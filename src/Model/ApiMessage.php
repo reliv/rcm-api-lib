@@ -21,6 +21,11 @@ use Reliv\RcmApiLib\Http\ApiResponse;
  */
 class ApiMessage extends AbstractApiModel
 {
+
+    /**
+     * @var bool Is this the primary error
+     */
+    protected $primary = null;
     /**
      * @var string
      */
@@ -32,7 +37,7 @@ class ApiMessage extends AbstractApiModel
     /**
      * @var string
      */
-    protected $type = ApiResponse::PRIMARY_TYPE;
+    protected $type = 'default';
     /**
      * @var string|null
      */
@@ -43,24 +48,59 @@ class ApiMessage extends AbstractApiModel
     protected $params = [];
 
     /**
-     * @param       $key
-     * @param       $value
-     * @param       $type
-     * @param null  $code
-     * @param array $params
+     * @param string $key
+     * @param string $value
+     * @param bool   $primary
+     * @param string $type
+     * @param null   $code
+     * @param array  $params
      */
     public function __construct(
         $key,
         $value = '',
-        $type = ApiResponse::PRIMARY_TYPE,
+        $primary = null,
+        $type = 'default',
         $code = null,
         $params = []
     ) {
         $this->setKey($key);
         $this->setValue($value);
+        $this->setPrimary($primary);
         $this->setType($type);
         $this->setCode($code);
         $this->setParams($params);
+    }
+
+    /**
+     * isPrimary
+     *
+     * @return bool
+     */
+    public function isPrimary()
+    {
+        return (bool) $this->primary;
+    }
+
+    /**
+     * getPrimary
+     *
+     * @return bool|null
+     */
+    public function getPrimary()
+    {
+        return $this->primary;
+    }
+
+    /**
+     * setPrimary
+     *
+     * @param boolean $primary
+     *
+     * @return void
+     */
+    public function setPrimary($primary = true)
+    {
+        $this->primary = $primary;
     }
 
     /**

@@ -23,11 +23,6 @@ use Zend\Http\Response as HttpResponse;
 class ApiResponse extends HttpResponse
 {
     /**
-     * PRIMARY TYPE Identifier
-     */
-    const PRIMARY_TYPE = 'primary';
-
-    /**
      * @var mixed
      */
     protected $data = null;
@@ -129,7 +124,7 @@ class ApiResponse extends HttpResponse
      */
     public function setApiMessage(ApiMessage $apiMessage)
     {
-        if ($apiMessage->getKey() == self::PRIMARY_TYPE) {
+        if ($apiMessage->isPrimary()) {
             array_unshift($this->messages, $apiMessage);
 
             return;

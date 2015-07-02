@@ -1,7 +1,8 @@
 <?php
-namespace Reliv\RcmApiLib;
+namespace Reliv\RcmApiLib\Http;
 
 use Reliv\RcmApiLib\Model\ApiMessage;
+use Zend\Http\Headers;
 use Zend\Http\Response as HttpResponse;
 
 /**
@@ -37,25 +38,35 @@ class ApiResponse extends HttpResponse
     protected $messages = [];
 
     /**
-     * setData
+     * __construct
+     */
+    public function __construct()
+    {
+        /** @var Headers $headers */
+        $headers = $this->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'application/json');
+    }
+
+    /**
+     * setDataOject
      *
      * @param \JsonSerializable $data
      *
      * @return void
      */
-    public function setData(\JsonSerializable $data)
+    public function setDataOject(\JsonSerializable $data)
     {
         $this->data = $data;
     }
 
     /**
-     * setDataArray
+     * setData
      *
-     * @param array $data
+     * @param array|null $data
      *
      * @return void
      */
-    public function setDataArray(array $data)
+    public function setData($data)
     {
         $this->data = $data;
     }
@@ -71,6 +82,21 @@ class ApiResponse extends HttpResponse
     }
 
     /**
+     * getContent
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        $content = [
+            'data' => $this->getData(),
+            'messages' => $this->getApiMessages(),
+        ];
+
+        return json_encode($content);
+    }
+
+    /**
      * setApiMessages
      *
      * @param array $apiMessages ApiMessage
@@ -82,6 +108,16 @@ class ApiResponse extends HttpResponse
         foreach ($apiMessages as $apiMessage) {
             $this->setApiMessage($apiMessage);
         }
+    }
+
+    /**
+     * getApiMessages
+     *
+     * @return array
+     */
+    public function getApiMessages()
+    {
+        return $this->messages;
     }
 
     /**

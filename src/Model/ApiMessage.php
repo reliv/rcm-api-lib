@@ -2,7 +2,7 @@
 
 namespace Reliv\RcmApiLib\Model;
 
-use Reliv\RcmApiLib\ApiResponse;
+use Reliv\RcmApiLib\Http\ApiResponse;
 
 /**
  * Class ApiMessage

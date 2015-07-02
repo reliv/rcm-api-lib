@@ -3,7 +3,7 @@
 
 namespace Reliv\RcmApiLib\Controller;
 
-use Reliv\RcmApiLib\ApiResponse;
+use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
@@ -99,15 +99,8 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     ) {
         $this->request = $request;
 
-        if (!$response) {
-            $response = new ApiResponse();
-        }
-
-        if (!$response instanceof ApiResponse) {
-            throw new \InvalidArgumentException(
-                'Expected an ApiResponse'
-            );
-        }
+        // Overrides any other response
+        $response = new ApiResponse();
 
         $this->response = $response;
 
@@ -264,31 +257,60 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
         return $this->methodNotAllowed();
     }
 
+    protected function getApiResponse(
+        $data,
+        $statusCode = 200,
+        $messageData = null,
+        $messageHydrator = 'ApiMessage',
+        $messageParams = []
+    ) {
+        $this->response->setData($data);
+
+        if (!empty($messageData)) {
+            return $this->getMessageResponse(
+                $messageData,
+                $messageHydrator,
+                $messageParams,
+                $statusCode
+            );
+        }
+
+        $this->response->setStatusCode($statusCode);
+
+        return $this->response;
+
+
+    }
+
     /**
      * getMessageResponse
      *
-     * @param        $data
+     * @param mixed  $messageData
      * @param string $hydrator
      * @param array  $params
      * @param int    $statusCode
      *
      * @return ApiResponse
+     * @throws \Exception
      */
     protected function getMessageResponse(
-        $data,
+        $messageData,
         $hydrator = 'ApiMessage',
         $params = [],
         $statusCode = 400
     ) {
         $hydratorMethod = 'hydrateResponseMessage' . $hydrator;
 
-        if (method_exists($this, $hydratorMethod)) {
-            $apiMessages = $this->$hydratorMethod(
-                $data,
-                $params
-            );
-            $this->response->setApiMessages($apiMessages);
+        if (!method_exists($this, $hydratorMethod)) {
+            throw new \Exception('No response message hydrator found');
         }
+
+        $apiMessages = $this->$hydratorMethod(
+            $messageData,
+            $params
+        );
+
+        $this->response->setApiMessages($apiMessages);
 
         $this->response->setStatusCode($statusCode);
 
@@ -420,7 +442,7 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     ) {
         $type = 'exception';
 
-        if(method_exists($exception, 'getParms')){
+        if (method_exists($exception, 'getParms')) {
             // @todo this should be in its own hydrator
             $params = array_merge($params, $exception->getParms());
         }

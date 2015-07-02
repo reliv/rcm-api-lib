@@ -1,24 +1,24 @@
 <?php
-namespace Reliv\RcmApiLib;
 
-use Zend\Http\Response as HttpResponse;
+
+namespace Reliv\RcmApiLib\Model;
 
 /**
- * Class Response
+ * Class ApiModelInterface
  *
- * JSON Response
+ * ApiModel Interface
  *
  * PHP version 5
  *
  * @category  Reliv
- * @package   Reliv\RcmApiLib
+ * @package   Reliv\RcmApiLib\Model
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2015 Reliv International
  * @license   License.txt New BSD License
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-class Response extends HttpResponse
-{
 
+interface ApiModelInterface extends ApiPopulatableInterface, ApiSerializableInterface
+{
 }

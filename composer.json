@@ -1,0 +1,30 @@
+{
+  "name": "reliv/rcm-api-lib",
+  "description": "Rcm Api Library",
+  "type": "library",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "rcm",
+    "module",
+    "zf2",
+    "api"
+  ],
+  "minimum-stability": "stable",
+  "homepage": "https://github.com/reliv/rcm-api-lib",
+  "authors": [
+    {
+      "name": "James Jervis",
+      "email": "jjervis@relivinc.com",
+      "homepage": "https://github.com/reliv"
+    }
+  ],
+  "require": {
+    "php": ">=5.5",
+    "zendframework/zendframework": "2.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Reliv\\RcmApiLib\\": "src/"
+    }
+  }
+}

@@ -420,6 +420,11 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     ) {
         $type = 'exception';
 
+        if(method_exists($exception, 'getParms')){
+            // @todo this should be in its own hydrator
+            $params = array_merge($params, $exception->getParms());
+        }
+
         $apiMessage = new ApiMessage(
             get_class($exception),
             $exception->getMessage(),

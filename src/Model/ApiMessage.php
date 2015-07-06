@@ -21,54 +21,125 @@ use Reliv\RcmApiLib\Http\ApiResponse;
  */
 class ApiMessage extends AbstractApiModel
 {
+    /**
+     * @var string
+     */
+    protected $type;
+
+    /**
+     * @var string|null
+     */
+    protected $source = null;
+
+    /**
+     * @var string|null
+     */
+    protected $code = null;
+
+    /**
+     * @var string
+     */
+    protected $value;
 
     /**
      * @var bool Is this the primary error
      */
     protected $primary = null;
-    /**
-     * @var string
-     */
-    protected $key;
-    /**
-     * @var string
-     */
-    protected $value;
-    /**
-     * @var string
-     */
-    protected $type = 'default';
-    /**
-     * @var string|null
-     */
-    protected $code = null;
+
     /**
      * @var array
      */
     protected $params = [];
 
+
     /**
-     * @param string $key
-     * @param string $value
-     * @param bool   $primary
      * @param string $type
+     * @param string $value
+     * @param null   $source
      * @param null   $code
+     * @param null   $primary
      * @param array  $params
      */
     public function __construct(
-        $key,
+        $type,
         $value = '',
-        $primary = null,
-        $type = 'default',
+        $source = null,
         $code = null,
+        $primary = null,
         $params = []
     ) {
-        $this->setKey($key);
-        $this->setValue($value);
-        $this->setPrimary($primary);
         $this->setType($type);
+        $this->setValue($value);
+        $this->setSource($source);
         $this->setCode($code);
+        $this->setPrimary($primary);
         $this->setParams($params);
+    }
+
+    /**
+     * getType
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * setType
+     *
+     * @param string $type
+     *
+     * @return void
+     */
+    public function setType($type)
+    {
+        $this->type = (string)$type;
+    }
+
+    /**
+     * getSource
+     *
+     * @return null|string
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * setSource
+     *
+     * @param string $source
+     *
+     * @return void
+     */
+    public function setSource($source)
+    {
+        $this->source = $source;
+    }
+
+    /**
+     * getCode
+     *
+     * @return null|string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * setCode
+     *
+     * @param string $code
+     *
+     * @return void
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
     }
 
     /**
@@ -78,7 +149,7 @@ class ApiMessage extends AbstractApiModel
      */
     public function isPrimary()
     {
-        return (bool) $this->primary;
+        return (bool)$this->primary;
     }
 
     /**
@@ -110,19 +181,17 @@ class ApiMessage extends AbstractApiModel
      */
     public function getKey()
     {
-        return $this->key;
-    }
+        $key = lcfirst((string)$this->type);
 
-    /**
-     * setKey
-     *
-     * @param $key
-     *
-     * @return void
-     */
-    public function setKey($key)
-    {
-        $this->key = (string)$key;
+        if ($this->source !== null) {
+            $key .= '.' . lcfirst((string)$this->source);
+        }
+
+        if ($this->code !== null) {
+            $key .= '.' . lcfirst((string)$this->code);
+        }
+
+        return $key;
     }
 
     /**
@@ -145,50 +214,6 @@ class ApiMessage extends AbstractApiModel
     public function setValue($value)
     {
         $this->value = (string)$value;
-    }
-
-    /**
-     * getType
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * setType
-     *
-     * @param $type
-     *
-     * @return void
-     */
-    public function setType($type)
-    {
-        $this->type = (string)$type;
-    }
-
-    /**
-     * getCode
-     *
-     * @return null|string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * setCode
-     *
-     * @param $code
-     *
-     * @return void
-     */
-    public function setCode($code)
-    {
-        $this->code = (string)$code;
     }
 
     /**
@@ -243,5 +268,19 @@ class ApiMessage extends AbstractApiModel
     {
         $key = (string)$key;
         $this->params[$key] = $value;
+    }
+
+    /**
+     * toArray
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $array['key'] = $this->getKey();
+
+        return $array;
     }
 }

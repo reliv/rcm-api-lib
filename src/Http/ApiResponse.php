@@ -1,7 +1,9 @@
 <?php
+
 namespace Reliv\RcmApiLib\Http;
 
 use Reliv\RcmApiLib\Model\ApiMessage;
+use Reliv\RcmApiLib\Model\ApiMessages;
 use Zend\Http\Headers;
 use Zend\Http\Response as HttpResponse;
 
@@ -28,9 +30,9 @@ class ApiResponse extends HttpResponse
     protected $data = null;
 
     /**
-     * @var array
+     * @var ApiMessages
      */
-    protected $messages = [];
+    protected $messages;
 
     /**
      * __construct
@@ -40,6 +42,8 @@ class ApiResponse extends HttpResponse
         /** @var Headers $headers */
         $headers = $this->getHeaders();
         $headers->addHeaderLine('Content-Type', 'application/json');
+
+        $this->messages = new ApiMessages();
     }
 
     /**
@@ -77,6 +81,21 @@ class ApiResponse extends HttpResponse
     }
 
     /**
+     * setContent
+     *
+     * @param mixed $content
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function setContent($content)
+    {
+        throw new \Exception(
+            'Content cannot be set directly, use setData, or addMssages'
+        );
+    }
+
+    /**
      * getContent
      *
      * @return string
@@ -92,23 +111,23 @@ class ApiResponse extends HttpResponse
     }
 
     /**
-     * setApiMessages
+     * addApiMessages
      *
      * @param array $apiMessages ApiMessage
      *
      * @return void
      */
-    public function setApiMessages($apiMessages = [])
+    public function addApiMessages($apiMessages = [])
     {
         foreach ($apiMessages as $apiMessage) {
-            $this->setApiMessage($apiMessage);
+            $this->addApiMessage($apiMessage);
         }
     }
 
     /**
      * getApiMessages
      *
-     * @return array
+     * @return ApiMessages
      */
     public function getApiMessages()
     {
@@ -116,41 +135,14 @@ class ApiResponse extends HttpResponse
     }
 
     /**
-     * setApiMessage
+     * addApiMessage
      *
      * @param ApiMessage $apiMessage
      *
      * @return void
      */
-    public function setApiMessage(ApiMessage $apiMessage)
+    public function addApiMessage(ApiMessage $apiMessage)
     {
-        if ($apiMessage->isPrimary()) {
-            array_unshift($this->messages, $apiMessage);
-
-            return;
-        }
-
-        $this->messages[] = $apiMessage;
-    }
-
-    /**
-     * getApiMessage
-     *
-     * @param string $key
-     * @param null   $default
-     *
-     * @return null|ApiMessage
-     */
-    public function getApiMessage($key, $default = null)
-    {
-        $key = (string)$key;
-        /** @var ApiMessage $apiMessage */
-        foreach ($this->messages as $apiMessage) {
-            if ($apiMessage->getKey() === $key) {
-                return $apiMessage;
-            }
-        }
-
-        return $default;
+        $this->messages->add($apiMessage);
     }
 }

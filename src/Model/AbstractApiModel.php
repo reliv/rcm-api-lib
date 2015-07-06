@@ -19,7 +19,7 @@ namespace Reliv\RcmApiLib\Model;
  * @link      https://github.com/reliv
  */
 
-class AbstractApiModel implements ApiModelInterface
+abstract class AbstractApiModel implements ApiModelInterface
 {
     /**
      * populate

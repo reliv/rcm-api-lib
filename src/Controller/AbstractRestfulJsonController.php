@@ -35,6 +35,8 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected $response;
 
+    protected $hydrator;
+
     /**
      * getTranslator
      *
@@ -46,9 +48,19 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     }
 
     /**
+     * getHydrator
+     *
+     * @return \Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface
+     */
+    protected function getHydrator()
+    {
+        return $this->serviceLocator->get('Reliv\RcmApiLib\Hydrator');
+    }
+
+    /**
      * translateMessage
      *
-     * @todo Make Plugin
+     * @todo Make Plugin - Service
      *
      * @param        $message
      * @param array  $params
@@ -114,16 +126,18 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected function methodNotAllowed()
     {
-        return $this->getMessageResponse(
-            [
-                'key' => 'Method_Not_Allowed',
-                'message' => 'Method Not Allowed',
-                'type' => 'Http_Method_Not_Allowed',
-                'code' => 'Http_Method_Not_Allowed'
-            ],
-            $params = [],
-            $hydrator = 'Array',
-            $statusCode = 405
+        $apiMessage = new ApiMessage(
+            'Http',
+            'Method Not Allowed',
+            'Method_Not_Allowed',
+            '405',
+            true
+        );
+
+        return $this->getApiResponse(
+            null,
+            405,
+            $apiMessage
         );
     }
 
@@ -260,33 +274,25 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     /**
      * getApiResponse
      *
-     * @param           $data
-     * @param int       $statusCode
-     * @param null      $messageData
-     * @param string    $messageHydrator
-     * @param null|bool $messagePrimary
-     * @param array     $messageParams
+     * @param      $data
+     * @param int  $statusCode
+     * @param null $apiMessagesData
+     * @param null $apiMessagesIsPrimary
      *
      * @return ApiResponse
-     * @throws \Exception
      */
     protected function getApiResponse(
         $data,
         $statusCode = 200,
-        $messageData = null,
-        $messageHydrator = 'ApiMessage',
-        $messagePrimary = null,
-        $messageParams = []
+        $apiMessagesData = null,
+        $apiMessagesIsPrimary = null
     ) {
         $this->response->setData($data);
 
-        if (!empty($messageData)) {
-            return $this->getMessageResponse(
-                $messageData,
-                $messageHydrator,
-                $messagePrimary,
-                $messageParams,
-                $statusCode
+        if (!empty($apiMessagesData)) {
+            $this->addApiMessage(
+                $apiMessagesData,
+                $apiMessagesIsPrimary
             );
         }
 
@@ -296,42 +302,27 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     }
 
     /**
-     * getMessageResponse
+     * addApiMessage
      *
-     * @param mixed  $messageData
-     * @param string $hydrator
-     * @param null   $primary
-     * @param array  $params
-     * @param int    $statusCode
+     * @param mixed $apiMessagesData
+     * @param null  $apiMessagesIsPrimary
      *
-     * @return ApiResponse
-     * @throws \Exception
+     * @return void
      */
-    protected function getMessageResponse(
-        $messageData,
-        $hydrator = 'ApiMessage',
-        $primary = null,
-        $params = [],
-        $statusCode = 400
+    protected function addApiMessage(
+        $apiMessagesData,
+        $apiMessagesIsPrimary = null
     ) {
-        $hydratorMethod = 'hydrateResponseMessage' . $hydrator;
+        $hydrator = $this->getHydrator();
 
-        if (!method_exists($this, $hydratorMethod)) {
-            throw new \Exception('No response message hydrator found');
-        }
+        $apiMessages = $this->response->getApiMessages();
 
-        $apiMessages = $this->$hydratorMethod(
-            $messageData
-        );
+        $apiMessages = $hydrator->hydrate($apiMessagesData, $apiMessages);
 
         /** @var ApiMessage $apiMessage */
         foreach ($apiMessages as $apiMessage) {
-            if (empty($apiMessage->getParams())) {
-                $apiMessage->setParams($params);
-            }
-
             if ($apiMessage->getPrimary() === null) {
-                $apiMessage->setPrimary($primary);
+                $apiMessage->setPrimary($apiMessagesIsPrimary);
             }
 
             $apiMessage->setValue(
@@ -341,117 +332,22 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
                 )
             );
         }
-
-        $this->response->setApiMessages($apiMessages);
-
-        $this->response->setStatusCode($statusCode);
-
-        return $this->response;
     }
 
     /**
-     * hydrateResponseMessageApiMessage
+     * addApiMessages
      *
-     * @todo Abstract hydrators
+     * @param array $apiMessagesData
+     * @param null  $apiMessagesIsPrimary
      *
-     * @param ApiMessage $apiMessage
-     *
-     * @return array of ApiMessage
+     * @return void
      */
-    protected function hydrateResponseMessageApiMessage(
-        ApiMessage $apiMessage
+    protected function addApiMessages(
+        array $apiMessagesData,
+        $apiMessagesIsPrimary = null
     ) {
-        return [$apiMessage];
-    }
-
-    /**
-     * hydrateResponseMessageArray
-     *
-     * @todo Abstract hydrators
-     *
-     * @param array $data
-     *
-     * @return array of ApiMessage
-     */
-    protected function hydrateResponseMessageArray(
-        array $data
-    ) {
-        $apiMessage = new ApiMessage(
-            $data['key']
-        );
-
-        $apiMessage->populate($data);
-
-        return [$apiMessage];
-    }
-
-    /**
-     * hydrateResponseMessageInputFilterMessages
-     *
-     * @todo Abstract hydrators
-     *
-     * @param array $inputFilterMessages
-     *
-     * @return array of ApiMessage
-     */
-    protected function hydrateResponseMessageInputFilterMessages(
-        $inputFilterMessages
-    ) {
-        $type = 'field';
-
-        $apiMessages = [];
-
-        foreach ($inputFilterMessages as $key => $message) {
-            foreach ($message as $fkey => $fmessage) {
-                $apiMessage = new ApiMessage(
-                    $key,
-                    $fmessage,
-                    null,
-                    $type,
-                    $fkey
-                );
-
-                $apiMessages[] = $apiMessage;
-            }
+        foreach ($apiMessagesData as $apiMessage) {
+            $this->addApiMessage($apiMessage, $apiMessagesIsPrimary);
         }
-
-        return $apiMessages;
-    }
-
-    /**
-     * hydrateResponseMessageException
-     *
-     * @todo Abstract hydrators
-     *
-     * @param \Exception $exception
-     *
-     * @return array of ApiMessage
-     */
-    protected function hydrateResponseMessageException(
-        \Exception $exception
-    ) {
-        $type = 'exception';
-        $params = [];
-        $code = $type;
-
-        if (method_exists($exception, 'getParms')) {
-            // @todo this should be in its own hydrator
-            $params = $exception->getParms();
-        }
-        if (method_exists($exception, 'getKey')) {
-            // @todo this should be in its own hydrator
-            $code = $exception->getKey();
-        }
-
-        $apiMessage = new ApiMessage(
-            get_class($exception),
-            $exception->getMessage(),
-            null,
-            $type,
-            $code,
-            $params
-        );
-
-        return [$apiMessage];
     }
 }

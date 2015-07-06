@@ -95,7 +95,7 @@ class ApiMessage extends AbstractApiModel
      */
     public function setType($type)
     {
-        $this->type = (string)$type;
+        $this->type = lcfirst((string)$type);
     }
 
     /**
@@ -117,6 +117,9 @@ class ApiMessage extends AbstractApiModel
      */
     public function setSource($source)
     {
+        if ($source !== null) {
+            $source = lcfirst((string)$source);
+        }
         $this->source = $source;
     }
 
@@ -139,6 +142,9 @@ class ApiMessage extends AbstractApiModel
      */
     public function setCode($code)
     {
+        if ($code !== null) {
+            $code = lcfirst((string)$code);
+        }
         $this->code = $code;
     }
 
@@ -181,14 +187,14 @@ class ApiMessage extends AbstractApiModel
      */
     public function getKey()
     {
-        $key = lcfirst((string)$this->type);
+        $key = $this->type;
 
         if ($this->source !== null) {
-            $key .= '.' . lcfirst((string)$this->source);
+            $key .= '.' . $this->source;
         }
 
         if ($this->code !== null) {
-            $key .= '.' . lcfirst((string)$this->code);
+            $key .= '.' . $this->code;
         }
 
         return $key;

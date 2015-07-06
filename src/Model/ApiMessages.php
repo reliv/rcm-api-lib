@@ -36,6 +36,12 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
      */
     public function add(ApiMessage $apiMessage)
     {
+        $index = $this->getIndex($apiMessage->getKey());
+
+        if ($index !== null) {
+            unset($this->messages[$index]);
+        }
+
         if ($apiMessage->isPrimary()) {
             array_unshift($this->messages, $apiMessage);
 
@@ -49,21 +55,39 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
      * get
      *
      * @param string $key
-     * @param null $default
+     * @param null   $default
      *
      * @return null|ApiMessage
      */
     public function get($key, $default = null)
     {
         $key = (string)$key;
-        /** @var ApiMessage $apiMessage */
-        foreach ($this->messages as $apiMessage) {
-            if ($apiMessage->getKey() === $key) {
-                return $apiMessage;
-            }
+
+        $index = $this->getIndex($key);
+
+        if ($index !== null) {
+            return $this->messages[$index];
         }
 
         return $default;
+    }
+
+    /**
+     * getIndex
+     *
+     * @param $key
+     *
+     * @return int|null
+     */
+    protected function getIndex($key)
+    {
+        foreach ($this->messages as $index => $apiMessage) {
+            if ($apiMessage->getKey() === $key) {
+                return $index;
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -657,13 +657,15 @@ angular.module('rcmApiLib')
         'rcmApiLibMessageService',
         function ($log, rcmApiLibMessageService) {
 
-            var link = function ($scope) {
+            var link = function ($scope, elm) {
                 $scope.$watch(
                     function () {
                         return rcmApiLibMessageService.messages
                     },
                     function () {
                         $scope.messages = rcmApiLibMessageService.messages;
+                        // Scroll to message
+                        elm[0].scrollIntoView(true);
                     }
                 );
                 $scope.messages = rcmApiLibMessageService.messages;

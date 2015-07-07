@@ -35,7 +35,7 @@ return [
     'asset_manager' => [
         'resolver_configs' => [
             'aliases' => [
-                'modules/rcm-api-lib/' => __DIR__ . '/../public/',
+                'modules/rcm-api-lib/' => __DIR__ . '/../public/rcm-api-lib/',
             ],
         ]
     ]

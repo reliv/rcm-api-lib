@@ -3,8 +3,9 @@
 
 namespace Reliv\RcmApiLib\Http;
 
+use Reliv\RcmApiLib\Model\ApiMessage;
 
- /**
+/**
  * Class ApiResponseInterface
  *
  * LongDescHere
@@ -19,7 +20,48 @@ namespace Reliv\RcmApiLib\Http;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
+interface ApiResponseInterface
+{
+    /**
+     * setData
+     *
+     * @param array|null $data
+     *
+     * @return void
+     */
+    public function setData($data);
 
-class ApiResponseInterface {
+    /**
+     * getData
+     *
+     * @return mixed
+     */
+    public function getData();
+
+    /**
+     * addApiMessages
+     *
+     * @param array $apiMessages ApiMessage
+     *
+     * @return void
+     */
+    public function addApiMessages($apiMessages = []);
+
+    /**
+     * addApiMessage
+     *
+     * @param ApiMessage $apiMessage
+     *
+     * @return void
+     */
+    public function addApiMessage(ApiMessage $apiMessage);
+
+    /**
+     * getApiMessages
+     *
+     * @return ApiMessages
+     */
+    public function getApiMessages();
+
 
 }

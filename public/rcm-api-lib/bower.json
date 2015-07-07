@@ -1,0 +1,26 @@
+{
+  "name": "rcm-api-lib",
+  "version": "0.1.0",
+  "homepage": "https://github.com/reliv/rcm-api-lib",
+  "description": "RCM API Javascript Library",
+  "keywords": [
+    "javascipt",
+    "api",
+    "standard",
+    "library"
+  ],
+  "authors": [
+    "James Jervis"
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+  },
+  "devDependencies": {},
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -20,6 +20,6 @@ namespace Reliv\RcmApiLib\Http;
  * @link      https://github.com/reliv
  */
 
-class ApiResponseInterface {
+interface ApiResponseInterface {
 
 }

@@ -20,7 +20,8 @@
   ],
   "require": {
     "php": ">=5.5",
-    "zendframework/zendframework": "2.*"
+    "zendframework/zendframework": "2.*",
+    "rwoverdijk/assetmanager": "1.*"
   },
   "autoload": {
     "psr-4": {

@@ -35,8 +35,6 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected $response;
 
-    protected $hydrator;
-
     /**
      * getTranslator
      *

@@ -25,7 +25,6 @@ angular.module('rcmApiLib')
                 inputFilter: 'inputFilter'
             };
 
-
             /**
              * addMessage
              * @param message
@@ -33,6 +32,19 @@ angular.module('rcmApiLib')
             self.addMessage = function (message) {
                 message = angular.extend(new rcmApiLibApiMessage(), message);
                 self.messages.push(message);
+            };
+
+            /**
+             * addPrimaryMessage
+             * @param messages
+             */
+            self.addPrimaryMessage = function (messages) {
+                self.getPrimaryMessage(
+                    messages,
+                    function (primaryMessage) {
+                        self.addMessage(primaryMessage);
+                    }
+                )
             };
 
             /**

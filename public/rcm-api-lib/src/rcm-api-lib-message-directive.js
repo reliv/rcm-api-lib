@@ -3,17 +3,28 @@ angular.module('rcmApiLib')
     'rcmApiLibMessageDirective',
     [
         '$log',
-        function ($log) {
+        'rcmApiLibMessageService',
+        function ($log, rcmApiLibMessageService) {
 
-            function link($scope) {
-
+            var link = function ($scope) {
+                $scope.$watch(
+                    function () {
+                        return rcmApiLibMessageService.messages
+                    },
+                    function () {
+                        $scope.messages = rcmApiLibMessageService.messages;
+                    }
+                );
+                $scope.messages = rcmApiLibMessageService.messages;
             };
 
             return {
                 link: link,
-                template: '<div class="alert alert-danger" role="alert">' +
-                '<div class="message" ng-repeat="message in messages">{{message}}</div>' +
+                template: '' +
+                '<div class="alert alert-danger" ng-hide="messages.length < 1" role="alert">' +
+                ' <div class="message" ng-repeat="message in messages">{{message.value}}</div>' +
                 '</div>'
+
             }
         }
     ]

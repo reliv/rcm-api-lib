@@ -22,6 +22,15 @@ use Reliv\RcmApiLib\Model\ApiMessages;
  */
 class ExceptionApiMessagesHydrator implements ApiMessagesHydratorInterface
 {
+    /**
+     * hydrate
+     *
+     * @param mixed       $data
+     * @param ApiMessages $apiMessages
+     *
+     * @return ApiMessages
+     * @throws ApiMessagesHydratorException
+     */
     public function hydrate($data, ApiMessages $apiMessages)
     {
         if (!$data instanceof \Exception) {
@@ -38,11 +47,17 @@ class ExceptionApiMessagesHydrator implements ApiMessagesHydratorInterface
             $params = $data->getParms();
         }
 
+        $code = $data->getCode();
+
+        if (empty($code)) {
+            $code = null;
+        }
+
         $apiMessage = new ApiMessage(
             $type,
             $data->getMessage(),
             $this->getSourceString($data),
-            (string)$data->getCode(),
+            $code,
             null,
             $params
         );

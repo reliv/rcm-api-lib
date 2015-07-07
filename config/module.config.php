@@ -32,4 +32,11 @@ return [
                 'Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory',
         ]
     ],
+    'asset_manager' => [
+        'resolver_configs' => [
+            'aliases' => [
+                'modules/rcm-api-lib/' => __DIR__ . '/../public/',
+            ],
+        ]
+    ]
 ];

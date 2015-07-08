@@ -21,7 +21,8 @@
   "require": {
     "php": ">=5.5",
     "zendframework/zendframework": "2.*",
-    "rwoverdijk/assetmanager": "1.*"
+    "rwoverdijk/assetmanager": "1.*",
+    "reliv/rcm-i18n": ">=0.2.0"
   },
   "autoload": {
     "psr-4": {

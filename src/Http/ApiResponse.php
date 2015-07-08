@@ -22,7 +22,7 @@ use Zend\Http\Response as HttpResponse;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-class ApiResponse extends HttpResponse
+class ApiResponse extends HttpResponse implements ApiResponseInterface
 {
     /**
      * @var mixed

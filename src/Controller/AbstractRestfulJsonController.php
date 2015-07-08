@@ -36,16 +36,6 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected $response;
 
     /**
-     * getTranslator
-     *
-     * @return \Zend\I18n\Translator\TranslatorInterface.
-     */
-    protected function getTranslator()
-    {
-        return $this->serviceLocator->get('MvcTranslator');
-    }
-
-    /**
      * getHydrator
      *
      * @return \Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface
@@ -57,8 +47,6 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
 
     /**
      * translateMessage
-     *
-     * @todo Make Plugin - Service
      *
      * @param        $message
      * @param array  $params
@@ -73,25 +61,13 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
         $textDomain = 'default',
         $locale = null
     ) {
-        $translator = $this->getTranslator();
-
-        $message = $translator->translate(
+        /** ViewHelper /RcmI18n\ViewHelper/ParamTranslate */
+        return $this->paramTranslate(
             $message,
+            $params,
             $textDomain,
             $locale
         );
-        $openTag = '{';
-        $closeTag = '}';
-
-        foreach ($params as $name => $value) {
-            $message = str_replace(
-                $openTag . $name . $closeTag,
-                $value,
-                $message
-            );
-        }
-
-        return $message;
     }
 
     /**

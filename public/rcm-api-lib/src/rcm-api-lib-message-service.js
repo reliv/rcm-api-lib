@@ -85,6 +85,7 @@ angular.module('rcmApiLib')
             /**
              * getTypeMessages
              * @param messages
+             * @param type
              * @param callback
              */
             self.getTypeMessages = function (messages, type, callback) {

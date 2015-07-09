@@ -33,7 +33,7 @@ abstract class AbstractApiModel implements ApiModelInterface
         array $data,
         array $ignore = []
     ) {
-        $setterPrefix = 'set';
+        $prefix = 'set';
 
         foreach ($data as $property => $value) {
             // Check for ignore keys
@@ -41,10 +41,10 @@ abstract class AbstractApiModel implements ApiModelInterface
                 continue;
             }
 
-            $setter = $setterPrefix . ucfirst($property);
+            $method = $prefix . ucfirst($property);
 
-            if (method_exists($this, $setter)) {
-                $this->$setter($value);
+            if (method_exists($this, $method)) {
+                $this->$method($value);
             }
         }
     }
@@ -69,11 +69,30 @@ abstract class AbstractApiModel implements ApiModelInterface
     /**
      * toArray
      *
+     * @param array $ignore List of properties to exclude from result
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($ignore = [])
     {
-        return get_object_vars($this);
+        $prefix = 'get';
+        $properties = get_object_vars($this);
+        $data = [];
+
+        foreach ($properties as $property => $value) {
+            // Check for ignore keys
+            if (in_array($property, $ignore)) {
+                continue;
+            }
+
+            $method = $prefix . ucfirst($property);
+
+            if (method_exists($this, $method)) {
+                $data[$property] = $this->$method();
+            }
+        }
+
+        return $data;
     }
 
     /**

@@ -66,6 +66,11 @@ https://github.com/reliv
     $this->addApiMessage(
         new ApiMessage('MYKEY', 'Some Message')
     );
+    
+    // Add HTTP sttus message
+    $this->addApiMessage(
+        new HttpStatusCodeApiMessage(403)
+    );
 
     // Add inputFilter message
     $inputFilter = new \Zend\InputFilter\InputFilter(); // Use you own inputFilter here

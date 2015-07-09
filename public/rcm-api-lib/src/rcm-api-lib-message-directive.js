@@ -23,7 +23,7 @@ angular.module('rcmApiLib')
             return {
                 link: link,
                 template: '' +
-                '<div class="alert alert-danger" ng-hide="messages.length < 1" role="alert">' +
+                '<div class="alert alert-{{messages[0].level}}" ng-hide="messages.length < 1" role="alert">' +
                 ' <div class="message" ng-repeat="message in messages">{{message.value}}</div>' +
                 '</div>'
 

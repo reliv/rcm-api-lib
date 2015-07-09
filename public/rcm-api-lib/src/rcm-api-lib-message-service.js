@@ -18,33 +18,12 @@ angular.module('rcmApiLib')
             self.messages = [];
 
             /**
-             * types
-             * @type {{inputFilter: string}}
-             */
-            self.types = {
-                inputFilter: 'inputFilter'
-            };
-
-            /**
              * addMessage
              * @param message
              */
             self.addMessage = function (message) {
                 message = angular.extend(new rcmApiLibApiMessage(), message);
                 self.messages.push(message);
-            };
-
-            /**
-             * addPrimaryMessage
-             * @param messages
-             */
-            self.addPrimaryMessage = function (messages) {
-                self.getPrimaryMessage(
-                    messages,
-                    function (primaryMessage) {
-                        self.addMessage(primaryMessage);
-                    }
-                )
             };
 
             /**
@@ -61,10 +40,31 @@ angular.module('rcmApiLib')
             };
 
             /**
+             * buildPrimaryMessage
+             * @param messages
+             */
+            self.buildPrimaryMessage = function (messages) {
+                self.getPrimaryMessage(
+                    messages,
+                    function (primaryMessage) {
+                        self.addMessage(primaryMessage);
+                    }
+                )
+            };
+
+            /**
              * clearMessages
              */
             self.clearMessages = function () {
                 self.messages = [];
+            };
+
+            /**
+             * getDefaultMessage
+             * @returns {rcmApiLibApiMessage}
+             */
+            self.getDefaultMessage = function() {
+                return new rcmApiLibApiMessage();
             };
 
             /**

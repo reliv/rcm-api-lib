@@ -18,6 +18,8 @@ angular.module('rcmApiLib')
             self.primary = null;
             self.params = [];
             self.key = [];
+            // Client only property
+            self.level = 'warning';
 
             /**
              * buildKey

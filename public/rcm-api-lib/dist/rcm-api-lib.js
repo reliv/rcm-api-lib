@@ -108,6 +108,8 @@ angular.module('rcmApiLib')
             self.primary = null;
             self.params = [];
             self.key = [];
+            // Client only property
+            self.level = 'warning';
 
             /**
              * buildKey
@@ -559,33 +561,12 @@ angular.module('rcmApiLib')
             self.messages = [];
 
             /**
-             * types
-             * @type {{inputFilter: string}}
-             */
-            self.types = {
-                inputFilter: 'inputFilter'
-            };
-
-            /**
              * addMessage
              * @param message
              */
             self.addMessage = function (message) {
                 message = angular.extend(new rcmApiLibApiMessage(), message);
                 self.messages.push(message);
-            };
-
-            /**
-             * addPrimaryMessage
-             * @param messages
-             */
-            self.addPrimaryMessage = function (messages) {
-                self.getPrimaryMessage(
-                    messages,
-                    function (primaryMessage) {
-                        self.addMessage(primaryMessage);
-                    }
-                )
             };
 
             /**
@@ -602,10 +583,31 @@ angular.module('rcmApiLib')
             };
 
             /**
+             * buildPrimaryMessage
+             * @param messages
+             */
+            self.buildPrimaryMessage = function (messages) {
+                self.getPrimaryMessage(
+                    messages,
+                    function (primaryMessage) {
+                        self.addMessage(primaryMessage);
+                    }
+                )
+            };
+
+            /**
              * clearMessages
              */
             self.clearMessages = function () {
                 self.messages = [];
+            };
+
+            /**
+             * getDefaultMessage
+             * @returns {rcmApiLibApiMessage}
+             */
+            self.getDefaultMessage = function() {
+                return new rcmApiLibApiMessage();
             };
 
             /**
@@ -626,6 +628,7 @@ angular.module('rcmApiLib')
             /**
              * getTypeMessages
              * @param messages
+             * @param type
              * @param callback
              */
             self.getTypeMessages = function (messages, type, callback) {
@@ -674,7 +677,7 @@ angular.module('rcmApiLib')
             return {
                 link: link,
                 template: '' +
-                '<div class="alert alert-danger" ng-hide="messages.length < 1" role="alert">' +
+                '<div class="alert alert-{{messages[0].level}}" ng-hide="messages.length < 1" role="alert">' +
                 ' <div class="message" ng-repeat="message in messages">{{message.value}}</div>' +
                 '</div>'
 

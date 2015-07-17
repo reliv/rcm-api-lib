@@ -4,6 +4,7 @@
 namespace Reliv\RcmApiLib\Http;
 
 use Reliv\RcmApiLib\Model\ApiMessage;
+use Reliv\RcmApiLib\Model\ApiMessages;
 
 /**
  * Class ApiResponseInterface
@@ -55,6 +56,15 @@ interface ApiResponseInterface
      * @return void
      */
     public function addApiMessage(ApiMessage $apiMessage);
+
+    /**
+     * setApiMessages
+     *
+     * @param ApiMessages $apiMessages
+     *
+     * @return void
+     */
+    public function setApiMessages(ApiMessages $apiMessages);
 
     /**
      * getApiMessages

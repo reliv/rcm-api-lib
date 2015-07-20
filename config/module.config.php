@@ -39,7 +39,7 @@ return [
             ],
         ]
     ],
-    /* <Example Controller> - TESTING ONLY *
+    /* <Example> - TESTING ONLY *
     'controllers' => [
         'invokables' => [
             'Reliv\RcmApiLib\Controller\ExampleRestfulJsonController' =>
@@ -65,5 +65,5 @@ return [
             'ViewJsonStrategy',
         ],
     ],
-    /* </Example Controller>*/
+    /* </Example>*/
 ];

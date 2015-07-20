@@ -33,14 +33,14 @@ class ApiMessageApiMessagesHydrator implements ApiMessagesHydratorInterface
      */
     public function hydrate($data, ApiMessages $apiMessages)
     {
-        if ($data instanceof ApiMessage) {
-            $apiMessages->add($data);
-
-            return $apiMessages;
+        if (!$data instanceof ApiMessage) {
+            throw new ApiMessagesHydratorException(
+                get_class($this) . ' cannot hydrate this data type'
+            );
         }
 
-        throw new ApiMessagesHydratorException(
-            get_class($this) . ' cannot hydrate this data type'
-        );
+        $apiMessages->add($data);
+
+        return $apiMessages;
     }
 }

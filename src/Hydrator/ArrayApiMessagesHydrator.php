@@ -7,6 +7,7 @@ use Reliv\RcmApiLib\Exception\ApiMessagesHydratorException;
 use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
+use Reliv\RcmApiLib\Model\ArrayApiMessage;
 
 /**
  * Class ArrayApiMessageHydrator
@@ -36,11 +37,9 @@ class ArrayApiMessagesHydrator implements ApiMessagesHydratorInterface
     public function hydrate($data, ApiMessages $apiMessages)
     {
         if (is_array($data) && array_key_exists('value', $data) && array_key_exists('type', $data)) {
-            $apiMessage = new ApiMessage(
-                $data['type']
+            $apiMessage = new ArrayApiMessage(
+                $data
             );
-
-            $apiMessage->populate($data);
 
             $apiMessages->add($apiMessage);
 

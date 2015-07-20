@@ -6,6 +6,7 @@ namespace Reliv\RcmApiLib\Hydrator;
 use Reliv\RcmApiLib\Exception\ApiMessagesHydratorException;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
+use Reliv\RcmApiLib\Model\ExceptionApiMessage;
 
 /**
  * Class ExceptionApiMessageHydrator
@@ -39,48 +40,12 @@ class ExceptionApiMessagesHydrator implements ApiMessagesHydratorInterface
             );
         }
 
-        $type = 'exception';
-        $params = [];
-
-        if (method_exists($data, 'getParms')) {
-            // @todo this should be in its own hydrator
-            $params = $data->getParms();
-        }
-
-        $code = $data->getCode();
-
-        if (empty($code)) {
-            $code = null;
-        }
-
-        $apiMessage = new ApiMessage(
-            $type,
-            $data->getMessage(),
-            $this->getSourceString($data),
-            $code,
-            null,
-            $params
+        $apiMessage = new ExceptionApiMessage(
+            $data
         );
 
         $apiMessages->add($apiMessage);
 
         return $apiMessages;
-    }
-
-    /**
-     * getSourceString
-     *
-     * @param $exception
-     *
-     * @return string
-     */
-    protected function getSourceString($exception)
-    {
-        $classname = get_class($exception);
-        if ($pos = strrpos($classname, '\\')) {
-            $classname = lcfirst(substr($classname, $pos + 1));
-        }
-
-        return $classname;
     }
 }

@@ -27,6 +27,20 @@ class ArrayApiMessage extends ApiMessage
         $properties = [],
         $ignore = []
     ) {
+        $this->build(
+            $properties,
+            $ignore
+        );
+    }
+
+    protected function build(
+        $properties = [],
+        $ignore = []
+    ) {
+        if (!isset($properties['value'])) {
+            $properties['value'] = '';
+        }
+
         parent::populate($properties, $ignore);
     }
 }

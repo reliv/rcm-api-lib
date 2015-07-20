@@ -38,5 +38,32 @@ return [
                 'modules/rcm-api-lib/' => __DIR__ . '/../public/rcm-api-lib/',
             ],
         ]
-    ]
+    ],
+    /* <Example Controller> - TESTING ONLY *
+    'controllers' => [
+        'invokables' => [
+            'Reliv\RcmApiLib\Controller\ExampleRestfulJsonController' =>
+                'Reliv\RcmApiLib\Controller\ExampleRestfulJsonController',
+        ],
+    ],
+    'router' => [
+        'routes' => [
+            'Reliv\RcmApiLib\Example' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route' => '/rcm-api-lib/example[/:id]',
+                    'defaults' => [
+                        'controller' => 'Reliv\RcmApiLib\Controller\ExampleRestfulJsonController',
+                        'id' => 'getApiMessage',
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'view_manager' => [
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],
+    ],
+    /* </Example Controller>*/
 ];

@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Controller;
 
 use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Model\ApiMessage;
+use Reliv\RcmApiLib\Model\ApiMessages;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\RequestInterface;
@@ -68,6 +68,26 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
             $textDomain,
             $locale
         );
+    }
+
+    /**
+     * translateApiResponseMessages
+     *
+     * @return void
+     */
+    protected function translateApiResponseMessages()
+    {
+        $apiMessages = $this->response->getApiMessages();
+
+        /** @var ApiMessage $apiMessage */
+        foreach ($apiMessages as $apiMessage) {
+            $apiMessage->setValue(
+                $this->translateMessage(
+                    $apiMessage->getValue(),
+                    $apiMessage->getParams()
+                )
+            );
+        }
     }
 
     /**
@@ -251,24 +271,23 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      * @param      $data
      * @param int  $statusCode
      * @param null $apiMessagesData
-     * @param null $apiMessagesIsPrimary
      *
      * @return ApiResponse
      */
     protected function getApiResponse(
         $data,
         $statusCode = 200,
-        $apiMessagesData = null,
-        $apiMessagesIsPrimary = null
+        $apiMessagesData = null
     ) {
         $this->response->setData($data);
 
         if (!empty($apiMessagesData)) {
             $this->addApiMessage(
-                $apiMessagesData,
-                $apiMessagesIsPrimary
+                $apiMessagesData
             );
         }
+
+        $this->translateApiResponseMessages();
 
         $this->response->setStatusCode($statusCode);
 
@@ -276,52 +295,60 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     }
 
     /**
+     * setApiMessages
+     *
+     * @param ApiMessage $apiMessage
+     *
+     * @return void
+     */
+    protected function setApiMessage(
+        ApiMessage $apiMessage
+    ) {
+        $this->response->addApiMessage($apiMessage);
+    }
+
+    /**
      * addApiMessage
      *
-     * @param mixed $apiMessagesData
-     * @param null  $apiMessagesIsPrimary
+     * @param $apiMessagesData
      *
      * @return void
      */
     protected function addApiMessage(
-        $apiMessagesData,
-        $apiMessagesIsPrimary = null
+        $apiMessagesData
     ) {
         $hydrator = $this->getHydrator();
 
         $apiMessages = $this->response->getApiMessages();
 
-        $apiMessages = $hydrator->hydrate($apiMessagesData, $apiMessages);
+        $hydrator->hydrate($apiMessagesData, $apiMessages);
+    }
 
-        /** @var ApiMessage $apiMessage */
-        foreach ($apiMessages as $apiMessage) {
-            if ($apiMessage->getPrimary() === null) {
-                $apiMessage->setPrimary($apiMessagesIsPrimary);
-            }
-
-            $apiMessage->setValue(
-                $this->translateMessage(
-                    $apiMessage->getValue(),
-                    $apiMessage->getParams()
-                )
-            );
-        }
+    /**
+     * setApiMessages
+     *
+     * @param ApiMessages $apiMessages
+     *
+     * @return void
+     */
+    protected function setApiMessages(
+        ApiMessages $apiMessages
+    ) {
+        $this->response->setApiMessages($apiMessages);
     }
 
     /**
      * addApiMessages
      *
-     * @param array $apiMessagesData
-     * @param null  $apiMessagesIsPrimary
+     * @param array|ArrayIterator $apiMessagesData
      *
      * @return void
      */
     protected function addApiMessages(
-        array $apiMessagesData,
-        $apiMessagesIsPrimary = null
+        $apiMessagesData
     ) {
         foreach ($apiMessagesData as $apiMessage) {
-            $this->addApiMessage($apiMessage, $apiMessagesIsPrimary);
+            $this->addApiMessage($apiMessage);
         }
     }
 }

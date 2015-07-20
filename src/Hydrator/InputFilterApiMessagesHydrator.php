@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Hydrator;
 
 use Reliv\RcmApiLib\Exception\ApiMessagesHydratorException;
@@ -8,6 +7,7 @@ use Reliv\RcmApiLib\InputFilter\MessageParamInputFilter;
 use Reliv\RcmApiLib\InputFilter\MessageParamInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
+use Reliv\RcmApiLib\Model\InputFilterApiMessages;
 use Zend\InputFilter\InputFilterInterface;
 
 /**
@@ -30,11 +30,6 @@ class InputFilterApiMessagesHydrator implements ApiMessagesHydratorInterface
      * @var null|string
      */
     protected $primaryMessage = null;
-
-    /**
-     * @var string type for fields
-     */
-    protected $typeName = 'inputFilter';
 
     /**
      * @param $primaryMessage
@@ -61,96 +56,12 @@ class InputFilterApiMessagesHydrator implements ApiMessagesHydratorInterface
             );
         }
 
-        $params = [];
-
-        if ($data instanceof MessageParamInterface) {
-            $params = $data->getMessageParams();
-        }
-
-        $primaryApiMessage = new ApiMessage(
-            $this->typeName,
-            $this->primaryMessage,
-            'overallFieldsMessage',
-            'error',
-            true,
-            $params
+        $inputFilterApiMessages = new InputFilterApiMessages(
+            $data,
+            $this->primaryMessage
         );
 
-        $apiMessages->add($primaryApiMessage);
-
-        $inputs = $data->getInvalidInput();
-
-        /**
-         * @var string                           $fieldName
-         * @var \Zend\InputFilter\InputInterface $input
-         */
-        foreach ($inputs as $fieldName => $input) {
-            $validatorChain = $input->getValidatorChain();
-            $validators = $validatorChain->getValidators();
-
-            $this->buildValidatorMessages($apiMessages, $fieldName, $validators);
-        }
-
-        return $apiMessages;
-    }
-
-    /**
-     * buildValidatorMessages
-     *
-     * @param ApiMessages $apiMessages
-     * @param             $source
-     * @param             $validators
-     *
-     * @return ApiMessages
-     */
-    protected function buildValidatorMessages(
-        ApiMessages $apiMessages,
-        $source,
-        $validators
-    ) {
-        foreach ($validators as $fkey => $validatorData) {
-            /** @var \Zend\Validator\ValidatorInterface $validator */
-            $validator = $validatorData['instance'];
-            $params = [];
-
-            if ($validator instanceof MessageParamInterface) {
-                $params = $validator->getMessageParams();
-            }
-
-            $inputMessages = $validator->getMessages();
-
-            $this->buildApiMessages($apiMessages, $source, $inputMessages, $params);
-        }
-
-        return $apiMessages;
-    }
-
-    /**
-     * buildApiMessages
-     *
-     * @param ApiMessages $apiMessages
-     * @param string      $source
-     * @param array       $inputMessages
-     * @param array       $params
-     *
-     * @return ApiMessages
-     */
-    protected function buildApiMessages(
-        ApiMessages $apiMessages,
-        $source,
-        $inputMessages,
-        $params = []
-    ) {
-        foreach ($inputMessages as $fkey => $message) {
-            $apiMessage = new ApiMessage(
-                $this->typeName,
-                $message,
-                $source,
-                $fkey,
-                null,
-                $params
-            );
-
+        foreach ($inputFilterApiMessages as $apiMessage) {
             $apiMessages->add($apiMessage);
         }
 

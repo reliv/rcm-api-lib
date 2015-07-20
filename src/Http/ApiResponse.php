@@ -125,6 +125,18 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
     }
 
     /**
+     * setApiMessages
+     *
+     * @param ApiMessages $apiMessages
+     *
+     * @return void
+     */
+    public function setApiMessages(ApiMessages $apiMessages)
+    {
+        $this->messages = $apiMessages;
+    }
+
+    /**
      * getApiMessages
      *
      * @return ApiMessages

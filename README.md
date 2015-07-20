@@ -44,6 +44,7 @@ https://github.com/reliv
 ```php
 
 // From a Controller that extends \Reliv\RcmApiLib\Controller\AbstractRestfulJsonController
+// @see \Reliv\RcmApiLib\Controller\ExampleRestfulJsonController
 
     // Add exception message
     $this->addApiMessage(

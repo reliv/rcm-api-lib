@@ -623,6 +623,7 @@ angular.module('rcmApiLib')
                 }
 
                 callback(primaryMessage);
+                return primaryMessage;
             };
 
             /**
@@ -645,6 +646,7 @@ angular.module('rcmApiLib')
                 );
 
                 callback(typeMessages);
+                return typeMessages;
             };
 
             return self;

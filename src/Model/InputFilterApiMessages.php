@@ -22,6 +22,10 @@ use Zend\InputFilter\InputFilterInterface;
  */
 class InputFilterApiMessages extends ApiMessages
 {
+    /**
+     * @var string
+     */
+    protected $primaryType = 'inputFilter';
 
     /**
      * @var string
@@ -31,7 +35,7 @@ class InputFilterApiMessages extends ApiMessages
     /**
      * @var string
      */
-    protected $primarySource = 'overallFieldsMessage';
+    protected $primarySource = 'validation';
 
     /**
      * @var string
@@ -67,12 +71,13 @@ class InputFilterApiMessages extends ApiMessages
             $params = array_merge($inputFilter->getMessageParams(), $params);
         }
 
-        $primaryApiMessage = new ValidatorMessageApiMessage(
+        $primaryApiMessage = new ApiMessage(
+            $this->primaryType,
             $this->primaryMessage,
             $this->primarySource,
             $this->primaryCode,
-            $params,
-            true
+            true,
+            $params
         );
 
         $this->add($primaryApiMessage);

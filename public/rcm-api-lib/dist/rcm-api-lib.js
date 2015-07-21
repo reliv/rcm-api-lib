@@ -590,7 +590,9 @@ angular.module('rcmApiLib')
                 self.getPrimaryMessage(
                     messages,
                     function (primaryMessage) {
-                        self.addMessage(primaryMessage);
+                        if(primaryMessage) {
+                            self.addMessage(primaryMessage);
+                        }
                     }
                 )
             };

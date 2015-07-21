@@ -3,6 +3,7 @@
 namespace Reliv\RcmApiLib\Controller;
 
 use Reliv\RcmApiLib\Http\ApiResponse;
+use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
 use Zend\Http\Response;
@@ -105,12 +106,24 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     ) {
         $this->request = $request;
 
-        // Overrides any other response
-        $response = new ApiResponse();
-
-        $this->response = $response;
+        $response = $this->getResponse();
 
         return parent::dispatch($request, $response);
+    }
+
+    /**
+     * Get response object of type ApiResponseInterface
+     *
+     * @return ApiResponseInterface
+     */
+    public function getResponse()
+    {
+        // Overrides any other response
+        if (!($this->response instanceof ApiResponseInterface)) {
+            $this->response = new ApiResponse();
+        }
+
+        return $this->response;
     }
 
     /**
@@ -279,7 +292,8 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
         $statusCode = 200,
         $apiMessagesData = null
     ) {
-        $this->response->setData($data);
+        $response = $this->getResponse();
+        $response->setData($data);
 
         if (!empty($apiMessagesData)) {
             $this->addApiMessage(
@@ -289,9 +303,9 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
 
         $this->translateApiResponseMessages();
 
-        $this->response->setStatusCode($statusCode);
+        $response->setStatusCode($statusCode);
 
-        return $this->response;
+        return $response;
     }
 
     /**
@@ -304,7 +318,7 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected function setApiMessage(
         ApiMessage $apiMessage
     ) {
-        $this->response->addApiMessage($apiMessage);
+        $this->getResponse()->addApiMessage($apiMessage);
     }
 
     /**
@@ -319,7 +333,7 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     ) {
         $hydrator = $this->getHydrator();
 
-        $apiMessages = $this->response->getApiMessages();
+        $apiMessages = $this->getResponse()->getApiMessages();
 
         $hydrator->hydrate($apiMessagesData, $apiMessages);
     }
@@ -334,7 +348,7 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected function setApiMessages(
         ApiMessages $apiMessages
     ) {
-        $this->response->setApiMessages($apiMessages);
+        $this->getResponse()->setApiMessages($apiMessages);
     }
 
     /**

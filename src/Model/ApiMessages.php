@@ -97,7 +97,8 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
      */
     public function toArray()
     {
-        return $this->messages;
+        // re-index so array is valid for json array
+        return array_values($this->messages);
     }
 
     /**

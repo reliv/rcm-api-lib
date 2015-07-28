@@ -365,4 +365,25 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
             $this->addApiMessage($apiMessage);
         }
     }
+
+    /**
+     * getApiMessages
+     *
+     * @return ApiMessages
+     */
+    protected function getApiMessages()
+    {
+        return $this->getResponse()->getApiMessages();
+    }
+
+    /**
+     * hasApiMessages
+     *
+     * @return bool
+     */
+    protected function hasApiMessages()
+    {
+        $apiMessages = $this->getApiMessages();
+        return $apiMessages->has();
+    }
 }

@@ -82,6 +82,10 @@ class InputFilterApiMessages extends ApiMessages
 
         $this->add($primaryApiMessage);
 
+        $this->parseInputs($inputFilter);
+
+        return;
+
         $inputs = $inputFilter->getInvalidInput();
 
         /**
@@ -94,6 +98,35 @@ class InputFilterApiMessages extends ApiMessages
 
             $this->buildValidatorMessages($fieldName, $validators);
         }
+    }
+
+    /**
+     * parseInputs
+     *
+     * @param        $input
+     * @param string $name
+     *
+     * @return void
+     */
+    protected function parseInputs($input, $name = '')
+    {
+        if ($input instanceof InputFilterInterface) {
+            $inputs = $input->getInvalidInput();
+
+            foreach ($inputs as $fieldName => $input) {
+                if (!empty($name)) {
+                    $name = $name . '-';
+                }
+                $this->parseInputs($input, $name . $fieldName);
+            }
+
+            return;
+        }
+
+        $validatorChain = $input->getValidatorChain();
+        $validators = $validatorChain->getValidators();
+
+        $this->buildValidatorMessages($name, $validators);
     }
 
     /**

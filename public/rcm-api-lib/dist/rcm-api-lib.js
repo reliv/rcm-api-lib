@@ -620,7 +620,7 @@ angular.module('rcmApiLib')
             self.getPrimaryMessage = function (messages, callback) {
                 var primaryMessage = null;
 
-                if (messages.length > 0) {
+                if (messages[0]) {
                     primaryMessage = messages[0];
                 }
 

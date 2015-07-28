@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Model;
 
 /**
@@ -70,6 +69,16 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
         }
 
         return $default;
+    }
+
+    /**
+     * has
+     *
+     * @return bool
+     */
+    public function has()
+    {
+        return (count($this->messages) > 0);
     }
 
     /**

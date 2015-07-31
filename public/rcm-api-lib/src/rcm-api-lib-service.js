@@ -17,6 +17,10 @@ angular.module('rcmApiLib')
 
             var self = this;
 
+            self.config = {
+                defaultMessage: 'An unknown error occured while making request'
+            };
+
             /**
              * cache
              * @type {{}}
@@ -363,7 +367,7 @@ angular.module('rcmApiLib')
                 }
 
                 if (data.messages.length < 1) {
-                    var message = new self.ApiMessage;
+                    var message = new self.ApiMessage(self.config.defaultMessage);
                     data.messages.primary = true;
                     data.messages = [message];
                 }

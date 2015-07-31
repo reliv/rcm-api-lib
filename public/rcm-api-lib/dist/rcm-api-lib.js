@@ -99,7 +99,7 @@ angular.module('rcmApiLib')
         /**
          * Class ApiMessage
          */
-        return function () {
+        return function (value) {
             var self = this;
             self.type = 'rcmApiLib';
             self.source = 'client';
@@ -107,7 +107,7 @@ angular.module('rcmApiLib')
             self.value = 'An unknown error occured while making request';
             self.primary = null;
             self.params = [];
-            self.key = [];
+            self.key = '';
             // Client only property
             self.level = 'warning';
 
@@ -121,11 +121,14 @@ angular.module('rcmApiLib')
             /**
              * init
              */
-            self.init = function () {
+            self.init = function (value) {
                 self.buildKey();
+                if(value) {
+                    self.value = value;
+                }
             };
 
-            self.init();
+            self.init(value);
         };
     }
 );
@@ -148,6 +151,10 @@ angular.module('rcmApiLib')
         function ($http, $log, rcmApiLibApiData, rcmApiLibApiMessage, rcmApiLibApiParams) {
 
             var self = this;
+
+            self.config = {
+                defaultMessage: 'An unknown error occured while making request'
+            };
 
             /**
              * cache
@@ -495,7 +502,7 @@ angular.module('rcmApiLib')
                 }
 
                 if (data.messages.length < 1) {
-                    var message = new self.ApiMessage;
+                    var message = new self.ApiMessage(self.config.defaultMessage);
                     data.messages.primary = true;
                     data.messages = [message];
                 }

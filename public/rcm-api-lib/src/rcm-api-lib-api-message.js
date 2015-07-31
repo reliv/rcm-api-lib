@@ -9,7 +9,7 @@ angular.module('rcmApiLib')
         /**
          * Class ApiMessage
          */
-        return function () {
+        return function (value) {
             var self = this;
             self.type = 'rcmApiLib';
             self.source = 'client';
@@ -17,7 +17,7 @@ angular.module('rcmApiLib')
             self.value = 'An unknown error occured while making request';
             self.primary = null;
             self.params = [];
-            self.key = [];
+            self.key = '';
             // Client only property
             self.level = 'warning';
 
@@ -31,11 +31,14 @@ angular.module('rcmApiLib')
             /**
              * init
              */
-            self.init = function () {
+            self.init = function (value) {
                 self.buildKey();
+                if(value) {
+                    self.value = value;
+                }
             };
 
-            self.init();
+            self.init(value);
         };
     }
 );

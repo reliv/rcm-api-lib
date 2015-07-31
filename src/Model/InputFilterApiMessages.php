@@ -4,6 +4,7 @@ namespace Reliv\RcmApiLib\Model;
 
 use Reliv\RcmApiLib\InputFilter\MessageParamInterface;
 use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\InputInterface;
 
 /**
  * Class InputFilterApiMessages
@@ -83,21 +84,6 @@ class InputFilterApiMessages extends ApiMessages
         $this->add($primaryApiMessage);
 
         $this->parseInputs($inputFilter);
-
-        return;
-
-        $inputs = $inputFilter->getInvalidInput();
-
-        /**
-         * @var string                           $fieldName
-         * @var \Zend\InputFilter\InputInterface $input
-         */
-        foreach ($inputs as $fieldName => $input) {
-            $validatorChain = $input->getValidatorChain();
-            $validators = $validatorChain->getValidators();
-
-            $this->buildValidatorMessages($fieldName, $validators);
-        }
     }
 
     /**
@@ -113,11 +99,9 @@ class InputFilterApiMessages extends ApiMessages
         if ($input instanceof InputFilterInterface) {
             $inputs = $input->getInvalidInput();
 
-            foreach ($inputs as $fieldName => $input) {
-                if (!empty($name)) {
-                    $name = $name . '-';
-                }
-                $this->parseInputs($input, $name . $fieldName);
+            foreach ($inputs as $key => $subinput) {
+                $fieldName = $this->getParseName($name, $key, $subinput);
+                $this->parseInputs($subinput, $fieldName);
             }
 
             return;
@@ -127,6 +111,27 @@ class InputFilterApiMessages extends ApiMessages
         $validators = $validatorChain->getValidators();
 
         $this->buildValidatorMessages($name, $validators);
+    }
+
+    /**
+     * getParseName
+     *
+     * @param $name
+     * @param $key
+     * @param $subinput
+     *
+     * @return string
+     */
+    protected function getParseName($name, $key, $subinput)
+    {
+        $fieldName = $key;
+        if (method_exists($subinput, 'getName')) {
+            $fieldName = $subinput->getName();
+        }
+        if (!empty($name)) {
+            $fieldName = $name . '-' . $fieldName;
+        }
+        return $fieldName;
     }
 
     /**

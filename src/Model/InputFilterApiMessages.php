@@ -107,10 +107,7 @@ class InputFilterApiMessages extends ApiMessages
             return;
         }
 
-        $validatorChain = $input->getValidatorChain();
-        $validators = $validatorChain->getValidators();
-
-        $this->buildValidatorMessages($name, $validators);
+        $this->buildValidatorMessages($name, $input);
     }
 
     /**
@@ -131,34 +128,63 @@ class InputFilterApiMessages extends ApiMessages
         if (!empty($name)) {
             $fieldName = $name . '-' . $fieldName;
         }
+
         return $fieldName;
     }
 
     /**
      * buildValidatorMessages
      *
-     * @param string $fieldName
-     * @param        $validators
+     * @param                $fieldName
+     * @param InputInterface $input
      *
      * @return void
      */
     protected function buildValidatorMessages(
         $fieldName,
-        $validators
+        InputInterface $input
     ) {
+        $validatorChain = $input->getValidatorChain();
+        $validators = $validatorChain->getValidators();
+
+        // We get the input messages because input does validations outside of the validators
+        $allMessages = $input->getMessages();
+
         foreach ($validators as $fkey => $validatorData) {
-            /** @var \Zend\Validator\ValidatorInterface $validator */
+            /** @var \Zend\Validator\AbstractValidator $validator */
             $validator = $validatorData['instance'];
+
             $params = [];
 
             if ($validator instanceof MessageParamInterface) {
                 $params = $validator->getMessageParams();
             }
 
+            try {
+                $messagesParams = $validator->getOption('messageParams');
+                $params = array_merge(
+                    $params,
+                    $messagesParams
+                );
+            } catch (\Exception $exception) {
+                // Do nothing
+            }
             $inputMessages = $validator->getMessages();
+
+            // Remove the messages from $allMessages as we get them from the validators
+            $allMessages = array_diff($allMessages, $inputMessages);
 
             $this->buildApiMessages($fieldName, $inputMessages, $params);
         }
+
+        $params = [];
+
+        if ($input instanceof MessageParamInterface) {
+            $params = $input->getMessageParams();
+        }
+
+        // get any remaining messages that did not come from validators
+        $this->buildApiMessages($fieldName, $allMessages, $params);
     }
 
     /**
@@ -176,6 +202,7 @@ class InputFilterApiMessages extends ApiMessages
         $params = []
     ) {
         foreach ($inputMessages as $errorKey => $message) {
+            ///
             $apiMessage = new ValidatorMessageApiMessage(
                 $message,
                 $fieldName,

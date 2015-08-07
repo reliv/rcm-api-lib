@@ -648,7 +648,10 @@ angular.module('rcmApiLib')
                     messages,
                     function (message, key) {
                         if (message.type == type) {
-                            this[message.source] = message.value;
+                            if(this[message.source] === undefined){
+                                this[message.source] = [];
+                            }
+                            this[message.source].push(message.value);
                         }
                     },
                     typeMessages

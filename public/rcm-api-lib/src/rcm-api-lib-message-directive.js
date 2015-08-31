@@ -13,8 +13,11 @@ angular.module('rcmApiLib')
                     },
                     function () {
                         $scope.messages = rcmApiLibMessageService.messages;
+
                         // Scroll to message
-                        elm[0].scrollIntoView(true);
+                        if($scope.messages.length > 0) {
+                            elm[0].scrollIntoView(true);
+                        }
                     }
                 );
                 $scope.messages = rcmApiLibMessageService.messages;

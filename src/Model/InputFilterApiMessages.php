@@ -3,6 +3,7 @@
 namespace Reliv\RcmApiLib\Model;
 
 use Reliv\RcmApiLib\InputFilter\MessageParamInterface;
+use Zend\InputFilter\CollectionInputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\InputInterface;
 
@@ -89,13 +90,33 @@ class InputFilterApiMessages extends ApiMessages
     /**
      * parseInputs
      *
-     * @param        $input
+     * @param mixed  $input
      * @param string $name
      *
      * @return void
      */
     protected function parseInputs($input, $name = '')
     {
+
+        if (is_array($input)) {
+            foreach ($input as $key => $subinput) {
+                $fieldName = $this->getParseName($name, $key, $subinput);
+                $this->parseInputs($subinput, $fieldName);
+            }
+
+            return;
+        }
+
+        if ($input instanceof CollectionInputFilter) {
+            $inputs = $input->getInvalidInput();
+            foreach ($inputs as $groupkey => $group) {
+                $fieldName = $this->getParseName($name, $groupkey, $group);
+                $this->parseInputs($group, $fieldName);
+            }
+
+            return;
+        }
+
         if ($input instanceof InputFilterInterface) {
             $inputs = $input->getInvalidInput();
 
@@ -125,7 +146,7 @@ class InputFilterApiMessages extends ApiMessages
         if (method_exists($subinput, 'getName')) {
             $fieldName = $subinput->getName();
         }
-        if (!empty($name)) {
+        if ($name !== '') {
             $fieldName = $name . '-' . $fieldName;
         }
 

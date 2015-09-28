@@ -90,7 +90,7 @@ class InputFilterApiMessages extends ApiMessages
     /**
      * parseInputs
      *
-     * @param        $input
+     * @param mixed  $input
      * @param string $name
      *
      * @return void
@@ -98,15 +98,20 @@ class InputFilterApiMessages extends ApiMessages
     protected function parseInputs($input, $name = '')
     {
 
+        if (is_array($input)) {
+            foreach ($input as $key => $subinput) {
+                $fieldName = $this->getParseName($name, $key, $subinput);
+                $this->parseInputs($subinput, $fieldName);
+            }
+
+            return;
+        }
+
         if ($input instanceof CollectionInputFilter) {
             $inputs = $input->getInvalidInput();
             foreach ($inputs as $groupkey => $group) {
-                //var_dump($group); die;
-                foreach ($group as $key => $subinput) {
-                    $name = $name . '-' . $groupkey;
-                    $fieldName = $this->getParseName($name, $key, $subinput);
-                    $this->parseInputs($subinput, $fieldName);
-                }
+                $fieldName = $this->getParseName($name, $groupkey, $group);
+                $this->parseInputs($group, $fieldName);
             }
 
             return;
@@ -141,7 +146,7 @@ class InputFilterApiMessages extends ApiMessages
         if (method_exists($subinput, 'getName')) {
             $fieldName = $subinput->getName();
         }
-        if (!empty($name)) {
+        if ($name !== '') {
             $fieldName = $name . '-' . $fieldName;
         }
 

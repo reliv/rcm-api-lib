@@ -9,6 +9,9 @@ angular.module('rcmApiLib')
         'rcmApiLibApiMessage',
         function ($log, rcmApiLibApiMessage) {
 
+            /**
+             * self
+             */
             var self = this;
 
             /**
@@ -18,10 +21,26 @@ angular.module('rcmApiLib')
             self.messages = [];
 
             /**
+             * isValidMessage
+             * @param message
+             * @returns boolean
+             */
+            self.isValidMessage = function (message) {
+                if(!message) {
+                    return false;
+                }
+                return (message.type && message.source);
+            };
+
+            /**
              * addMessage
              * @param message
              */
             self.addMessage = function (message) {
+                if(!self.isValidMessage(message)) {
+                    console.warn("rcmApiLibApiMessage.addMessage recieved an invalid message", message)
+                    return;
+                }
                 message = angular.extend(new rcmApiLibApiMessage(), message);
                 self.messages.push(message);
             };
@@ -47,7 +66,7 @@ angular.module('rcmApiLib')
                 self.getPrimaryMessage(
                     messages,
                     function (primaryMessage) {
-                        if(primaryMessage) {
+                        if (primaryMessage) {
                             self.addMessage(primaryMessage);
                         }
                     }
@@ -65,7 +84,7 @@ angular.module('rcmApiLib')
              * getDefaultMessage
              * @returns {rcmApiLibApiMessage}
              */
-            self.getDefaultMessage = function() {
+            self.getDefaultMessage = function () {
                 return new rcmApiLibApiMessage();
             };
 
@@ -90,6 +109,7 @@ angular.module('rcmApiLib')
              * @param messages
              * @param type
              * @param callback
+             * @returns {"source": "value"}
              */
             self.getTypeMessages = function (messages, type, callback) {
                 var typeMessages = {};
@@ -98,7 +118,7 @@ angular.module('rcmApiLib')
                     messages,
                     function (message, key) {
                         if (message.type == type) {
-                            if(this[message.source] === undefined){
+                            if (this[message.source] === undefined) {
                                 this[message.source] = [];
                             }
                             this[message.source].push(message.value);
@@ -107,7 +127,9 @@ angular.module('rcmApiLib')
                     typeMessages
                 );
 
-                callback(typeMessages);
+                if(typeof callback === 'function') {
+                    callback(typeMessages);
+                }
                 return typeMessages;
             };
 

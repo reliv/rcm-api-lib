@@ -22,7 +22,7 @@
     "php": ">=5.5",
     "zendframework/zendframework": "2.*",
     "rwoverdijk/assetmanager": "1.*",
-    "reliv/rcm-i18n": ">=0.2.3"
+    "rcm/i18n": ">=0.2.3"
   },
   "autoload": {
     "psr-4": {

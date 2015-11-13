@@ -1,3 +1,7 @@
+/**
+ * rcmApiLibMessageDirective
+ * <rcm-api-lib-message-directive namespace="{MY_MESSAGE_NAMESPACE}"></rcm-api-lib-message-directive>
+ */
 angular.module('rcmApiLib')
     .directive(
     'rcmApiLibMessageDirective',
@@ -6,13 +10,25 @@ angular.module('rcmApiLib')
         'rcmApiLibMessageService',
         function ($log, rcmApiLibMessageService) {
 
-            var link = function ($scope, elm) {
+            /**
+             * link
+             * @param $scope
+             * @param elm
+             * @param attrs
+             */
+            var link = function ($scope, elm, attrs) {
+                var namespace = "DEFAULT";
+                if(attrs.namespace) {
+                    namespace = attrs.namespace;
+                }
+                // Clear to create namespace
+                rcmApiLibMessageService.clearMessages(namespace);
                 $scope.$watch(
                     function () {
-                        return rcmApiLibMessageService.messages
+                        return rcmApiLibMessageService.messages[namespace];
                     },
                     function () {
-                        $scope.messages = rcmApiLibMessageService.messages;
+                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
 
                         // Scroll to message
                         if($scope.messages.length > 0) {
@@ -20,16 +36,17 @@ angular.module('rcmApiLib')
                         }
                     }
                 );
-                $scope.messages = rcmApiLibMessageService.messages;
+                $scope.messages = rcmApiLibMessageService.getMessages(namespace);
             };
 
             return {
                 link: link,
                 template: '' +
-                '<div class="alert alert-{{messages[0].level}}" ng-hide="messages.length < 1" role="alert">' +
-                ' <div class="message" ng-repeat="message in messages">{{message.value}}</div>' +
+                '<div ng-hide="messages.length < 1">' +
+                ' <div ng-repeat="message in messages" class="alert alert-{{message.level}}" role="alert">' +
+                '  <div class="message">{{message.value}}</div>' +
+                ' </div>' +
                 '</div>'
-
             }
         }
     ]

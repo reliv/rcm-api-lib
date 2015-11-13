@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+          crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
+    <script src="/modules/rcm-api-lib/dist/rcm-api-lib.js"></script>
+    <script>
+        angular.module('rcmApiLib').controller(
+                'rcmApiLibExample',
+                [
+                    'rcmApiLibMessageService',
+                    'rcmApiLibApiMessage',
+                    function (
+                            rcmApiLibMessageService,
+                            rcmApiLibApiMessage
+                    ) {
+                        var self = this;
+
+                        self.value = "My error message";
+                        self.namespace = 'MY_NAMESPACE';
+                        self.level = 'info';
+
+                        self.addMessage = function () {
+                            var message = new rcmApiLibApiMessage(self.value);
+                            message.level = self.level;
+                            rcmApiLibMessageService.addMessage(
+                                    message,
+                                    self.namespace
+                            );
+                        };
+
+                        self.addPrimaryMessage = function () {
+                            var message = new rcmApiLibApiMessage(self.value);
+                            message.level = self.level;
+                            rcmApiLibMessageService.addMessage(
+                                    message,
+                                    self.namespace
+                            );
+                        };
+
+                        self.clearMessages = function () {
+                            rcmApiLibMessageService.clearMessages(self.namespace);
+                        };
+
+                        self.consoleLog = function () {
+                            var messages = rcmApiLibMessageService.getMessages(self.namespace);
+                            console.log(messages);
+                        };
+                    }
+                ]
+        );
+    </script>
+</head>
+<body ng-app="rcmApiLib">
+<h1>Example</h1>
+
+<h2>Message Directive</h2>
+<div ng-controller="rcmApiLibExample as self">
+    <div rcm-api-lib-message-directive="" namespace="MY_NAMESPACE"><!-- --></div>
+
+    <div>
+        <label>Message Value</label>
+        <input type="text" ng-model="self.value"/>
+    </div>
+    <div>
+        <label>Message Level</label>
+        <input type="text" ng-model="self.level" placeholder="levels: succes, info, warning, danger"/>
+    </div>
+    <div>
+        <label>Namespace</label>:
+        <span>{{self.namespace}}</span>
+    </div>
+    <div>
+        <input type="button" value="Add" ng-click="self.addMessage()"/>
+        <input type="button"
+               value="Add Primary"
+               ng-click="self.addPrimaryMessage()"/>
+        <input type="button" value="Clear" ng-click="self.clearMessages()"/>
+        <input type="button"
+               value="Console.log(messages)"
+               ng-click="self.consoleLog()"/>
+    </div>
+</div>
+
+</body>
+</html>

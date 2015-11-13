@@ -3,145 +3,228 @@
  */
 angular.module('rcmApiLib')
     .factory(
-    'rcmApiLibMessageService',
-    [
-        '$log',
-        'rcmApiLibApiMessage',
-        function ($log, rcmApiLibApiMessage) {
+        'rcmApiLibMessageService',
+        [
+            '$log',
+            'rcmApiLibApiMessage',
+            function ($log, rcmApiLibApiMessage) {
 
-            /**
-             * self
-             */
-            var self = this;
+                /**
+                 * self
+                 */
+                var self = this;
 
-            /**
-             * messages
-             * @type {Array}
-             */
-            self.messages = [];
-
-            /**
-             * hasMessages
-             * @returns {boolean}
-             */
-            self.hasMessages = function() {
-                return (self.messages.length <= 0);
-            };
-
-            /**
-             * isValidMessage
-             * @param message
-             * @returns boolean
-             */
-            self.isValidMessage = function (message) {
-                if(!message) {
-                    return false;
-                }
-                return (message.type && message.source);
-            };
-
-            /**
-             * addMessage
-             * @param message
-             */
-            self.addMessage = function (message) {
-                if(!self.isValidMessage(message)) {
-                    console.warn("rcmApiLibApiMessage.addMessage recieved an invalid message", message)
-                    return;
-                }
-                message = angular.extend(new rcmApiLibApiMessage(), message);
-                self.messages.push(message);
-            };
-
-            /**
-             * addMessages
-             * @param messages
-             */
-            self.addMessages = function (messages) {
-                angular.forEach(
-                    messages,
-                    function (message, key) {
-                        self.addMessage(message);
-                    }
-                );
-            };
-
-            /**
-             * buildPrimaryMessage
-             * @param messages
-             */
-            self.buildPrimaryMessage = function (messages) {
-                self.getPrimaryMessage(
-                    messages,
-                    function (primaryMessage) {
-                        if (primaryMessage) {
-                            self.addMessage(primaryMessage);
-                        }
-                    }
-                )
-            };
-
-            /**
-             * clearMessages
-             */
-            self.clearMessages = function () {
+                /**
+                 * messages
+                 * @type {Array}
+                 */
                 self.messages = [];
-            };
 
-            /**
-             * getDefaultMessage
-             * @returns {rcmApiLibApiMessage}
-             */
-            self.getDefaultMessage = function () {
-                return new rcmApiLibApiMessage();
-            };
+                /**
+                 * getNamespace
+                 * @param namespace
+                 * @returns {*}
+                 */
+                var getNamespace = function (namespace) {
+                    if (typeof namespace !== 'string') {
+                        namespace = "DEFAULT"
+                    }
+                    return namespace;
+                };
 
-            /**
-             * getPrimaryMessage
-             * @param messages
-             * @param callback
-             */
-            self.getPrimaryMessage = function (messages, callback) {
-                var primaryMessage = null;
+                /**
+                 * addNamespaceMessage
+                 * @param namespace
+                 * @param message
+                 */
+                var addNamespaceMessage = function (namespace, message) {
+                    namespace = getNamespace(namespace);
+                    if (!self.messages[namespace]) {
+                        self.messages[namespace] = []
+                    }
 
-                if (messages) {
-                    primaryMessage = messages[0];
-                }
+                    self.messages[namespace].push(message);
+                };
 
-                callback(primaryMessage);
-                return primaryMessage;
-            };
+                /**
+                 * getNamespaceMessages
+                 * @param namespace
+                 * @returns {*}
+                 */
+                var getNamespaceMessages = function (namespace) {
+                    namespace = getNamespace(namespace);
+                    if (!self.messages[namespace]) {
+                        return [];
+                    }
 
-            /**
-             * getTypeMessages
-             * @param messages
-             * @param type
-             * @param callback
-             * @returns {"source": "value"}
-             */
-            self.getTypeMessages = function (messages, type, callback) {
-                var typeMessages = {};
+                    return self.messages[namespace];
+                };
 
-                angular.forEach(
-                    messages,
-                    function (message, key) {
-                        if (message.type == type) {
-                            if (this[message.source] === undefined) {
-                                this[message.source] = [];
-                            }
-                            this[message.source].push(message.value);
+                /**
+                 * clearNamespaceMessages
+                 * @param namespace
+                 */
+                var clearNamespaceMessages = function (namespace) {
+                    namespace = getNamespace(namespace);
+
+                    self.messages[namespace] = [];
+                };
+
+                /**
+                 * hasMessages
+                 * @param namespace
+                 * @returns {boolean}
+                 */
+                self.hasMessages = function (namespace) {
+                    var messages = getNamespaceMessages(namespace);
+                    return (messages.length <= 0);
+                };
+
+                /**
+                 * isValidMessage
+                 * @param message
+                 * @returns boolean
+                 */
+                self.isValidMessage = function (message) {
+                    if (!message) {
+                        return false;
+                    }
+                    return (message.type && message.source);
+                };
+
+                /**
+                 * addMessage
+                 * @param message
+                 * @param namespace
+                 */
+                self.addMessage = function (message, namespace) {
+                    if (!self.isValidMessage(message)) {
+                        console.warn(
+                            "rcmApiLibApiMessage.addMessage recieved an invalid message",
+                            message
+                        );
+                        return;
+                    }
+                    message = angular.extend(new rcmApiLibApiMessage(), message);
+
+                    addNamespaceMessage(namespace, message);
+                };
+
+                /**
+                 * addMessages
+                 * @param messages
+                 * @param namespace
+                 */
+                self.addMessages = function (messages, namespace) {
+                    angular.forEach(
+                        messages,
+                        function (message, key) {
+                            self.addMessage(message, namespace);
                         }
-                    },
-                    typeMessages
-                );
+                    );
+                };
 
-                if(typeof callback === 'function') {
-                    callback(typeMessages);
-                }
-                return typeMessages;
-            };
+                /**
+                 * getMessages
+                 * @param namespace
+                 * @returns {[]}
+                 */
+                self.getMessages = function(namespace) {
+                    return getNamespaceMessages(namespace);
+                };
 
-            return self;
-        }
-    ]
-);
+                /**
+                 * addPrimaryMessage
+                 * @param messages
+                 * @param namespace
+                 * @param callback
+                 */
+                self.addPrimaryMessage = function (messages, namespace, callback) {
+                    self.getPrimaryMessage(
+                        messages,
+                        function (primaryMessage) {
+                            if (primaryMessage) {
+                                self.addMessage(primaryMessage, namespace);
+                                if(typeof callback === 'function') {
+                                    callback(primaryMessage)
+                                }
+                            }
+                        }
+                    )
+                };
+
+                /**
+                 * buildPrimaryMessage
+                 * @param messages
+                 * @param namespace
+                 * @param callback
+                 */
+                self.buildPrimaryMessage = function (messages, namespace, callback) {
+                    self.addPrimaryMessage(messages, namespace, callback);
+                };
+
+                /**
+                 * clearMessages
+                 * @param namespace
+                 */
+                self.clearMessages = function (namespace) {
+                    clearNamespaceMessages(namespace);
+                };
+
+                /**
+                 * getDefaultMessage
+                 * @returns {rcmApiLibApiMessage}
+                 */
+                self.getDefaultMessage = function () {
+                    return new rcmApiLibApiMessage();
+                };
+
+                /**
+                 * getPrimaryMessage
+                 * @param messages
+                 * @param callback
+                 */
+                self.getPrimaryMessage = function (messages, callback) {
+                    var primaryMessage = null;
+
+                    if (messages) {
+                        primaryMessage = messages[0];
+                    }
+
+                    callback(primaryMessage);
+                    return primaryMessage;
+                };
+
+                /**
+                 * getTypeMessages
+                 * @param messages
+                 * @param type
+                 * @param callback
+                 * @returns {"source": "value"}
+                 */
+                self.getTypeMessages = function (messages, type, callback) {
+                    var typeMessages = {};
+
+                    angular.forEach(
+                        messages,
+                        function (message, key) {
+                            if (message.type == type) {
+                                if (this[message.source] === undefined) {
+                                    this[message.source] = [];
+                                }
+                                this[message.source].push(message.value);
+                            }
+                        },
+                        typeMessages
+                    );
+
+                    if (typeof callback === 'function') {
+                        callback(typeMessages);
+                    }
+                    return typeMessages;
+                };
+
+                return self;
+            }
+        ]
+    );

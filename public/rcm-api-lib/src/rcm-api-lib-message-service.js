@@ -21,6 +21,14 @@ angular.module('rcmApiLib')
             self.messages = [];
 
             /**
+             * hasMessages
+             * @returns {boolean}
+             */
+            self.hasMessages = function() {
+                return (self.messages.length <= 0);
+            };
+
+            /**
              * isValidMessage
              * @param message
              * @returns boolean

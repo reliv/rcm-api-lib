@@ -233,12 +233,11 @@ angular.module('rcmApiLib')
              * @returns {*}
              */
             self.buildApiParams = function (apiParams) {
+                var apiParamsObject = new self.ApiParams();
+                apiParamsObject.populate(apiParams);
+                apiParamsObject.url = self.formatUrl(apiParamsObject.url, apiParamsObject.urlParams);
 
-                apiParams = angular.extend(new self.ApiParams(), apiParams);
-
-                apiParams.url = self.formatUrl(apiParams.url, apiParams.urlParams);
-
-                return apiParams;
+                return apiParamsObject;
             };
 
             /**

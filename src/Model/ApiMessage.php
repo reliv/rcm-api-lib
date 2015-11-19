@@ -22,35 +22,46 @@ use Reliv\RcmApiLib\Http\ApiResponse;
 class ApiMessage extends AbstractApiModel
 {
     /**
+     * The type or Category of the message
+     *
      * @var string
      */
     protected $type;
 
     /**
+     * The source field or identifier for this message
+     *
      * @var string|null
      */
     protected $source = null;
 
     /**
+     * A failure code relating to this message
+     *
      * @var string|null
      */
     protected $code = null;
 
     /**
+     * The message value
+     *
      * @var string
      */
     protected $value;
 
     /**
-     * @var bool Is this the primary error
+     * Is this the primary error
+     *
+     * @var bool
      */
     protected $primary = null;
 
     /**
+     * Extra params that may be used in translation or message parsing
+     *
      * @var array
      */
     protected $params = [];
-
 
     /**
      * @param string $type

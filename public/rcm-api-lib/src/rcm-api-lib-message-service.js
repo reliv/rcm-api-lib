@@ -37,12 +37,8 @@ angular.module('rcmApiLib')
                  * @param namespace
                  * @param message
                  */
-                self.addNamespaceMessage = function (namespace, message) {
-                    namespace = getNamespace(namespace);
-                    if (!self.messages[namespace]) {
-                        self.messages[namespace] = []
-                    }
-
+                var addNamespaceMessage = function (namespace, message) {
+                    namespace = self.createNamespace(namespace);
                     self.messages[namespace].push(message);
                 };
 
@@ -68,6 +64,18 @@ angular.module('rcmApiLib')
                     namespace = getNamespace(namespace);
 
                     self.messages[namespace] = [];
+                };
+
+                /**
+                 * createNamespace
+                 * @param namespace
+                 */
+                self.createNamespace = function (namespace) {
+                    namespace = getNamespace(namespace);
+                    if (!self.messages[namespace]) {
+                        self.messages[namespace] = []
+                    }
+                    return namespace;
                 };
 
                 /**
@@ -107,7 +115,7 @@ angular.module('rcmApiLib')
                     }
                     message = angular.extend(new rcmApiLibApiMessage(), message);
 
-                    self.addNamespaceMessage(namespace, message);
+                    addNamespaceMessage(namespace, message);
                 };
 
                 /**

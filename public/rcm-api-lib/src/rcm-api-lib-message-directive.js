@@ -22,7 +22,7 @@ angular.module('rcmApiLib')
                     namespace = attrs.namespace;
                 }
                 // Create namespace
-                rcmApiLibMessageService.addNamespaceMessage(namespace);
+                rcmApiLibMessageService.createNamespace(namespace);
                 $scope.$watch(
                     function () {
                         return rcmApiLibMessageService.messages[namespace];

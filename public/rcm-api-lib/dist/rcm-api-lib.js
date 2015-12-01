@@ -4,6 +4,16 @@
 angular.module('rcmApiLib', []);
 
 /**
+ * rcmApiLib Module
+ */
+angular.module('rcmApiLib').value(
+    'rcmApiLibServiceConfig',
+    {
+        defaultMessage: 'An unknown error occured while making request'
+    }
+);
+
+/**
  * Class ApiParams
  */
 angular.module('rcmApiLib')
@@ -165,16 +175,19 @@ angular.module('rcmApiLib')
     [
         '$http',
         '$log',
+        'rcmApiLibServiceConfig',
         'rcmApiLibApiData',
         'rcmApiLibApiMessage',
         'rcmApiLibApiParams',
-        function ($http, $log, rcmApiLibApiData, rcmApiLibApiMessage, rcmApiLibApiParams) {
+        function ($http, $log, rcmApiLibServiceConfig, rcmApiLibApiData, rcmApiLibApiMessage, rcmApiLibApiParams) {
 
             var self = this;
 
-            self.config = {
-                defaultMessage: 'An unknown error occured while making request'
-            };
+            /**
+             * config
+             * @type {rcmApiLibServiceConfig|*}
+             */
+            self.config = rcmApiLibServiceConfig;
 
             /**
              * cache

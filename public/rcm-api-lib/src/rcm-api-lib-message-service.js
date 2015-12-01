@@ -16,9 +16,9 @@ angular.module('rcmApiLib')
 
                 /**
                  * messages
-                 * @type {Array}
+                 * @type {{}}
                  */
-                self.messages = [];
+                self.messages = {};
 
                 /**
                  * getNamespace
@@ -37,7 +37,7 @@ angular.module('rcmApiLib')
                  * @param namespace
                  * @param message
                  */
-                var addNamespaceMessage = function (namespace, message) {
+                self.addNamespaceMessage = function (namespace, message) {
                     namespace = getNamespace(namespace);
                     if (!self.messages[namespace]) {
                         self.messages[namespace] = []
@@ -107,7 +107,7 @@ angular.module('rcmApiLib')
                     }
                     message = angular.extend(new rcmApiLibApiMessage(), message);
 
-                    addNamespaceMessage(namespace, message);
+                    self.addNamespaceMessage(namespace, message);
                 };
 
                 /**

@@ -21,8 +21,8 @@ angular.module('rcmApiLib')
                 if(attrs.namespace) {
                     namespace = attrs.namespace;
                 }
-                // Clear to create namespace
-                rcmApiLibMessageService.clearMessages(namespace);
+                // Create namespace
+                rcmApiLibMessageService.addNamespaceMessage(namespace);
                 $scope.$watch(
                     function () {
                         return rcmApiLibMessageService.messages[namespace];

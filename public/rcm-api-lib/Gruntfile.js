@@ -14,6 +14,7 @@ module.exports = function (grunt) {
                     files: {
                         'dist/<%= pkg.name %>.min.js': [
                             'src/rcm-api-lib.js',
+                            'src/rcm-api-lib-service-config.js',
                             'src/rcm-api-lib-api-params.js',
                             'src/rcm-api-lib-api-data.js',
                             'src/rcm-api-lib-api-message.js',
@@ -32,6 +33,7 @@ module.exports = function (grunt) {
                     files: {
                         'dist/<%= pkg.name %>.js': [
                             'src/rcm-api-lib.js',
+                            'src/rcm-api-lib-service-config.js',
                             'src/rcm-api-lib-api-params.js',
                             'src/rcm-api-lib-api-data.js',
                             'src/rcm-api-lib-api-message.js',

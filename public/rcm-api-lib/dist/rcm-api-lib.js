@@ -862,6 +862,7 @@ angular.module('rcmApiLib')
 
             return {
                 link: link,
+                scope: {},
                 template: '' +
                 '<div ng-hide="messages.length < 1">' +
                 ' <div ng-repeat="message in messages" class="alert alert-{{message.level}}" role="alert">' +

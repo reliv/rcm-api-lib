@@ -31,8 +31,8 @@ class StringApiMessage extends ApiMessage
      */
     public function __construct(
         $message,
-        $type = 'string',
-        $source = 'generic',
+        $type = 'generic',
+        $source = 'unknown',
         $code = 'fail',
         $primary = null,
         $params = []

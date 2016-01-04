@@ -9,6 +9,7 @@ return [
             'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator',
             'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
             'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator',
+            'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
         ],
         'InputFilterApiMessagesHydrator' => [
             'primaryMessage' => 'Some information was missing or invalid',
@@ -22,7 +23,8 @@ return [
                 'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator',
             'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator' =>
                 'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
-
+            'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator' =>
+                'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
         ],
         'factories' => [
             /* MAIN HYDRATOR */

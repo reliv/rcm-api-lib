@@ -95,6 +95,27 @@ abstract class AbstractApiModel implements ApiModelInterface
         return $data;
     }
 
+
+    /**
+     * modelArrayToArray
+     *
+     * @param array $modelArray
+     * @param array $ignore
+     *
+     * @return array
+     */
+    protected function modelArrayToArray($modelArray, $ignore = [])
+    {
+        $array = [];
+
+        /** @var ApiSerializableInterface $item */
+        foreach ($modelArray as $item) {
+            $array[] = $item->toArray($ignore);
+        }
+
+        return $array;
+    }
+
     /**
      * jsonSerialize
      *

@@ -24,7 +24,9 @@ interface ApiSerializableInterface extends \JsonSerializable
     /**
      * toArray
      *
-     * @return array
+     * @param array $ignore
+     *
+     * @return mixed
      */
-    public function toArray();
+    public function toArray($ignore = []);
 }

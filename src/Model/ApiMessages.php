@@ -102,9 +102,11 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
     /**
      * toArray
      *
+     * @param array $ignore
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($ignore = [])
     {
         // re-index so array is valid for json array
         return array_values($this->messages);

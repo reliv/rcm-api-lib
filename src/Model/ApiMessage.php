@@ -2,8 +2,6 @@
 
 namespace Reliv\RcmApiLib\Model;
 
-use Reliv\RcmApiLib\Http\ApiResponse;
-
 /**
  * Class ApiMessage
  *
@@ -290,11 +288,13 @@ class ApiMessage extends AbstractApiModel
     /**
      * toArray
      *
+     * @param array $ignore
+     *
      * @return array
      */
-    public function toArray()
+    public function toArray($ignore = [])
     {
-        $array = parent::toArray();
+        $array = parent::toArray($ignore);
 
         $array['key'] = $this->getKey();
 

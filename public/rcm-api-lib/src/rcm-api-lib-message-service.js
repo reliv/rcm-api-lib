@@ -199,7 +199,9 @@ angular.module('rcmApiLib')
                         primaryMessage = messages[0];
                     }
 
-                    callback(primaryMessage);
+                    if(typeof callback === 'function') {
+                        callback(primaryMessage)
+                    }
                     return primaryMessage;
                 };
 

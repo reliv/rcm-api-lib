@@ -99,7 +99,7 @@ angular.module('rcmApiLib')
                     {
                         method: 'GET',
                         url: apiParams.url,
-                        params: apiParams.params // @todo Validate this works for GET query
+                        params: apiParams.params
                     }
                 )
                     .success(
@@ -128,7 +128,8 @@ angular.module('rcmApiLib')
                     {
                         method: 'POST',
                         url: apiParams.url,
-                        data: apiParams.data
+                        data: apiParams.data,
+                        params: apiParams.params
                     }
                 )
                     .success(
@@ -157,7 +158,8 @@ angular.module('rcmApiLib')
                     {
                         method: 'PATCH',
                         url: apiParams.url,
-                        data: apiParams.data // angular.toJson(data)
+                        data: apiParams.data, // angular.toJson(data)
+                        params: apiParams.params
                     }
                 )
                     .success(
@@ -186,7 +188,8 @@ angular.module('rcmApiLib')
                     {
                         method: 'PUT',
                         url: apiParams.url,
-                        data: apiParams.data
+                        data: apiParams.data,
+                        params: apiParams.params
                     }
                 )
                     .success(
@@ -215,7 +218,8 @@ angular.module('rcmApiLib')
                     {
                         method: 'DELETE',
                         url: apiParams.url,
-                        data: apiParams.data
+                        data: apiParams.data,
+                        params: apiParams.params
                     }
                 )
                     .success(

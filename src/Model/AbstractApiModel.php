@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Model;
 
 /**

@@ -14,6 +14,54 @@ return [
         'InputFilterApiMessagesHydrator' => [
             'primaryMessage' => 'Some information was missing or invalid',
         ],
+        /**
+         *
+         */
+        'ResourceConfig' => [
+            'basePath' => '/api/resource',
+            'baseFormat' => 'application/json'
+        ],
+        /**
+         *
+         */
+        'ResourceRoutes' => [
+            'my-path' => [
+                'allowedMethods' => [
+                    'get'
+                ],
+                'pre' => [
+                    'MyHttpServiceName' => [
+                        // Options
+                    ],
+                    'RcmUserAclMiddleware' => [
+                        // Options
+                        'resource' => 'site',
+                    ],
+                ],
+                /**
+                 * http service
+                 */
+                'controller' => [
+                    'MyHttpRepositoryServiceName' => [
+                        // Options
+                        // 'entity' => 'My\Doctrine\Entity'
+                    ],
+                ],
+                'methods' => [
+                    'get' => [
+                        'pre' => [
+                            'MyHttpServiceName' => [
+                                // Options
+                            ]
+                        ],
+                        'description' => "My description",
+                        'httpVerb' => 'GET',
+                        'path' => "/:id"
+                    ],
+                ],
+                //'path' => '/my-path'
+            ],
+        ],
     ],
     'service_manager' => [
         'invokables' => [

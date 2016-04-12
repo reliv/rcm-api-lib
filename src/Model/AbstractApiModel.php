@@ -62,7 +62,7 @@ abstract class AbstractApiModel implements ApiModelInterface
         array $ignore = []
     ) {
         if ($object instanceof AbstractApiModel) {
-            $this->populate($object->toArray());
+            $this->populate($object->toArray(), $ignore);
         }
     }
 

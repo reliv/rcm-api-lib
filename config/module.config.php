@@ -14,52 +14,116 @@ return [
         'InputFilterApiMessagesHydrator' => [
             'primaryMessage' => 'Some information was missing or invalid',
         ],
-        /**
-         *
-         */
-        'ResourceConfig' => [
-            'basePath' => '/api/resource',
-            'baseFormat' => 'application/json'
-        ],
-        /**
-         *
-         */
-        'ResourceRoutes' => [
-            'my-path' => [
-                'allowedMethods' => [
-                    'get'
+        'resource' => [
+            /**
+             *
+             */
+            'config' => [
+                //'basePath' => '/api/resource/{resourceControllerMethod}', // /:resourcePath
+                'basePath' => '/api/resource/(?<resourceController>[a-z]+)/(?<resourceMethod>[^.]+)',
+                'baseFormat' => 'application/json',
+                'undefinedMethodStatus' => 404,
+            ],
+
+            'formats' => [
+                'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat'
+            ],
+
+            'defaultMethods' => [
+                /* Default Methods */
+                'create' => [
+                    'description' => "Create new resource",
+                    'httpVerb' => 'POST',
+                    'path' => ""
                 ],
-                'pre' => [
-                    'MyHttpServiceName' => [
-                        // Options
-                    ],
-                    'RcmUserAclMiddleware' => [
-                        // Options
-                        'resource' => 'site',
-                    ],
+                'upsert' => [
+                    'description' => "Update or create a resource",
+                    'httpVerb' => 'PUT',
+                    'path' => ""
                 ],
-                /**
-                 * http service
-                 */
-                'controller' => [
-                    'MyHttpRepositoryServiceName' => [
-                        // Options
-                        // 'entity' => 'My\Doctrine\Entity'
-                    ],
+                'exists' => [
+                    'description' => "Check if a resource exists",
+                    'httpVerb' => 'GET',
+                    'path' => ":id/exists"
                 ],
-                'methods' => [
-                    'get' => [
-                        'pre' => [
-                            'MyHttpServiceName' => [
-                                // Options
-                            ]
+                'findById' => [
+                    'description' => "Find resource by ID",
+                    'httpVerb' => 'GET',
+                    'path' => ":id"
+                ],
+                'find' => [
+                    'description' => "Find resources",
+                    'httpVerb' => 'GET',
+                    'path' => ""
+                ],
+                'findOne' => [
+                    'description' => "Find resources",
+                    'httpVerb' => 'GET',
+                    'path' => "findOne"
+                ],
+                'deleteById' => [
+                    'description' => "Delete resource by ID",
+                    'httpVerb' => 'DELETE',
+                    'path' => ":id"
+                ],
+                'count' => [
+                    'description' => "Count resources",
+                    'httpVerb' => 'GET',
+                    'path' => "count"
+                ],
+                'updateProperties' => [
+                    'description' => "Udpate resource properties by ID",
+                    'httpVerb' => 'PUT',
+                    'path' => ":id"
+                ],
+            ],
+            /**
+             *
+             */
+            'controllerRoute' => [
+                '/example-path' => [
+                    'allowedMethods' => [
+                        'get'
+                    ],
+                    'pre' => [
+                        'MyHttpServiceName' => [
+                            // Options
                         ],
-                        'description' => "My description",
-                        'httpVerb' => 'GET',
-                        'path' => "/:id"
+                        'Reliv\RcmApiLib\Resource\Middleware/RcmUserAcl' => [
+                            'resourceId' => '{resourceId}',
+                            'privilege' => null,
+                        ],
+                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterClass' => [
+                            'class' => '',
+                        ],
+                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterService' => [
+                            'service' => '',
+                        ],
+                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterConfig' => [
+                            'config' => [],
+                        ],
                     ],
+                    /**
+                     * http service
+                     */
+                    'controller' => [
+                        'service' => 'MyHttpRepositoryServiceName',
+                        'options' => [],
+                    ],
+                    'methods' => [
+                        'example' => [
+                            'pre' => [
+                                'MyHttpServiceName' => [
+                                    // Options
+                                ]
+                            ],
+                            'description' => "My description",
+                            'httpVerb' => 'GET',
+                            'path' => "/:id"
+                        ],
+                    ],
+                    'path' => '/example-path'
                 ],
-                //'path' => '/my-path'
             ],
         ],
     ],
@@ -80,7 +144,14 @@ return [
                 'Reliv\RcmApiLib\Factory\CompositeApiMessageHydratorFactory',
             'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator' =>
                 'Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory',
-        ]
+        ],
+        'config_factories' => [
+            'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware' => [
+                'arguments' => [
+                    'Config',
+                ],
+            ],
+        ],
     ],
     'asset_manager' => [
         'resolver_configs' => [

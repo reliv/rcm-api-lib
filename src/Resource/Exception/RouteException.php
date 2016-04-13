@@ -1,16 +1,16 @@
 <?php
 
-namespace Reliv\RcmApiLib\ResourceController;
+namespace Reliv\RcmApiLib\Resource\Exception;
 
 /**
- * Class DoctrineResourceController
+ * Class RouteException
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class DoctrineResourceController extends AbstractResourceController
+class RouteException extends \Exception
 {
 
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace Reliv\RcmApiLib\ResourceController;
+namespace Reliv\RcmApiLib\Resource\Exception;
 
 /**
- * Class AbstractResourceController
+ * Class ResponseFormatException
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class AbstractResourceController
+class ResponseFormatException extends \Exception
 {
 
 }

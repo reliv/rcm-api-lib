@@ -1,9 +1,9 @@
 <?php
 
-namespace Reliv\RcmApiLib\ResourceMiddleware;
+namespace Reliv\RcmApiLib\Resource\Middleware;
 
 /**
- * Class MiddlewareInterface
+ * Class Middleware
  *
  * PHP version 5
  *
@@ -15,7 +15,10 @@ namespace Reliv\RcmApiLib\ResourceMiddleware;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-interface MiddlewareInterface extends \Zend\Stratigility\MiddlewareInterface
+interface Middleware extends \Zend\Stratigility\MiddlewareInterface
 {
-
+    /**
+     * OPTIONS_ATTRIBUTE
+     */
+    const OPTIONS_ATTRIBUTE = 'middleware-options';
 }

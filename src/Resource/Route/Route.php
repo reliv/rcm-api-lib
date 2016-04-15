@@ -2,6 +2,7 @@
 namespace Reliv\RcmApiLib\Resource\Route;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Resource\Options\RuntimeOptions;
 
 /**
  * Class Router
@@ -11,8 +12,11 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface Route
+interface Route extends RuntimeOptions
 {
+    /**
+     * PARAMS_NAME
+     */
     const PARAMS_NAME = 'resource-route-params';
     
     /**

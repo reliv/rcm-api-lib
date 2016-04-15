@@ -3,9 +3,9 @@
 namespace Reliv\RcmApiLib\Resource\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Zend\Stratigility\Route;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Resource\Options\DefaultControllerOptions;
 
 /**
  * Class DoctrineResourceController
@@ -17,7 +17,6 @@ use Zend\Stratigility\Route;
  */
 class DoctrineResourceController extends AbstractResourceController
 {
-
     /**
      * @var EntityManager
      */
@@ -26,20 +25,31 @@ class DoctrineResourceController extends AbstractResourceController
     /**
      * DoctrineResourceController constructor.
      *
-     * @param array         $config
-     * @param EntityManager $entityManager
+     * @param DefaultControllerOptions $defaultControllerOptions
+     * @param EntityManager            $entityManager
      */
-    public function __construct($config, EntityManager $entityManager)
-    {
+    public function __construct(
+        DefaultControllerOptions $defaultControllerOptions,
+        EntityManager $entityManager
+    ) {
         $this->entityManager = $entityManager;
-        parent::__construct($config);
+        $defaultOptions = $defaultControllerOptions->getOptions(
+            'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController'
+        );
+        parent::__construct($defaultOptions);
     }
 
-    protected function getRepository($repositoryName)
+    /**
+     * getRepository
+     *
+     * @param $entityName
+     *
+     * @return \Doctrine\ORM\EntityRepository
+     */
+    protected function getRepository($entityName)
     {
-        return $this->entityManager->getRepository($repositoryName);
+        return $this->entityManager->getRepository($entityName);
     }
-
 
     public function create(Request $request, Response $response)
     {
@@ -59,9 +69,6 @@ class DoctrineResourceController extends AbstractResourceController
     public function findById(Request $request, Response $response)
     {
         $id = $this->getUrlParam('id');
-
-
-
     }
 
     public function find(Request $request, Response $response)

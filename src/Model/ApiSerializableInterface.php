@@ -18,7 +18,6 @@ namespace Reliv\RcmApiLib\Model;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-
 interface ApiSerializableInterface extends \JsonSerializable
 {
     /**

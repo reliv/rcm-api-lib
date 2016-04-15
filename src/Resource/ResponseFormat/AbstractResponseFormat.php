@@ -2,6 +2,9 @@
 
 namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 
+use Reliv\RcmApiLib\Resource\Options\Options;
+use Reliv\RcmApiLib\Resource\Options\RuntimeOptions;
+
 /**
  * Class AbstractResponseFormat
  *
@@ -13,20 +16,33 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 abstract class AbstractResponseFormat implements ResponseFormat
 {
     /**
-     * getOptionValue
-     *
-     * @param array  $options
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed|null
+     * @var Options
      */
-    protected function getOptionValue(array $options, $key, $default = null)
-    {
-        if (array_key_exists($key, $options)) {
-            return $options[$key];
-        }
+    protected $defaultOptions;
 
-        return $default;
+    /**
+     * AbstractResponseFormat constructor.
+     *
+     * @param Options $defaultOptions
+     */
+    public function __construct(Options $defaultOptions)
+    {
+        $this->defaultOptions = $defaultOptions;
+    }
+
+    /**
+     * buildRuntimeOptions
+     *
+     * @param array|null $runTimeOptions
+     *
+     * @return Options
+     */
+    public function buildRuntimeOptions(array $runTimeOptions = null)
+    {
+        $defaultOptions = clone($this->defaultOptions);
+
+        $defaultOptions->setFromArray($runTimeOptions);
+
+        return $defaultOptions;
     }
 }

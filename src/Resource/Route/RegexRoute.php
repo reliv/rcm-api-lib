@@ -3,6 +3,7 @@ namespace Reliv\RcmApiLib\Resource\Route;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Options\DefaultRouteOptions;
 
 /**
  * Class Router
@@ -15,6 +16,19 @@ use Reliv\RcmApiLib\Resource\Exception\RouteException;
 class RegexRoute extends AbstractRoute
 {
     /**
+     * RegexRoute constructor.
+     *
+     * @param DefaultRouteOptions $defaultRouteOptions
+     */
+    public function __construct(DefaultRouteOptions $defaultRouteOptions)
+    {
+        $defaultOptions = $defaultRouteOptions->getOptions(
+            'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController'
+        );
+        parent::__construct($defaultOptions);
+    }
+    
+    /**
      * match
      *
      * @param Request $request
@@ -25,7 +39,8 @@ class RegexRoute extends AbstractRoute
      */
     public function match(Request $request, array $options)
     {
-        $path = $this->getOption($options, 'path');
+        $options = $this->buildRuntimeOptions($options);
+        $path = $options->get($options);
         
         if(empty($path)) {
             throw new RouteException('Path option required');

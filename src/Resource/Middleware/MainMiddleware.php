@@ -44,10 +44,14 @@ class MainMiddleware implements Middleware
         $this->serviceManager = $serviceManager;
     }
 
-
+    /**
+     * getRoute
+     *
+     * @return Route
+     */
     public function getRoute()
     {
-
+        return new RegexRoute();
     }
 
     /**
@@ -60,12 +64,9 @@ class MainMiddleware implements Middleware
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        echo "<pre>";
-        var_export($request->getUri()->getPath());
+        $route = $this->getRoute();
 
-        $route = new RegexRoute();
-
-        $basePath = $this->config['resource']['config']['basePath'];
+        $basePath = $this->getBasePath() ;
         $options = [
             'path' => $basePath,
         ];
@@ -108,7 +109,7 @@ class MainMiddleware implements Middleware
         $uri->withPath($originalPath);
 
         if (empty($method)) {
-            $response->withStatus($this->config['resource']['config']['undefinedMethodStatus']);
+            $response->withStatus($this->config['resource']['config']['missingMethodStatus']);
 
             return $response;
         }

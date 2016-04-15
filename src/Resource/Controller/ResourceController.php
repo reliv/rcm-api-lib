@@ -4,6 +4,7 @@ namespace Reliv\RcmApiLib\Resource\Controller;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Reliv\RcmApiLib\Resource\Options\RuntimeOptions;
 
 /**
  * Class ResourceController
@@ -13,7 +14,7 @@ use Psr\Http\Message\ResponseInterface as Response;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface ResourceController
+interface ResourceController extends RuntimeOptions
 {
     /**
      * OPTIONS_ATTRIBUTE

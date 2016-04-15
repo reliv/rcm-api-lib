@@ -2,6 +2,7 @@
 namespace Reliv\RcmApiLib\Resource\Route;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * Class Router
@@ -14,20 +15,33 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 abstract class AbstractRoute implements Route
 {
     /**
-     * getOption
-     *
-     * @param array  $options
-     * @param string $key
-     * @param null   $default
-     *
-     * @return mixed|null
+     * @var Options
      */
-    protected function getOption(array $options, $key, $default = null)
-    {
-        if (array_key_exists($key, $options)) {
-            return $options[$key];
-        }
+    protected $defaultOptions;
 
-        return $default;
+    /**
+     * AbstractResponseFormat constructor.
+     *
+     * @param Options $defaultOptions
+     */
+    public function __construct(Options $defaultOptions)
+    {
+        $this->defaultOptions = $defaultOptions;
+    }
+
+    /**
+     * buildRuntimeOptions
+     *
+     * @param array|null $runTimeOptions
+     *
+     * @return Options
+     */
+    public function buildRuntimeOptions(array $runTimeOptions = null)
+    {
+        $defaultOptions = clone($this->defaultOptions);
+
+        $defaultOptions->setFromArray($runTimeOptions);
+
+        return $defaultOptions;
     }
 }

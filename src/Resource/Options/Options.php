@@ -61,6 +61,15 @@ interface Options
     public function merge(Options $options);
 
     /**
+     * getOptions
+     *
+     * @param string $key
+     *
+     * @return Options
+     */
+    public function getOptions($key);
+
+    /**
      * _toArray
      *
      * @return array

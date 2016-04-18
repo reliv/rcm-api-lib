@@ -7,14 +7,14 @@ use Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ControllerBuilder
+ * Class ResponseFormatOptionsBuilder
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ControllerBuilder extends AbstractResourceBuilder
+class ResponseFormatOptionsBuilder extends AbstractControllerBuilder
 {
     /**
      * @var ServiceLocatorInterface

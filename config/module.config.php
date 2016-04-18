@@ -32,6 +32,11 @@ return [
                             'application/json'
                         ]
                     ],
+                    'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
+                        'validContentTypes' => [
+                            'application/xml'
+                        ]
+                    ],
                 ],
                 /* */
                 'routeOptions' => [
@@ -45,14 +50,11 @@ return [
                     'allowedMethods' => [
                     ],
                     /* */
-                    'controller' => [
-                        'service' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
-                        'options' => [],
-                    ],
-                    'responseFormat' => [
-                        'service' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
-                        'options' => [],
-                    ],
+                    'controllerService' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
+                    'controllerOptions' => [],
+                    /* */
+                    'responseFormatService' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat',
+                    'responseFormatOptions' => [],
                     /* */
                     'methods' => [
                         /* Default Methods */
@@ -105,7 +107,7 @@ return [
                             'pre' => [],
                         ],
                         'updateProperties' => [
-                            'description' => "Udpate resource properties by ID",
+                            'description' => "Update resource properties by ID",
                             'httpVerb' => 'PUT',
                             'path' => ":id",
                             'pre' => [],
@@ -191,6 +193,13 @@ return [
                 'Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory',
         ],
         'config_factories' => [
+            /* Resource Builders */
+            'Reliv\RcmApiLib\Resource\Builder\ResourceOptionsBuilder' => [
+                'arguments' => [
+                    'Reliv\RcmApiLib\Resource\Options\DefaultResourceControllerOptions',
+                    'Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions',
+                ],
+            ],
             /* Resource Controller */
             'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController' => [
                 'arguments' => [
@@ -203,6 +212,9 @@ return [
             'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware' => [
                 'arguments' => [
                     'Config',
+                    'ServiceManager',
+                    'Reliv\RcmApiLib\Resource\Builder\ResourceOptionsBuilder',
+                    'Reliv\RcmApiLib\Resource\Route\RegexRoute'
                 ],
             ],
 
@@ -227,6 +239,11 @@ return [
                     'Config',
                 ],
             ],
+            'Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions' => [
+                'arguments' => [
+                    'Config',
+                ],
+            ],
 
             /* Resource ResponseFormat */
             'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat' => [
@@ -236,9 +253,18 @@ return [
                         'add',
                         ['Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat'],
                     ],
+                    'XmlResponseFormat' => [
+                        'add',
+                        ['Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat'],
+                    ],
                 ],
             ],
             'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [
+                'arguments' => [
+                    'Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions',
+                ],
+            ],
+            'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions',
                 ],

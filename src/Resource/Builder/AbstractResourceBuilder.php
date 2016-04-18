@@ -7,14 +7,14 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 use Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions;
 
 /**
- * Class AbstractControllerBuilder
+ * Class AbstractResourceBuilder
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class AbstractControllerBuilder
+abstract class AbstractResourceBuilder implements ResourceBuilder
 {
     /**
      * @var DefaultResourceControllerOptions
@@ -41,13 +41,14 @@ class AbstractControllerBuilder
     }
 
     /**
-     * getControllerOptions
+     * getOptions
      *
      * @param string $resourceControllerKey
+     * @param mixed   $default
      *
-     * @return Options
+     * @return mixed|Options
      */
-    public function getControllerOptions($resourceControllerKey, $default = null)
+    public function getOptions($resourceControllerKey, $default = null)
     {
         if ($this->resourceControllersOptions->has($resourceControllerKey)) {
             return $this->resourceControllersOptions->getOptions($resourceControllerKey);
@@ -57,11 +58,11 @@ class AbstractControllerBuilder
     }
 
     /**
-     * getDefaultControllerOptions
+     * getDefaultOptions
      *
-     * @return DefaultResourceControllerOptions
+     * @return Options
      */
-    public function getDefaultControllerOptions()
+    public function getDefaultOptions()
     {
         return $this->defaultResourceControllerOptions;
     }

@@ -24,14 +24,12 @@ class ResourceOptionsBuilder extends AbstractResourceBuilder
      */
     public function build($resourceControllerKey, $default = null)
     {
-        $controllerOptions = $this->getOptions($resourceControllerKey);
+        $options = $this->getOptions($resourceControllerKey);
 
-        $controllerConfig = $controllerOptions->get('controller');
-
-        if (empty($controllerConfig) && empty($controllerConfig['options'])) {
+        if (empty($options)) {
             return $default;
         }
 
-        return $controllerConfig['options'];
+        return $options;
     }
 }

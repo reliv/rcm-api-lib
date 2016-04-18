@@ -4,6 +4,7 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Reliv\RcmApiLib\Resource\Builder\ResourceBuilder;
 use Reliv\RcmApiLib\Resource\Controller\ResourceController;
 use Reliv\RcmApiLib\Resource\Route\RegexRoute;
 use Reliv\RcmApiLib\Resource\Route\Route;
@@ -31,6 +32,16 @@ class MainMiddleware implements Middleware
     protected $serviceManager;
 
     /**
+     * @var Route
+     */
+    protected $route;
+
+    /**
+     * @var ResourceBuilder
+     */
+    protected $resourceBuilder;
+
+    /**
      * MainMiddleware constructor.
      *
      * @param                         $config
@@ -38,10 +49,15 @@ class MainMiddleware implements Middleware
      */
     public function __construct(
         $config,
-        ServiceLocatorInterface $serviceManager
+        ServiceLocatorInterface $serviceManager,
+        ResourceBuilder $resourceBuilder,
+        Route $route
     ) {
         $this->config = $config['Reliv\\RcmApiLib'];
         $this->serviceManager = $serviceManager;
+        $this->resourceBuilder = $resourceBuilder;
+        var_dump('<pre>', $this->resourceBuilder->build('/example-path', 'nope')); die;
+        $this->route = $route;
     }
 
     /**
@@ -51,7 +67,12 @@ class MainMiddleware implements Middleware
      */
     public function getRoute()
     {
-        return new RegexRoute();
+        return $this->route;
+    }
+
+    public function getBasePath()
+    {
+
     }
 
     /**
@@ -66,7 +87,7 @@ class MainMiddleware implements Middleware
     {
         $route = $this->getRoute();
 
-        $basePath = $this->getBasePath() ;
+        $basePath = $this->getBasePath();
         $options = [
             'path' => $basePath,
         ];
@@ -116,10 +137,13 @@ class MainMiddleware implements Middleware
 
         // middleware
         // @todo check for pre first
-        $controllerServiceOptions = $this->config['resource']['controllerRoute'][$params['resourceController']]['controller']['options'];
-        $controllerServiceName = $this->config['resource']['controllerRoute'][$params['resourceController']]['controller']['service'];
+        $controllerServiceOptions
+            = $this->config['resource']['controllerRoute'][$params['resourceController']]['controller']['options'];
+        $controllerServiceName
+            = $this->config['resource']['controllerRoute'][$params['resourceController']]['controller']['service'];
         $controllerPre = $this->config['resource']['controllerRoute'][$params['resourceController']]['pre'];
-        $methodPre = $this->config['resource']['controllerRoute'][$params['resourceController']]['methods'][$method]['pre'];
+        $methodPre
+            = $this->config['resource']['controllerRoute'][$params['resourceController']]['methods'][$method]['pre'];
         $middlewarePipe = new MiddlewarePipe();
 
         $request->withAttribute(Middleware::OPTIONS_ATTRIBUTE, $controllerPre);
@@ -140,7 +164,7 @@ class MainMiddleware implements Middleware
 
             $middlewarePipe->pipe('/', $service);
         }
-        
+
         $resourceController = $service = $this->serviceManager->get($controllerServiceName);
 
         // run method(Request $request, Response $response);

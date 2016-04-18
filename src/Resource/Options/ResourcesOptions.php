@@ -2,16 +2,15 @@
 
 namespace Reliv\RcmApiLib\Resource\Options;
 
-
 /**
- * Class DefaultControllerOptions
+ * Class ResourceOptions
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-Class DefaultControllerOptions extends GenericOptions
+Class ResourcesOptions extends GenericOptions
 {
     /**
      * @var array
@@ -25,7 +24,7 @@ Class DefaultControllerOptions extends GenericOptions
      */
     public function __construct($config)
     {
-        $options = $config['Reliv\\RcmApiLib']['resource']['default']['controllerOptions'];
+        $options = $config['Reliv\\RcmApiLib']['resource']['resources'];
         parent::__construct($options);
     }
 }

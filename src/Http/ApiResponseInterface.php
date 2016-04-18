@@ -9,8 +9,6 @@ use Reliv\RcmApiLib\Model\ApiMessages;
 /**
  * Class ApiResponseInterface
  *
- * LongDescHere
- *
  * PHP version 5
  *
  * @category  Reliv
@@ -72,6 +70,4 @@ interface ApiResponseInterface
      * @return ApiMessages
      */
     public function getApiMessages();
-
-
 }

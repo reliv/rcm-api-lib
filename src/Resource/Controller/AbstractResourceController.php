@@ -3,7 +3,6 @@
 namespace Reliv\RcmApiLib\Resource\Controller;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Reliv\RcmApiLib\Resource\Options\Options;
 use Reliv\RcmApiLib\Resource\Route\Route;
 
 /**
@@ -17,37 +16,6 @@ use Reliv\RcmApiLib\Resource\Route\Route;
 abstract class AbstractResourceController implements ResourceController
 {
     /**
-     * @var Options
-     */
-    protected $defaultOptions;
-
-    /**
-     * AbstractResponseFormat constructor.
-     *
-     * @param Options $defaultOptions
-     */
-    public function __construct(Options $defaultOptions)
-    {
-        $this->defaultOptions = $defaultOptions;
-    }
-
-    /**
-     * buildRuntimeOptions
-     *
-     * @param array|null $runTimeOptions
-     *
-     * @return Options
-     */
-    public function buildRuntimeOptions(array $runTimeOptions = null)
-    {
-        $defaultOptions = clone($this->defaultOptions);
-
-        $defaultOptions->setFromArray($runTimeOptions);
-
-        return $defaultOptions;
-    }
-    
-    /**
      * getUrlParam
      *
      * @param Request $request
@@ -58,7 +26,7 @@ abstract class AbstractResourceController implements ResourceController
      */
     protected function getRouteParam(Request $request, $key, $default = null)
     {
-        $resourceUrlParams = $request->getAttribute(Route::PARAMS_NAME, []);
+        $resourceUrlParams = $request->getAttribute(Route::REQUEST_ATTRIBUTE_ROUTE_PARAMS, []);
 
         if (array_key_exists($key, $resourceUrlParams)) {
             return $resourceUrlParams[$key];

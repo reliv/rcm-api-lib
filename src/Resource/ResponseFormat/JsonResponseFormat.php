@@ -5,8 +5,7 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
-use Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions;
-use Zend\Form\Annotation\Options;
+use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * interface ResponseFormat
@@ -24,30 +23,18 @@ class JsonResponseFormat extends AbstractResponseFormat
     protected static $noDataModeSet = '_NO_DATA_MODEL_SET_';
 
     /**
-     * JsonResponseFormat constructor.
-     *
-     * @param DefaultResponseFormatOptions $defaultResponseFormatOptions
-     */
-    public function __construct(DefaultResponseFormatOptions $defaultResponseFormatOptions)
-    {
-        $defaultOptions = $defaultResponseFormatOptions->getOptions(
-            'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat'
-        );
-        parent::__construct($defaultOptions);
-    }
-
-    /**
      * build
+     * - Set the format to the Response
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed    $dataModel
-     * @param array    $options
+     * @param Options  $options
+     * @param null     $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
      */
-    public function build(Request $request, Response $response, $dataModel = null, array $options = [])
+    public function build(Request $request, Response $response, Options $options, $dataModel = null)
     {
         $body = $response->getBody();
         $content = json_encode($dataModel);
@@ -67,15 +54,13 @@ class JsonResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed    $dataModel
-     * @param array    $options
+     * @param Options  $options
+     * @param mixed     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, $dataModel = null, array $options = [])
+    public function isValid(Request $request, Response $response, Options $options, $dataModel = null)
     {
-        $options = $this->buildRuntimeOptions($options);
-
         $contentType = $request->getHeader('Content-Type');
 
         $validContentTypes = $options->get('validContentTypes', []);

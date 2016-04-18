@@ -5,6 +5,7 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
+use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * Class CompositeResponseFormat
@@ -39,13 +40,13 @@ class CompositeResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed    $dataModel
-     * @param array    $options
+     * @param Options  $options
+     * @param null     $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
      */
-    public function build(Request $request, Response $response, $dataModel = null, array $options = [])
+    public function build(Request $request, Response $response, Options $options, $dataModel = null)
     {
         /** @var ResponseFormat $responseFormat */
         foreach ($this->responseFormats as $responseFormat) {

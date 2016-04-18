@@ -17,157 +17,166 @@ return [
         /* */
         'resource' => [
             'default' => [
-                /* */
-                'basePath' => '/api/resource/(?<resourceController>[a-z]+)/(?<resourceMethod>[^.]+)',
-
+                /* DEFAULT: Resource Controller */
+                'controllerService' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
                 'controllerOptions' => [
-                    'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController' => [
-                        'entity' => null,
+                    'entity' => null,
+                ],
+                /* DEFAULT: Resource Controller Method Definitions */
+                'methods' => [
+                    /* Default Methods */
+                    'create' => [
+                        'description' => "Create new resource",
+                        'httpVerb' => 'POST',
+                        'path' => "",
+                        'preService' => [],
+                    ],
+                    'upsert' => [
+                        'description' => "Update or create a resource",
+                        'httpVerb' => 'PUT',
+                        'path' => "",
+                        'preService' => [],
+                    ],
+                    'exists' => [
+                        'description' => "Check if a resource exists",
+                        'httpVerb' => 'GET',
+                        'path' => ":id/exists",
+                        'preService' => [],
+                    ],
+                    'findById' => [
+                        'description' => "Find resource by ID",
+                        'httpVerb' => 'GET',
+                        'path' => ":id",
+                        'preService' => [],
+                    ],
+                    'find' => [
+                        'description' => "Find resources",
+                        'httpVerb' => 'GET',
+                        'path' => "",
+                        'preService' => [],
+                    ],
+                    'findOne' => [
+                        'description' => "Find resources",
+                        'httpVerb' => 'GET',
+                        'path' => "findOne",
+                        'preService' => [],
+                    ],
+                    'deleteById' => [
+                        'description' => "Delete resource by ID",
+                        'httpVerb' => 'DELETE',
+                        'path' => ":id",
+                        'preService' => [],
+                    ],
+                    'count' => [
+                        'description' => "Count resources",
+                        'httpVerb' => 'GET',
+                        'path' => "count",
+                        'preService' => [],
+                    ],
+                    'updateProperties' => [
+                        'description' => "Update resource properties by ID",
+                        'httpVerb' => 'PUT',
+                        'path' => ":id",
+                        'preService' => [],
                     ],
                 ],
-                /* */
+                /* DEFAULT: Status to return if a method is not defined */
+                'missingMethodStatus' => 404,
+                /* Pre Controller Middleware  */
+                'preServices' => [
+                    // '{serviceName}',
+                ],
+                'preOptions' => [
+                    //'serviceName' => [ '{optionKey}' => '{optionValue}' ],
+                ],
+                /* DEFAULT: Response Format */
+                'responseFormatService' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat',
                 'responseFormatOptions' => [
                     'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [
                         'validContentTypes' => [
                             'application/json'
-                        ]
+                        ],
                     ],
                     'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
                         'validContentTypes' => [
                             'application/xml'
-                        ]
+                        ],
                     ],
                 ],
-                /* */
+                /* DEFAULT: Route */
+                'routeService' => 'Reliv\RcmApiLib\Resource\Route\RegexRoute',
                 'routeOptions' => [
-                    'Reliv\RcmApiLib\Resource\Route\RegexRoute' => [
-                        'path' => null,
-                    ],
-                ],
-                /* */
-                'resourceController' => [
-                    /* */
-                    'allowedMethods' => [
-                    ],
-                    /* */
-                    'controllerService' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
-                    'controllerOptions' => [],
-                    /* */
-                    'responseFormatService' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat',
-                    'responseFormatOptions' => [],
-                    /* */
-                    'methods' => [
-                        /* Default Methods */
-                        'create' => [
-                            'description' => "Create new resource",
-                            'httpVerb' => 'POST',
-                            'path' => "",
-                            'pre' => [],
-                        ],
-                        'upsert' => [
-                            'description' => "Update or create a resource",
-                            'httpVerb' => 'PUT',
-                            'path' => "",
-                            'pre' => [],
-                        ],
-                        'exists' => [
-                            'description' => "Check if a resource exists",
-                            'httpVerb' => 'GET',
-                            'path' => ":id/exists",
-                            'pre' => [],
-                        ],
-                        'findById' => [
-                            'description' => "Find resource by ID",
-                            'httpVerb' => 'GET',
-                            'path' => ":id",
-                            'pre' => [],
-                        ],
-                        'find' => [
-                            'description' => "Find resources",
-                            'httpVerb' => 'GET',
-                            'path' => "",
-                            'pre' => [],
-                        ],
-                        'findOne' => [
-                            'description' => "Find resources",
-                            'httpVerb' => 'GET',
-                            'path' => "findOne",
-                            'pre' => [],
-                        ],
-                        'deleteById' => [
-                            'description' => "Delete resource by ID",
-                            'httpVerb' => 'DELETE',
-                            'path' => ":id",
-                            'pre' => [],
-                        ],
-                        'count' => [
-                            'description' => "Count resources",
-                            'httpVerb' => 'GET',
-                            'path' => "count",
-                            'pre' => [],
-                        ],
-                        'updateProperties' => [
-                            'description' => "Update resource properties by ID",
-                            'httpVerb' => 'PUT',
-                            'path' => ":id",
-                            'pre' => [],
-                        ],
-                    ],
-                    /* */
-                    'path' => null,
-                    /* */
-                    'pre' => [
-                    ],
-                    'missingMethodStatus' => 404,
+                    'path' => '/api/resource/(?<resourceController>[a-z]+)/(?<resourceMethod>[^.]+)',
                 ],
             ],
 
             /**
              *
              */
-            'resourceControllers' => [
+            'resources' => [
                 '/example-path' => [
-                    /* */
+                    /* Methods White-list */
                     'allowedMethods' => [
-                        'get'
+                        'get',
+                        'example',
                     ],
-                    /* */
-                    'controller' => [
-                        'service' => 'MyHttpRepositoryServiceName',
-                        'options' => [],
+                    /* Resource Controller */
+                    'controllerService' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
+                    'controllerOptions' => [
+                        'entity' => null,
                     ],
-                    /* */
+                    /* Resource Controller Method Definitions */
                     'methods' => [
                         'example' => [
-                            'pre' => [
+                            /* Pre Controller Method Middleware  */
+                            'preServices' => [
                                 'MyHttpServiceName' => [
                                     // Options
                                 ]
                             ],
+                            /* */
                             'description' => "My description",
                             'httpVerb' => 'GET',
                             'path' => "/:id"
                         ],
                     ],
                     /* */
+                    'missingMethodStatus' => 404,
+                    /* Path */
                     'path' => '/example-path',
-                    /* */
-                    'pre' => [
-                        'MyHttpServiceName' => [
-                            // Options
-                        ],
-                        'Reliv\RcmApiLib\Resource\Middleware/RcmUserAcl' => [
+                    /* Pre Controller Middleware */
+                    'preServices' => [
+                        'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl',
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass',
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService',
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig',
+                    ],
+                    'preOptions' => [
+                        'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl' => [
                             'resourceId' => '{resourceId}',
                             'privilege' => null,
                         ],
-                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterClass' => [
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass' => [
                             'class' => '',
                         ],
-                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterService' => [
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService' => [
                             'service' => '',
                         ],
-                        'Reliv\RcmApiLib\Resource\Middleware/ZfInputFilterConfig' => [
+                        'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig' => [
                             'config' => [],
+                        ],
+                    ],
+                    'responseFormatService' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
+                    'responseFormatOptions' => [
+                        'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [
+                            'validContentTypes' => [
+                                'application/json'
+                            ],
+                        ],
+                        'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
+                            'validContentTypes' => [
+                                'application/xml'
+                            ],
                         ],
                     ],
                 ],
@@ -194,7 +203,7 @@ return [
         ],
         'config_factories' => [
             /* Resource Builders */
-            'Reliv\RcmApiLib\Resource\Builder\ResourceOptionsBuilder' => [
+            'Reliv\RcmApiLib\Resource\Builder\ConfigResourceModelBuilder' => [
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Options\DefaultResourceControllerOptions',
                     'Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions',
@@ -203,7 +212,6 @@ return [
             /* Resource Controller */
             'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController' => [
                 'arguments' => [
-                    'Reliv\RcmApiLib\Resource\Options\DefaultControllerOptions',
                     'Doctrine\ORM\EntityManager',
                 ],
             ],
@@ -213,33 +221,18 @@ return [
                 'arguments' => [
                     'Config',
                     'ServiceManager',
-                    'Reliv\RcmApiLib\Resource\Builder\ResourceOptionsBuilder',
+                    'Reliv\RcmApiLib\Resource\Builder\ConfigResourceModelBuilder',
                     'Reliv\RcmApiLib\Resource\Route\RegexRoute'
                 ],
             ],
 
             /* Resource Options */
-            'Reliv\RcmApiLib\Resource\Options\DefaultControllerOptions' => [
+            'Reliv\RcmApiLib\Resource\Options\DefaultOptions' => [
                 'arguments' => [
                     'Config',
                 ],
             ],
-            'Reliv\RcmApiLib\Resource\Options\DefaultResourceControllerOptions' => [
-                'arguments' => [
-                    'Config',
-                ],
-            ],
-            'Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions' => [
-                'arguments' => [
-                    'Config',
-                ],
-            ],
-            'Reliv\RcmApiLib\Resource\Options\DefaultRouteOptions' => [
-                'arguments' => [
-                    'Config',
-                ],
-            ],
-            'Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions' => [
+            'Reliv\RcmApiLib\Resource\Options\ResourcesOptions' => [
                 'arguments' => [
                     'Config',
                 ],
@@ -260,21 +253,12 @@ return [
                 ],
             ],
             'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [
-                'arguments' => [
-                    'Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions',
-                ],
             ],
             'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
-                'arguments' => [
-                    'Reliv\RcmApiLib\Resource\Options\DefaultResponseFormatOptions',
-                ],
             ],
 
             /* Resource Route */
             'Reliv\RcmApiLib\Resource\Route\RegexRoute' => [
-                'arguments' => [
-                    'Reliv\RcmApiLib\Resource\Options\DefaultRouteOptions',
-                ],
             ],
         ],
     ],

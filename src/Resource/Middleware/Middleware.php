@@ -18,7 +18,7 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 interface Middleware extends \Zend\Stratigility\MiddlewareInterface
 {
     /**
-     * OPTIONS_ATTRIBUTE
+     * REQUEST_ATTRIBUTE_MIDDLEWARE_OPTIONS
      */
-    const OPTIONS_ATTRIBUTE = 'middleware-options';
+    const REQUEST_ATTRIBUTE_MIDDLEWARE_OPTIONS = 'api-lib-middleware-options';
 }

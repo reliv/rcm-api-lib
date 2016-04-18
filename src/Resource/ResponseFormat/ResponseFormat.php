@@ -5,7 +5,6 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Options\Options;
-use Reliv\RcmApiLib\Resource\Options\RuntimeOptions;
 
 /**
  * interface ResponseFormat
@@ -15,12 +14,12 @@ use Reliv\RcmApiLib\Resource\Options\RuntimeOptions;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface ResponseFormat extends RuntimeOptions
+interface ResponseFormat
 {
     /**
-     * DATA_MODEL_KEY
+     * REQUEST_ATTRIBUTE
      */
-    const DATA_MODEL_KEY = 'resource-response-data-model';
+    const REQUEST_ATTRIBUTE = 'api-lib-resource-response-data-model';
 
     /**
      * build
@@ -28,12 +27,12 @@ interface ResponseFormat extends RuntimeOptions
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed    $dataModel
-     * @param array    $options
+     * @param Options  $options
+     * @param null     $dataModel
      *
      * @return Response
      */
-    public function build(Request $request, Response $response, $dataModel = null, array $options = []);
+    public function build(Request $request, Response $response, Options $options, $dataModel = null);
 
     /**
      * isValid
@@ -41,10 +40,10 @@ interface ResponseFormat extends RuntimeOptions
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed    $dataModel
-     * @param array    $options
+     * @param Options  $options
+     * @param mixed     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, $dataModel = null, array $options = []);
+    public function isValid(Request $request, Response $response, Options $options, $dataModel = null);
 }

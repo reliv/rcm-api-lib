@@ -3,14 +3,14 @@
 namespace Reliv\RcmApiLib\Resource\Options;
 
 /**
- * Class DefaultResponseFormatOptions
+ * Class DefaultOptions
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-Class DefaultResponseFormatOptions extends GenericOptions
+Class DefaultOptions extends GenericOptions
 {
     /**
      * @var array
@@ -24,7 +24,7 @@ Class DefaultResponseFormatOptions extends GenericOptions
      */
     public function __construct($config)
     {
-        $options = $config['Reliv\\RcmApiLib']['resource']['default']['responseFormatOptions'];
+        $options = $config['Reliv\\RcmApiLib']['resource']['default'];
         parent::__construct($options);
     }
 }

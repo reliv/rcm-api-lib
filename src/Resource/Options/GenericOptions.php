@@ -106,6 +106,10 @@ Class GenericOptions implements Options
     {
         $options = $this->get($key, []);
 
+        if (is_subclass_of($options, 'Reliv\RcmApiLib\Resource\Options')) {
+            return $options;
+        }
+
         if (!is_array($options)) {
             $options = [];
             $options[$key] = $options;

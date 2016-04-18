@@ -5,7 +5,7 @@ namespace Reliv\RcmApiLib\Resource\Controller;
 use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Reliv\RcmApiLib\Resource\Options\DefaultControllerOptions;
+use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * Class DoctrineResourceController
@@ -25,18 +25,12 @@ class DoctrineResourceController extends AbstractResourceController
     /**
      * DoctrineResourceController constructor.
      *
-     * @param DefaultControllerOptions $defaultControllerOptions
-     * @param EntityManager            $entityManager
+     * @param EntityManager $entityManager
      */
     public function __construct(
-        DefaultControllerOptions $defaultControllerOptions,
         EntityManager $entityManager
     ) {
         $this->entityManager = $entityManager;
-        $defaultOptions = $defaultControllerOptions->getOptions(
-            'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController'
-        );
-        parent::__construct($defaultOptions);
     }
 
     /**
@@ -68,7 +62,7 @@ class DoctrineResourceController extends AbstractResourceController
 
     public function findById(Request $request, Response $response)
     {
-        $id = $this->getUrlParam('id');
+        $id = $this->getRouteParam($request, 'id');
     }
 
     public function find(Request $request, Response $response)

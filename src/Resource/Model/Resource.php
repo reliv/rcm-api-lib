@@ -2,163 +2,122 @@
 
 namespace Reliv\RcmApiLib\Resource\Model;
 
-use Reliv\RcmApiLib\Resource\Exception\OptionException;
 use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
- * Class Resource
+ * Interface Resource
  *
+ * PHP version 5
+ *
+ * @category  Reliv
  * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
+ * @copyright 2015 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class Resource
+interface Resource
 {
     /**
-     * @var string
+     * REQUEST_ATTRIBUTE
      */
-    protected $resourceControllerKey;
-
-    /**
-     * @var Options
-     */
-    protected $defaultResourceControllerOptions;
-
-    /**
-     * @var Options
-     */
-    protected $resourceOptions;
-
-    /**
-     * @var string
-     */
-    protected $optionNotFound = '__OPTION_NOT_FOUND__';
-
-    /**
-     * Resource constructor.
-     *
-     * @param string  $resourceControllerKey
-     * @param Options $defaultResourceControllerOptions
-     * @param Options $resourceControllersOptions
-     *
-     * @throws OptionException
-     */
-    public function __construct(
-        $resourceControllerKey,
-        Options $defaultResourceControllerOptions,
-        Options $resourceControllersOptions
-    ) {
-        $this->resourceControllerKey = $resourceControllerKey;
-        $this->defaultResourceControllerOptions = $defaultResourceControllerOptions;
-
-        if (!$resourceControllersOptions->has($resourceControllerKey)) {
-            throw new OptionException("No options exist for {$resourceControllerKey}");
-        }
-
-        $this->resourceOptions = $resourceControllersOptions->getOptions($resourceControllerKey);
-    }
-
-    /**
-     * buildValue
-     *
-     * @param string $key
-     * @param mixed  $default
-     *
-     * @return mixed
-     */
-    protected function buildValue($key, $default = null)
-    {
-        $defaultValue = $this->defaultResourceControllerOptions->get($key, $default);
-        $value = $this->resourceOptions->get($key, $defaultValue);
-
-        return $value;
-    }
+    const REQUEST_ATTRIBUTE = 'api-lib-resource-model';
 
     /**
      * getAllowedMethods
      *
-     * @return array|null
+     * @return array
      */
-    public function getAllowedMethods()
-    {
-        $value = $this->resourceOptions->get('allowedMethods', []);
-
-        return $value;
-    }
+    public function getAllowedMethods();
 
     /**
-     * getControllerOptions
+     * getControllerService
      *
      * @return string|null
      */
-    public function getControllerService()
-    {
-        return $this->buildValue('controllerService');
-    }
+    public function getControllerService();
 
     /**
      * getControllerOptions
      *
-     * @return array|null
+     * @return Options
      */
-    public function getControllerOptions()
-    {
-        return $this->buildValue('controllerOptions', []);
-    }
+    public function getControllerOptions();
+
+    /**
+     * getMethods
+     *
+     * @return array
+     */
+    public function getMethods();
+
+    /**
+     * getMethod
+     *
+     * @param string $name
+     *
+     * @return Method|null
+     */
+    public function getMethod($name);
+
+    /**
+     * hasMethod
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasMethod($name);
+
+    /**
+     * getMissingMethodStatus
+     *
+     * @return int
+     */
+    public function getMissingMethodStatus();
+
+    /**
+     * getPath
+     *
+     * @return string
+     */
+    public function getPath();
+
+    /**
+     * getPreServices
+     *
+     * @return array
+     */
+    public function getPreServices();
+
+    /**
+     * getPreService
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasPreService($name);
+
+    /**
+     * getPreOptions
+     *
+     * @param string $name
+     *
+     * @return Options
+     */
+    public function getPreOptions($name);
 
     /**
      * getResponseFormatService
      *
      * @return string|null
      */
-    public function getResponseFormatService()
-    {
-        return $this->buildValue('responseFormatService');
-    }
+    public function getResponseFormatService();
 
     /**
      * getResponseFormatOptions
      *
-     * @return array|null
+     * @return Options
      */
-    public function getResponseFormatOptions()
-    {
-        return $this->buildValue('responseFormatOptions', []);
-    }
-
-    /**
-     * getMethods
-     *
-     * @return void
-     */
-    public function getMethods()
-    {
-        $methods =  $this->buildValue('methods', []);
-        $allowedMethods = $this->getAllowedMethods();
-
-        $finalMethods = [];
-
-        
-    }
-
-    public function getMethod($name, $default = null)
-    {
-
-    }
-
-    public function getPath()
-    {
-
-    }
-
-    public function getPreServiceNames()
-    {
-
-    }
-
-    public function getMissingMethodStatus()
-    {
-
-    }
+    public function getResponseFormatOptions();
 }

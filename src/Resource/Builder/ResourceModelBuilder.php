@@ -2,7 +2,7 @@
 
 namespace Reliv\RcmApiLib\Resource\Builder;
 
-use Reliv\RcmApiLib\Resource\Model\Resource;
+use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 
 /**
  * interface ResourceModelBuilder
@@ -19,7 +19,7 @@ interface ResourceModelBuilder
      *
      * @param string $resourceControllerKey
      *
-     * @return Resource
+     * @return ResourceModel
      */
     public function build($resourceControllerKey);
 }

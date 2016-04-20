@@ -23,7 +23,7 @@ interface Route
      * match
      *
      * - If it matches, will set route properties
-     * - If not matches, will retur false
+     * - If not matches, will return false
      *
      * @param Request $request
      * @param Options $options

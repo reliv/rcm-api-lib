@@ -1,16 +1,16 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\ResponseDataFormat;
+namespace Reliv\RcmApiLib\Resource\Exception;
 
 /**
- * Class ResponseDataFormat
+ * Class ServiceMissingException
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface ResponseDataFormat
+class ServiceMissingException extends \Exception
 {
-    
+
 }

@@ -21,4 +21,6 @@ interface Middleware extends \Zend\Stratigility\MiddlewareInterface
      * REQUEST_ATTRIBUTE_MIDDLEWARE_OPTIONS
      */
     const REQUEST_ATTRIBUTE_MIDDLEWARE_OPTIONS = 'api-lib-middleware-options';
+
+    const REQUEST_ATTRIBUTE_RESPONSE_FORMAT_SERVICE = 'api-lib-resource-response-format-service';
 }

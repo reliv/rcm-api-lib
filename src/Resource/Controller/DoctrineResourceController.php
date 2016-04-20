@@ -34,14 +34,28 @@ class DoctrineResourceController extends AbstractResourceController
     }
 
     /**
+     * getEntityName
+     *
+     * @param Request $request
+     *
+     * @return Options
+     */
+    protected function getEntityName(Request $request)
+    {
+        return $this->getControllerOption($request, 'entity', null);
+    }
+
+    /**
      * getRepository
      *
-     * @param $entityName
+     * @param Request $request
      *
      * @return \Doctrine\ORM\EntityRepository
      */
-    protected function getRepository($entityName)
+    protected function getRepository(Request $request)
     {
+        $entityName = $this->getEntityName($request);
+        
         return $this->entityManager->getRepository($entityName);
     }
 
@@ -63,6 +77,8 @@ class DoctrineResourceController extends AbstractResourceController
     public function findById(Request $request, Response $response)
     {
         $id = $this->getRouteParam($request, 'id');
+        
+        $this->getRepository($request)->find($id);
     }
 
     public function find(Request $request, Response $response)

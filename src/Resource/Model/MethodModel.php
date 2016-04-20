@@ -2,18 +2,23 @@
 
 namespace Reliv\RcmApiLib\Resource\Model;
 
-use Reliv\RcmApiLib\Resource\Options\Options;
-
 /**
- * interface Method
+ * interface MethodModel
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface Method
+interface MethodModel
 {
+    /**
+     * getName
+     *
+     * @return string
+     */
+    public function getName();
+
     /**
      * getDescription
      *
@@ -36,27 +41,9 @@ interface Method
     public function getPath();
 
     /**
-     * getPreServices
-     *
-     * @return array
-     */
-    public function getPreServices();
-
-    /**
      * getPreService
      *
-     * @param string $name
-     *
-     * @return array
+     * @return PreServiceModel
      */
-    public function hasPreService($name);
-
-    /**
-     * getPreOptions
-     *
-     * @param string $name
-     *
-     * @return Options
-     */
-    public function getPreOptions($name);
+    public function getPreService();
 }

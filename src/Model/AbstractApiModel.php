@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Model;
 
 /**
@@ -95,7 +94,16 @@ abstract class AbstractApiModel implements ApiModelInterface
         return $data;
     }
 
-
+    /**
+     * jsonSerialize
+     *
+     * @return array|mixed
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
+    
     /**
      * modelArrayToArray
      *
@@ -114,15 +122,5 @@ abstract class AbstractApiModel implements ApiModelInterface
         }
 
         return $array;
-    }
-
-    /**
-     * jsonSerialize
-     *
-     * @return array|mixed
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
     }
 }

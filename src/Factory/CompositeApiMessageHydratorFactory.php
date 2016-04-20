@@ -17,7 +17,7 @@ class CompositeApiMessageHydratorFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $composite = new CompositeApiMessagesHydrator();
-        $config = $serviceLocator->get('config');
+        $config = $serviceLocator->get('Config');
         foreach ($config['Reliv\\RcmApiLib']['CompositeApiMessageHydrators'] as $hydratorService) {
             $composite->add($serviceLocator->get($hydratorService));
         }

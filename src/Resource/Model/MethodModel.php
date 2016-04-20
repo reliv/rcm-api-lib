@@ -13,6 +13,11 @@ namespace Reliv\RcmApiLib\Resource\Model;
 interface MethodModel
 {
     /**
+     * Request Attribute Id
+     */
+    const REQUEST_ATTRIBUTE_MODEL_METHOD = 'api-lib-resource-model-method';
+
+    /**
      * getName
      *
      * @return string
@@ -45,5 +50,5 @@ interface MethodModel
      *
      * @return PreServiceModel
      */
-    public function getPreService();
+    public function getPreServiceModel();
 }

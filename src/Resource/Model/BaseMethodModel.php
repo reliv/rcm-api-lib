@@ -35,7 +35,7 @@ class BaseMethodModel implements MethodModel
     /**
      * @var PreServiceModel
      */
-    protected $preService;
+    protected $preServiceModel;
 
     /**
      * BaseMethodModel constructor.
@@ -44,20 +44,20 @@ class BaseMethodModel implements MethodModel
      * @param string          $description
      * @param string          $httpVerb
      * @param string          $path
-     * @param PreServiceModel $preService
+     * @param PreServiceModel $preServiceModel
      */
     public function __construct(
         $name,
         $description,
         $httpVerb,
         $path,
-        PreServiceModel $preService
+        PreServiceModel $preServiceModel
     ) {
         $this->name = $name;
         $this->description = $description;
         $this->httpVerb = $httpVerb;
         $this->path = $path;
-        $this->preService = $preService;
+        $this->preServiceModel = $preServiceModel;
     }
 
     /**
@@ -105,8 +105,8 @@ class BaseMethodModel implements MethodModel
      *
      * @return PreServiceModel
      */
-    public function getPreService()
+    public function getPreServiceModel()
     {
-        return $this->preService;
+        return $this->preServiceModel;
     }
 }

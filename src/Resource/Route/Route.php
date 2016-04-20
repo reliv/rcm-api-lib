@@ -15,18 +15,12 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 interface Route
 {
     /**
-     * REQUEST_ATTRIBUTE_ROUTE_PARAMS
-     */
-    const REQUEST_ATTRIBUTE_ROUTE_PARAMS = 'api-lib-resource-route-params';
-
-    /**
      * match
      *
-     * - If it matches, will set route properties
+     * - If it matches, will set RouteModel properties
      * - If not matches, will return false
      *
      * @param Request $request
-     * @param Options $options
      *
      * @return bool
      */

@@ -18,9 +18,9 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 interface ResourceModel
 {
     /**
-     * REQUEST_ATTRIBUTE_RESOURCE_MODEL
+     * Request Attribute Id
      */
-    const REQUEST_ATTRIBUTE_RESOURCE_MODEL = 'api-lib-resource-model';
+    const REQUEST_ATTRIBUTE_MODEL_RESOURCE = 'api-lib-resource-model-resource';
     
     /**
      * getControllerModel
@@ -88,11 +88,4 @@ interface ResourceModel
      * @return ResponseFormatModel
      */
     public function getResponseFormatModel();
-
-    /**
-     * getRouteOptions
-     *
-     * @return Options
-     */
-    public function getRouteOptions();
 }

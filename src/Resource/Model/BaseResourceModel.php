@@ -55,7 +55,7 @@ class BaseResourceModel implements ResourceModel
     /**
      * @var Options
      */
-    protected $routeOptions;
+    protected $routeAttributes;
 
     /**
      * BaseResourceModel constructor.
@@ -66,7 +66,7 @@ class BaseResourceModel implements ResourceModel
      * @param string              $path
      * @param PreServiceModel     $preServiceModel
      * @param ResponseFormatModel $responseFormatModel
-     * @param Options             $routeOptions
+     * @param Options             $routeAttributes
      * @param int                 $methodMissingStatus
      */
     public function __construct(
@@ -76,7 +76,6 @@ class BaseResourceModel implements ResourceModel
         $path,
         PreServiceModel $preServiceModel,
         ResponseFormatModel $responseFormatModel,
-        Options $routeOptions,
         $methodMissingStatus = 404
     ) {
         $this->controllerModel = $controllerModel;
@@ -87,7 +86,6 @@ class BaseResourceModel implements ResourceModel
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
         $this->responseFormatModel = $responseFormatModel;
-        $this->routeOptions = $routeOptions;
         $this->methodMissingStatus = $methodMissingStatus;
 
     }
@@ -201,15 +199,5 @@ class BaseResourceModel implements ResourceModel
     public function getResponseFormatModel()
     {
         return $this->responseFormatModel;
-    }
-
-    /**
-     * getRouteOptions
-     *
-     * @return Options
-     */
-    public function getRouteOptions()
-    {
-        return $this->routeOptions;
     }
 }

@@ -7,58 +7,24 @@ use Reliv\RcmApiLib\Resource\Model\BaseMethodModel;
 use Reliv\RcmApiLib\Resource\Model\BasePreServiceModel;
 use Reliv\RcmApiLib\Resource\Model\BaseResourceModel;
 use Reliv\RcmApiLib\Resource\Model\BaseResponseFormatModel;
-use Reliv\RcmApiLib\Resource\Model\BaseRouteModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
-use Reliv\RcmApiLib\Resource\Options\Options;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ConfigResourceModelBuilder
+ * Class ZFConfigResourceModelBuilder
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ConfigResourceModelBuilder
+class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder implements ResourceModelBuilder
 {
     /**
-     * @var ServiceLocatorInterface
-     */
-    protected $serviceManager;
-
-    /**
-     * @var Options
-     */
-    protected $defaultOptions;
-
-    /**
-     * @var Options
-     */
-    protected $resourcesOptions;
-
-    /**
-     * @var
+     * @var array
      */
     protected $resourceModels = [];
-
-    /**
-     * ConfigResourceModelBuilder constructor.
-     *
-     * @param ServiceLocatorInterface $serviceManager
-     * @param Options                 $defaultOptions
-     * @param Options                 $resourcesOptions
-     */
-    public function __construct(
-        ServiceLocatorInterface $serviceManager,
-        Options $defaultOptions,
-        Options $resourcesOptions
-    ) {
-        $this->serviceManager = $serviceManager;
-        $this->defaultOptions = $defaultOptions;
-        $this->resourcesOptions = $resourcesOptions;
-    }
 
     /**
      * getMethodsAllowed
@@ -73,79 +39,6 @@ class ConfigResourceModelBuilder
     }
 
     /**
-     * getResourceValue
-     *
-     * @param string $resourceKey
-     * @param string $key
-     * @param null   $default
-     *
-     * @return mixed
-     */
-    protected function getResourceValue($resourceKey, $key, $default = null)
-    {
-        $resourceOptions = $this->resourcesOptions->getOptions($resourceKey);
-        $value = $resourceOptions->get($key, $default);
-
-        return $value;
-    }
-
-    /**
-     * getDefaultValue
-     *
-     * @param string $key
-     * @param null   $default
-     *
-     * @return mixed
-     */
-    protected function getDefaultValue($key, $default = null)
-    {
-        return $this->defaultOptions->get($key, $default);
-    }
-
-    /**
-     * buildValue
-     *
-     * @param string $resourceKey
-     * @param string $key
-     * @param null   $default
-     *
-     * @return mixed
-     */
-    protected function buildValue($resourceKey, $key, $default = null)
-    {
-        $defaultValue = $this->getDefaultValue($key, $default);
-
-        return $this->getResourceValue($resourceKey, $key, $defaultValue);
-    }
-
-    /**
-     * buildOptions
-     *
-     * @param string $resourceKey
-     * @param string $key
-     *
-     * @return GenericOptions
-     */
-    protected function buildOptions($resourceKey, $key)
-    {
-        $array = $this->buildValue($resourceKey, $key, []);
-
-        return new GenericOptions($array);
-    }
-
-    /**
-     * buildResourceOptions
-     *
-     * @param $resourceKey
-     *
-     * @return void
-     */
-    protected function buildResourceOptions($resourceKey)
-    {
-
-    }
-
-    /**
      * buildPreServiceModel
      *
      * @param $preServiceNames
@@ -155,7 +48,6 @@ class ConfigResourceModelBuilder
      */
     protected function buildPreServiceModel($preServiceNames, $preServiceOptionsArrays)
     {
-
         $preServices = [];
         foreach ($preServiceNames as $serviceAlias => $preServiceName) {
             $preServices[$serviceAlias] = $this->serviceManager->get($preServiceName);
@@ -229,12 +121,14 @@ class ConfigResourceModelBuilder
         }
 
         // ControllerModel
+        $controllerServiceAlias = $this->buildValue(
+            $resourceKey,
+            'controllerServiceName',
+            'UNDEFINED'
+        );
+
         $controllerService = $this->serviceManager->get(
-            $this->buildValue(
-                $resourceKey,
-                'controllerServiceName',
-                'UNDEFINED'
-            )
+            $controllerServiceAlias
         );
 
         $controllerOptions = $this->buildOptions(
@@ -243,9 +137,12 @@ class ConfigResourceModelBuilder
         );
 
         $controllerModel = new BaseControllerModel(
+            $controllerServiceAlias,
             $controllerService,
             $controllerOptions
         );
+
+
 
         $methodsAllowed = $this->getMethodsAllowed($resourceKey);
         $methodModels = $this->buildMethodModels($resourceKey);
@@ -258,12 +155,14 @@ class ConfigResourceModelBuilder
         );
 
         // responseFormatModel
+        $responseFormatServiceAlias = $this->buildValue(
+            $resourceKey,
+            'responseFormatServiceName',
+            'UNDEFINED'
+        );
+
         $responseFormatService = $this->serviceManager->get(
-            $this->buildValue(
-                $resourceKey,
-                'responseFormatServiceName',
-                'UNDEFINED'
-            )
+            $responseFormatServiceAlias
         );
 
         $responseFormatOptions = $this->buildOptions(
@@ -271,25 +170,9 @@ class ConfigResourceModelBuilder
             'responseFormatOptions'
         );
         $responseFormatModel = new BaseResponseFormatModel(
+            $responseFormatServiceAlias,
             $responseFormatService,
             $responseFormatOptions
-        );
-
-        $routeService = $this->serviceManager->get(
-            $this->buildValue(
-                $resourceKey,
-                'routeServiceName',
-                'UNDEFINED'
-            )
-        );
-
-        $routeOptions = $this->buildOptions(
-            $resourceKey,
-            'routeOptions'
-        );
-        $routeModel = new BaseRouteModel(
-            $routeService,
-            $routeOptions
         );
 
         $methodMissingStatus = $this->buildValue('methodMissingStatus', 404);
@@ -301,7 +184,6 @@ class ConfigResourceModelBuilder
             $path,
             $preServiceModel,
             $responseFormatModel,
-            $routeModel,
             $methodMissingStatus
         );
 

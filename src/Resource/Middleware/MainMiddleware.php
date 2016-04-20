@@ -5,10 +5,15 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Builder\ResourceModelBuilder;
+use Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder;
 use Reliv\RcmApiLib\Resource\Controller\ResourceController;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Model\ControllerModel;
+use Reliv\RcmApiLib\Resource\Model\MethodModel;
+use Reliv\RcmApiLib\Resource\Model\PreServiceModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
-use Reliv\RcmApiLib\Resource\Options\Options;
+use Reliv\RcmApiLib\Resource\Model\RouteModel;
+use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Reliv\RcmApiLib\Resource\Route\Route;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stratigility\MiddlewarePipe;
@@ -24,35 +29,37 @@ use Zend\Stratigility\MiddlewarePipe;
 class MainMiddleware implements Middleware
 {
     /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var ServiceLocatorInterface
-     */
-    protected $serviceManager;
-
-    /**
      * @var ResourceModelBuilder
      */
     protected $resourceModelBuilder;
 
     /**
+     * @var RouteModelBuilder
+     */
+    protected $routeModelBuilder;
+
+    /**
      * MainMiddleware constructor.
      *
-     * @param array                   $config
-     * @param ServiceLocatorInterface $serviceManager
-     * @param ResourceModelBuilder    $resourceModelBuilder
+     * @param RouteModelBuilder    $routeModelBuilder
+     * @param ResourceModelBuilder $resourceModelBuilder
      */
     public function __construct(
-        $config,
-        ServiceLocatorInterface $serviceManager,
+        RouteModelBuilder $routeModelBuilder,
         ResourceModelBuilder $resourceModelBuilder
     ) {
-        $this->config = $config['Reliv\\RcmApiLib'];
-        $this->serviceManager = $serviceManager;
         $this->resourceModelBuilder = $resourceModelBuilder;
+        $this->routeModelBuilder = $routeModelBuilder;
+    }
+
+    /**
+     * getRouteModel
+     *
+     * @return RouteModel
+     */
+    public function getRouteModel()
+    {
+        return $this->routeModelBuilder->build();
     }
 
     /**
@@ -67,7 +74,6 @@ class MainMiddleware implements Middleware
         return $this->resourceModelBuilder->build($resourceKey);
     }
 
-
     /**
      * __invoke
      *
@@ -80,38 +86,50 @@ class MainMiddleware implements Middleware
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        $route = $this->getRoute();
-        $routeOptions = $this->getRouteOptions();
+        $routeModel = $this->getRouteModel();
+        $routeOptions = $routeModel->getOptions();
+        $routeOptions->set('httpVerb', $request->getMethod());
+
+        /** @var Request $request */
+        $request = $request->withAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE, $routeModel);
+
+        $route = $routeModel->getService();
 
         $match = $route->match($request, $routeOptions);
 
         if (!$match) {
-            return $out();
+            return $out($request, $response);
         }
 
-        $params = $request->getAttribute(Route::REQUEST_ATTRIBUTE_ROUTE_PARAMS);
+        $resourceKey = $routeModel->getRouteParam('resourceController');
 
         // @todo $params null check
-        if ($params === null) {
-            throw new RouteException('No route params found');
+        if (empty($resourceKey)) {
+            throw new RouteException("'resourceController' param not found");
         }
 
-        $resourceModel = $this->getResourceModel($params['resourceController']);
+        /** @var ResourceModel $resourceModel */
+        $resourceModel = $this->getResourceModel($resourceKey);
+        
+        var_dump($resourceModel);die;
 
-        $resourceModel->
+        /** @var Request $request */
+        $request = $request->withAttribute(ResourceModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE, $resourceModel);
 
         $uri = $request->getUri();
         $originalPath = $uri->getPath();
 
-        $uri->withPath($params['resourceMethod']);
+        $uri->withPath($routeModel->getRouteParam('resourceMethod'));
 
+        /** @var MethodModel $methodModel */
         $methodModel = null;
 
-        $availableMethods = $resourceModel->getMethods();
+        $availableMethods = $resourceModel->getMethodModels();
 
         /** @var MethodModel $availableMethod */
         foreach ($availableMethods as $availableMethod) {
-            $match = $route->match($request, $availableMethod->getPath());
+            
+            $match = $route->match($request);
             if ($match) {
                 $methodModel = $availableMethod;
                 break;
@@ -121,55 +139,54 @@ class MainMiddleware implements Middleware
         $uri->withPath($originalPath);
 
         if (empty($methodModel)) {
-            $response->withStatus($resourceModel->getMissingMethodStatus());
+            $response->withStatus($resourceModel->getMethodMissingStatus());
 
             return $response;
         }
+        
+        /** @var ControllerModel $controllerModel */
+        $controllerModel = $resourceModel->getControllerModel();
 
-        $controllerServiceName = $resourceModel->getControllerService();
+        $controllerService = $controllerModel->getService();
+        $controllerOptions = $controllerModel->getOptions();
 
         $middlewarePipe = new MiddlewarePipe();
 
-        $request->withAttribute(
-            ResourceController::REQUEST_ATTRIBUTE_CONTROLLER_OPTIONS, 
-            $resourceModel->getControllerOptions()
-        );
-
-        $request->withAttribute(
-            ResourceModel::REQUEST_ATTRIBUTE_RESOURCE_MODEL,
-            $resourceModel
-        );
-
-        $request->withAttribute(
-            MethodModel::REQUEST_ATTRIBUTE_METHOD_MODEL,
+        /** @var Request $request */
+        $request = $request->withAttribute(
+            MethodModel::REQUEST_ATTRIBUTE_MODEL_METHOD,
             $methodModel
         );
 
-        $resourcePreServices = $resourceModel->getPreServices();
+        /** @var PreServiceModel $resourcePreServiceModel */
+        $resourcePreServiceModel = $resourceModel->getPreServiceModel();
+        $resourcePreServiceServices = $resourcePreServiceModel->getServices();
 
         // resource controller pre
-        foreach ($resourcePreServices as $serviceName) {
-
-            $service = $this->serviceManager->get($serviceName);
-
+        foreach ($resourcePreServiceServices as $serviceAlias => $service) {
+            $resourcePreServiceOptions = $resourcePreServiceModel->getOptions($serviceAlias);
+            $middlewareOptions = new OptionsMiddleware($resourcePreServiceOptions);
+            $middlewarePipe->pipe('/', $middlewareOptions);
             $middlewarePipe->pipe('/', $service);
         }
 
-        $resourceMethodPreServices = $methodModel->getPreServices();
-        
+        /** @var PreServiceModel $resourceMethodPreServiceModel */
+        $methodPreServiceModel = $methodModel->getPreServiceModel();
+        $methodPreServiceServices = $methodPreServiceModel->getServices();
+
         // resource method pre
-        foreach ($resourceMethodPreServices as $serviceName => $options) {
-
-            $service = $this->serviceManager->get($serviceName);
-
+        foreach ($methodPreServiceServices as $serviceAlias => $service) {
+            $methodPreServiceOptions = $methodPreServiceModel->getOptions($serviceAlias);
+            $middlewareOptions = new OptionsMiddleware($methodPreServiceOptions);
+            $middlewarePipe->pipe('/', $middlewareOptions);
             $middlewarePipe->pipe('/', $service);
         }
-
-        $resourceController = $this->serviceManager->get($controllerServiceName);
 
         // run method(Request $request, Response $response);
         $method = $methodModel->getName();
-        $middlewarePipe->pipe('/', $resourceController->$method);
+        $middlewareOptions = new OptionsMiddleware($controllerOptions);
+        $middlewarePipe->pipe('/', $middlewareOptions);
+        $middlewarePipe->pipe('/', $controllerService->$method);
 
         return $middlewarePipe($request, $response, $out);
     }

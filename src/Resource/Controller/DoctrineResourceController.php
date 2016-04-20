@@ -42,7 +42,7 @@ class DoctrineResourceController extends AbstractResourceController
      */
     protected function getEntityName(Request $request)
     {
-        return $this->getControllerOption($request, 'entity', null);
+        return $this->getOption($request, 'entity', null);
     }
 
     /**

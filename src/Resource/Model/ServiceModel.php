@@ -21,6 +21,13 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 interface ServiceModel
 {
     /**
+     * getAlias
+     *
+     * @return string
+     */
+    public function getAlias();
+    
+    /**
      * getService
      *
      * @return object  Middleware compatible

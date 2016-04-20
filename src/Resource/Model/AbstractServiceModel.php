@@ -22,6 +22,11 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 abstract class AbstractServiceModel
 {
     /**
+     * @var string
+     */
+    protected $alias;
+
+    /**
      * @var Middleware compatible
      */
     protected $service;
@@ -34,15 +39,28 @@ abstract class AbstractServiceModel
     /**
      * AbstractServiceModel constructor.
      *
-     * @param object  $service Middleware compatible
+     * @param string        $alias
+     * @param object        $service
      * @param Options $serviceOptions
      */
     public function __construct(
+        $alias,
         $service,
         Options $serviceOptions
     ) {
+        $this->alias = $alias;
         $this->service = $service;
         $this->serviceOptions = $serviceOptions;
+    }
+
+    /**
+     * getAlias
+     *
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
     }
 
     /**

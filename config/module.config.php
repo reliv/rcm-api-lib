@@ -102,7 +102,7 @@ return [
                 'methodMissingStatus' => 404,
                 /* Pre Controller Middleware  */
                 'preServiceNames' => [
-                    // '{serivceAlias}' => '{serviceName}',
+                    // '{serviceAlias}' => '{serviceName}',
                 ],
                 'preServiceOptions' => [
                     // '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],
@@ -110,12 +110,14 @@ return [
                 /* DEFAULT: Response Format */
                 'responseFormatServiceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat',
                 'responseFormatOptions' => [
-                    'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [
+                    'JsonResponseFormat' => [
+                        'serviceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
                         'validContentTypes' => [
                             'application/json'
                         ],
                     ],
-                    'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
+                    'XmlResponseFormat' => [
+                        'serviceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat',
                         'validContentTypes' => [
                             'application/xml'
                         ],
@@ -127,7 +129,7 @@ return [
              *
              */
             'resources' => [
-                '/example-path' => [
+                'example-path' => [
                     /* Methods White-list */
                     'methodsAllowed' => [
                         'findById',
@@ -146,7 +148,7 @@ return [
                     /* */
                     'methodMissingStatus' => 404,
                     /* Path */
-                    'path' => '/example-path',
+                    'path' => 'example-path',
                     /* Pre Controller Middleware */
                     'preServiceNames' => [
                         'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl',
@@ -180,7 +182,7 @@ return [
             /* DEFAULT: Route */
             'routeServiceName' => 'Reliv\RcmApiLib\Resource\Route\RegexRoute',
             'routeOptions' => [
-                'path' => '/api/resource/(?<resourceController>[a-z]+)/(?<resourceMethod>[^.]+)',
+                'path' => '/api/resource/(?<resourceController>[^/]+)/(?<resourceMethod>[^.]*)',
                 'routeParams' => [],
             ],
         ],
@@ -205,10 +207,18 @@ return [
         ],
         'config_factories' => [
             /* Resource Builders */
-            'Reliv\RcmApiLib\Resource\Builder\ConfigResourceModelBuilder' => [
+            'Reliv\RcmApiLib\Resource\Builder\ResourceModelBuilder' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Builder\ZfConfigResourceModelBuilder',
                 'arguments' => [
-                    'Reliv\RcmApiLib\Resource\Options\DefaultResourceControllerOptions',
-                    'Reliv\RcmApiLib\Resource\Options\ResourceControllersOptions',
+                    'Config',
+                    'ServiceManager',
+                ],
+            ],
+            'Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Builder\ZfConfigRouteModelBuilder',
+                'arguments' => [
+                    'Config',
+                    'ServiceManager',
                 ],
             ],
             /* Resource Controller */
@@ -220,38 +230,18 @@ return [
 
             /* Resource Middleware */
             'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware',
                 'arguments' => [
-                    'Config',
-                    'ServiceManager',
-                    'Reliv\RcmApiLib\Resource\Builder\ConfigResourceModelBuilder',
-                    'Reliv\RcmApiLib\Resource\Route\RegexRoute'
-                ],
-            ],
-
-            /* Resource Options */
-            'Reliv\RcmApiLib\Resource\Options\DefaultOptions' => [
-                'arguments' => [
-                    'Config',
-                ],
-            ],
-            'Reliv\RcmApiLib\Resource\Options\ResourcesOptions' => [
-                'arguments' => [
-                    'Config',
+                    'Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder',
+                    'Reliv\RcmApiLib\Resource\Builder\ResourceModelBuilder',
                 ],
             ],
 
             /* Resource ResponseFormat */
-            'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat' => [
-                'class' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat\'',
-                'calls' => [
-                    'JsonResponseFormat' => [
-                        'add',
-                        ['Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat'],
-                    ],
-                    'XmlResponseFormat' => [
-                        'add',
-                        ['Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat'],
-                    ],
+            'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat' => [
+                'class' => 'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat\'',
+                'arguments' => [
+                    'ServiceManager',
                 ],
             ],
             'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat' => [

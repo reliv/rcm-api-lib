@@ -12,8 +12,4 @@ namespace Reliv\RcmApiLib\Resource\Controller;
  */
 interface ResourceController
 {
-    /**
-     * REQUEST_ATTRIBUTE_CONTROLLER_OPTIONS
-     */
-    const REQUEST_ATTRIBUTE_CONTROLLER_OPTIONS = 'api-lib-resource-controller-options';
 }

@@ -3,6 +3,7 @@ namespace Reliv\RcmApiLib\Resource\Route;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
@@ -19,15 +20,18 @@ class RegexRoute extends AbstractRoute
      * match
      *
      * @param Request $request
-     * @param Options   $options
      *
      * @return bool
      * @throws RouteException
      */
     public function match(Request $request, Options $options)
     {
-        $path = $options->get($options);
-        
+        /** @var RouteModel $routeModel */
+        $routeModel = $request->getAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE);
+
+        $path = $options->get('path');
+        $httpVerb = $options->get('httpVerb');
+
         if(empty($path)) {
             throw new RouteException('Path option required');
         }
@@ -39,19 +43,17 @@ class RegexRoute extends AbstractRoute
         // $uri = '/api/resource/hi/there/oh/yeah';
         $uri = $request->getUri()->getPath();
         $routeMatched = (bool)preg_match($regex, $uri, $captures);
+        $verbMatched = ($request->getMethod() === $httpVerb);
         
-        if(!$routeMatched){
+        if(!$routeMatched || !$verbMatched){
             return false;
         }
-        
-        $params = [];
+
         foreach ($captures as $key => $val) {
             if (!is_numeric($key)) {
-                $params[$key] = $val;
+                $routeModel->setRouteParam($key, $val);
             }
         }
-
-        $request->withAttribute(Route::REQUEST_ATTRIBUTE_ROUTE_PARAMS, $params);
 
         return true;
     }

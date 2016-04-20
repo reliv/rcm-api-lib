@@ -17,11 +17,6 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 interface ResponseFormat
 {
     /**
-     * REQUEST_ATTRIBUTE
-     */
-    const REQUEST_ATTRIBUTE = 'api-lib-resource-response-data-model';
-
-    /**
      * build
      * - Set the format to the Response
      *

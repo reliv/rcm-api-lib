@@ -2,24 +2,22 @@
 
 namespace Reliv\RcmApiLib\Resource\Builder;
 
-use Reliv\RcmApiLib\Resource\Model\ResourceModel;
+use Reliv\RcmApiLib\Resource\Model\RouteModel;
 
 /**
- * interface ResourceModelBuilder
+ * interface RouteModelBuilder
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface ResourceModelBuilder
+interface RouteModelBuilder
 {
     /**
      * build
      *
-     * @param string $resourceKey
-     *
-     * @return ResourceModel
+     * @return RouteModel
      */
-    public function build($resourceKey);
+    public function build();
 }

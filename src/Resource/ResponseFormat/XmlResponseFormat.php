@@ -47,13 +47,14 @@ class XmlResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return Response
      */
-    public function build(Request $request, Response $response, Options $options, $dataModel = null)
+    public function build(Request $request, Response $response, $dataModel = null)
     {
+        $options = $this->getOptions($request);
+
         $body = $response->getBody();
 
         $xmlData = new \SimpleXMLElement('<?xml version="1.0"?><data></data>');
@@ -73,9 +74,8 @@ class XmlResponseFormat extends AbstractResponseFormat
         }
 
         $body->write($content);
-        $response->withBody($body);
 
-        return $response;
+        return $response->withBody($body)->withHeader('Content-Type', 'application/xml');
     }
 
     /**
@@ -84,13 +84,13 @@ class XmlResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param mixed     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, Options $options, $dataModel = null)
+    public function isValid(Request $request, Response $response, $dataModel = null)
     {
+        $options = $this->getOptions($request);
         $contentType = $request->getHeader('Content-Type');
 
         $validContentTypes = $options->get('validContentTypes', []);

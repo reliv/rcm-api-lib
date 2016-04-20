@@ -22,10 +22,12 @@ class RcmUserAcl implements Middleware
      * @param Response      $response
      * @param callable|null $out
      *
-     * @return void
+     * @return mixed
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
         $options = $request->getAttribute(OptionsMiddleware::REQUEST_ATTRIBUTE_OPTIONS);
+
+        return $out($request, $response);
     }
 }

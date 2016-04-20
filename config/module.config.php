@@ -53,7 +53,7 @@ return [
                         'description' => "Find resource by ID",
                         'httpVerb' => 'GET',
                         'name' => 'findById',
-                        'path' => ":id",
+                        'path' => "(?<id>[^/]+)",
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
@@ -151,10 +151,10 @@ return [
                     'path' => 'example-path',
                     /* Pre Controller Middleware */
                     'preServiceNames' => [
-                        'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl',
-                        'ZfInputFilterClass' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass',
-                        'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService',
-                        'ZfInputFilterConfig' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig',
+                        //'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl',
+                        //'ZfInputFilterClass' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass',
+                        //'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService',
+                        //'ZfInputFilterConfig' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig',
                     ],
                     'preServiceOptions' => [
                         'RcmUserAcl' => [
@@ -214,6 +214,13 @@ return [
                     'ServiceManager',
                 ],
             ],
+            'Reliv\RcmApiLib\Resource\Builder\ResponseFormatModelBuilder' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Builder\ZfConfigResponseFormatModelBuilder',
+                'arguments' => [
+                    'Config',
+                    'ServiceManager',
+                ],
+            ],
             'Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder' => [
                 'class' => 'Reliv\RcmApiLib\Resource\Builder\ZfConfigRouteModelBuilder',
                 'arguments' => [
@@ -234,7 +241,11 @@ return [
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder',
                     'Reliv\RcmApiLib\Resource\Builder\ResourceModelBuilder',
+                    'Reliv\RcmApiLib\Resource\Builder\ResponseFormatModelBuilder',
                 ],
+            ],
+            'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl' => [
+                
             ],
 
             /* Resource ResponseFormat */

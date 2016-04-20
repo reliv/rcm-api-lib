@@ -4,8 +4,10 @@ namespace Reliv\RcmApiLib\Resource\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Http\BasicApiResponse;
 use Reliv\RcmApiLib\Resource\Middleware\OptionsMiddleware;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
+use Reliv\RcmApiLib\Resource\Model\ResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Options\Options;
 use Reliv\RcmApiLib\Resource\ResponseFormat\ResponseFormat;
@@ -69,32 +71,45 @@ abstract class AbstractResourceController implements ResourceController
 
         return $routeModel->getRouteParam($key, $default);
     }
+
     /**
-     * buildResponse
+     * getResponseFormat
+     *
+     * @return ResponseFormatModel
+     */
+    protected function getResponseFormatModel(Request $request)
+    {
+        return $request->getAttribute(ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT);
+    }
+
+    /**
+     * getResponseFormat
+     *
+     * @return ResponseFormat
+     */
+    protected function getResponseFormat(Request $request)
+    {
+        /** @var ResponseFormatModel $responseFormatModel */
+        $responseFormatModel = $this->getResponseFormatModel($request);
+        return $responseFormatModel->getService();
+    }
+
+    /**
+     * format
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
-     * @param mixed     $dataModel
+     * @param null     $dataModel
      *
      * @return Response
      */
-    protected function buildResponse(
+    protected function formatResponse(
         Request $request,
         Response $response,
-        Options $options,
         $dataModel = null
     ) {
-        /** @var ResourceModel $resourceModel */
-        $resourceModel = $request->getAttribute(ResourceModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE);
-
-        $responseFormatModel = $resourceModel->getResponseFormatModel();
-
-        /** @var ResponseFormat $responseFormat */
-        $responseFormat = $responseFormatModel->getService();
-        $responseOptions = $responseFormatModel->getOptions();
-
-        return $responseFormat->build($request, $response, $responseOptions, $dataModel);
+        $responseFormat = $this->getResponseFormat($request);
+        return $responseFormat->build($request, $response, $dataModel);
     }
 
     /**
@@ -102,7 +117,6 @@ abstract class AbstractResourceController implements ResourceController
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param mixed     $dataModel
      *
      * @return Response
@@ -110,19 +124,16 @@ abstract class AbstractResourceController implements ResourceController
     protected function buildApiResponse(
         Request $request,
         Response $response,
-        Options $options,
-        $dataModel = null
+        $dataModel = null,
+        $messages = []
     ) {
-        /** @var ResourceModel $resourceModel */
-        $resourceModel = $request->getAttribute(ResourceModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE);
-
-        $responseFormatModel = $resourceModel->getResponseFormatModel();
-
-        /** @var ResponseFormat $responseFormat */
-        $responseFormat = $responseFormatModel->getService();
-        $responseOptions = $responseFormatModel->getOptions();
-        
-        return $responseFormat->build($request, $response, $responseOptions, $dataModel);
+        // hydrate messages
+        // build new BasicApiResponse
+        $apiResponse = new BasicApiResponse(
+            $dataModel,
+            $messages
+        );
+        return $this->getResponseFormat($request)->build($request, $response, $dataModel);
     }
 
 }

@@ -17,5 +17,8 @@ namespace Reliv\RcmApiLib\Resource\Model;
  */
 interface ResponseFormatModel extends ServiceModel
 {
-
+    /**
+     * Request Attribute Id
+     */
+    const REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT = 'api-lib-resource-model-resource-format';
 }

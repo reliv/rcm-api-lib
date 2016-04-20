@@ -22,12 +22,11 @@ interface ResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return Response
      */
-    public function build(Request $request, Response $response, Options $options, $dataModel = null);
+    public function build(Request $request, Response $response, $dataModel = null);
 
     /**
      * isValid
@@ -35,10 +34,9 @@ interface ResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param mixed     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, Options $options, $dataModel = null);
+    public function isValid(Request $request, Response $response, $dataModel = null);
 }

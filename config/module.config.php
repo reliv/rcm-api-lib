@@ -110,7 +110,7 @@ return [
                     // '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],
                 ],
                 /* DEFAULT: Response Format */
-                'responseFormatServiceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\CompositeResponseFormat',
+                'responseFormatServiceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat',
                 'responseFormatOptions' => [
                     'JsonResponseFormat' => [
                         'serviceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',

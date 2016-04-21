@@ -130,7 +130,7 @@ class DoctrineResourceController extends AbstractResourceController
      */
     public function exists(Request $request, Response $response)
     {
-        if (!is_object($this->getEntityByRequestId($request))) {
+        if (is_object($this->getEntityByRequestId($request))) {
             return $this->formatResponse($request, $response, true);
         }
 
@@ -190,7 +190,7 @@ class DoctrineResourceController extends AbstractResourceController
 
     /**
      * Returns the count of the entities given.
-     * @TODO take ?filter=something into account if it is in the request
+     * @TODO take ?where=something into account if it is in the request
      *
      * @param Request $request
      * @param Response $response
@@ -200,15 +200,14 @@ class DoctrineResourceController extends AbstractResourceController
     {
         $entityName = $this->getEntityName($request);
         $count = $this->entityManager
-            ->createQuery('SELECT COUNT(e) FROM :entityName e')
-            ->setParameter('entityName', $entityName)
+            ->createQuery('SELECT COUNT(e) FROM ' . $entityName . ' e')
             ->getSingleScalarResult();
 
         if (!class_exists($entityName)) {
             return $response->withStatus(404);
         }
 
-        return $this->formatResponse($request, $response, $count);
+        return $this->formatResponse($request, $response, (int)$count);
     }
 
     /**
@@ -249,7 +248,7 @@ class DoctrineResourceController extends AbstractResourceController
         $idName = $meta->getSingleIdentifierFieldName();
         if (empty($idName)) {
             throw new DoctrineEntityException(
-                'Could not get SingleIdentifierFieldName for entity '. $entityName
+                'Could not get SingleIdentifierFieldName for entity ' . $entityName
             );
         }
         $setter = 'set' . ucfirst($idName);

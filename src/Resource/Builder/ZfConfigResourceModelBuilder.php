@@ -146,7 +146,6 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
         $methodModels = $this->buildMethodModels($resourceKey);
         $path = $this->getResourceValue($resourceKey, 'path');
 
-        // 
         $preServiceModel = $this->buildPreServiceModel(
             $this->buildValue($resourceKey, 'preServiceNames', []),
             $this->buildValue($resourceKey, 'preServiceOptions', [])

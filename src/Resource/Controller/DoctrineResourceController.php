@@ -6,12 +6,8 @@ use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiPopulatableInterface;
-use Reliv\RcmApiLib\Resource\Exception\EntityDoesNotHaveSingleIdentifierField;
-use Reliv\RcmApiLib\Resource\Exception\EntityDoesNotImplementApiPopulatableInterface;
-use Reliv\RcmApiLib\Resource\Exception\EntityMissingIdSetter;
-use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsed;
+use Reliv\RcmApiLib\Resource\Exception\DoctrineEntityException;
 use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsedException;
-use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * Class DoctrineResourceController
@@ -85,9 +81,6 @@ class DoctrineResourceController extends AbstractResourceController
      * @param Request $request
      * @param Response $response
      * @return Response
-     * @throws EntityDoesNotHaveSingleIdentifierField
-     * @throws EntityDoesNotImplementApiPopulatableInterface
-     * @throws EntityMissingIdSetter
      */
     public function create(Request $request, Response $response)
     {
@@ -109,9 +102,6 @@ class DoctrineResourceController extends AbstractResourceController
      * @param Request $request
      * @param Response $response
      * @return Response
-     * @throws EntityDoesNotHaveSingleIdentifierField
-     * @throws EntityDoesNotImplementApiPopulatableInterface
-     * @throws EntityMissingIdSetter
      */
     public function upsert(Request $request, Response $response)
     {
@@ -228,7 +218,6 @@ class DoctrineResourceController extends AbstractResourceController
      * @param Request $request
      * @param Response $response
      * @return Response
-     * @throws EntityDoesNotImplementApiPopulatableInterface
      */
     public function updateProperties(Request $request, Response $response)
     {
@@ -248,10 +237,9 @@ class DoctrineResourceController extends AbstractResourceController
      * Asks doctrine for the entity's ID field name and calls the
      * appropriate setter to set the given entity's ID.
      *
-     * @param Object $entity
-     * @param string $id
-     * @throws EntityDoesNotHaveSingleIdentifierField
-     * @throws EntityMissingIdSetter
+     * @param $entity
+     * @param $id
+     * @throws DoctrineEntityException
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
     protected function setEntityId($entity, $id)
@@ -260,11 +248,13 @@ class DoctrineResourceController extends AbstractResourceController
         $meta = $this->entityManager->getClassMetadata($entityName);
         $idName = $meta->getSingleIdentifierFieldName();
         if (empty($idName)) {
-            throw new EntityDoesNotHaveSingleIdentifierField($entityName);
+            throw new DoctrineEntityException(
+                'Could not get SingleIdentifierFieldName for entity '. $entityName
+            );
         }
         $setter = 'set' . ucfirst($idName);
         if (!method_exists($entity, $setter)) {
-            throw new EntityMissingIdSetter(
+            throw new DoctrineEntityException(
                 'The entity ' . $entityName . ' is missing function ' . $setter . '()'
             );
         }
@@ -279,13 +269,14 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param $entity
      * @param Request $request
-     * @throws EntityDoesNotImplementApiPopulatableInterface
-     * @throws RequestBodyWasNotParsedException
+     * @throws DoctrineEntityException
      */
     protected function populateEntity($entity, Request $request)
     {
         if (!$entity instanceof ApiPopulatableInterface) {
-            throw new EntityDoesNotImplementApiPopulatableInterface();
+            throw new DoctrineEntityException(
+                'Entity ' . get_class($entity) . ' not instance of ApiPopulatableInterface'
+            );
         }
 
         $body = $request->getAttribute('body', new RequestBodyWasNotParsedException());

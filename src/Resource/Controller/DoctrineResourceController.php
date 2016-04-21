@@ -275,6 +275,7 @@ class DoctrineResourceController extends AbstractResourceController
      * Populates the given entity from the given request's body.
      * If an earlier middleware parses the body into the "body"
      * request attribute, that attribute will be used rather than
+     * the un-parsed actual body of the request.
      *
      * @param $entity
      * @param Request $request

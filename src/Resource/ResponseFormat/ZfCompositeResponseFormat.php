@@ -103,8 +103,7 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
      *
      * @return bool
      */
-    public
-    function isValid(
+    public function isValid(
         Request $request,
         Response $response,
         $dataModel = null

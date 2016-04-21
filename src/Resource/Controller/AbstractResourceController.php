@@ -41,8 +41,8 @@ abstract class AbstractResourceController implements ResourceController
      * getControllerOption
      *
      * @param Request $request
-     * @param string $key
-     * @param null $default
+     * @param string  $key
+     * @param null    $default
      *
      * @return Options
      */
@@ -58,8 +58,8 @@ abstract class AbstractResourceController implements ResourceController
      * getUrlParam
      *
      * @param Request $request
-     * @param string $key
-     * @param null $default
+     * @param string  $key
+     * @param null    $default
      *
      * @return null
      */
@@ -97,9 +97,9 @@ abstract class AbstractResourceController implements ResourceController
     /**
      * formatResponse
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
-     * @param mixed $dataModel
+     * @param mixed    $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
@@ -127,9 +127,9 @@ abstract class AbstractResourceController implements ResourceController
     /**
      * buildApiResponse
      *
-     * @param Request $request
+     * @param Request  $request
      * @param Response $response
-     * @param mixed $dataModel
+     * @param mixed    $dataModel
      *
      * @return Response
      */

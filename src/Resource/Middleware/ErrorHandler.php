@@ -38,5 +38,7 @@ class ErrorHandler implements ErrorMiddlewareInterface
 
             return $response->withBody($body)->withHeader('Content-Type', 'application/json');
         }
+
+        return $out($request, $response);
     }
 }

@@ -153,8 +153,8 @@ return [
                     'preServiceNames' => [
                         //'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl',
                         //'ZfInputFilterClass' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass',
-                        //'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService',
                         //'ZfInputFilterConfig' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig',
+                        //'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService',
                     ],
                     'preServiceOptions' => [
                         'RcmUserAcl' => [
@@ -247,7 +247,15 @@ return [
             'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl' => [
                 
             ],
+            'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass' => [
 
+            ],
+            'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterConfig' => [
+
+            ],
+            'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterService' => [
+
+            ],
             /* Resource ResponseFormat */
             'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat' => [
                 'class' => 'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat\'',

@@ -5,13 +5,12 @@ namespace Reliv\RcmApiLib\Resource\Controller;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Http\BasicApiResponse;
+use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
 use Reliv\RcmApiLib\Resource\Middleware\OptionsMiddleware;
-use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Model\ResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Options\Options;
 use Reliv\RcmApiLib\Resource\ResponseFormat\ResponseFormat;
-use Reliv\RcmApiLib\Resource\Route\Route;
 
 /**
  * Class AbstractResourceController
@@ -91,17 +90,19 @@ abstract class AbstractResourceController implements ResourceController
     {
         /** @var ResponseFormatModel $responseFormatModel */
         $responseFormatModel = $this->getResponseFormatModel($request);
+
         return $responseFormatModel->getService();
     }
 
     /**
-     * format
+     * formatResponse
      *
      * @param Request  $request
      * @param Response $response
-     * @param null     $dataModel
+     * @param mixed    $dataModel
      *
      * @return Response
+     * @throws ResponseFormatException
      */
     protected function formatResponse(
         Request $request,
@@ -109,6 +110,13 @@ abstract class AbstractResourceController implements ResourceController
         $dataModel = null
     ) {
         $responseFormat = $this->getResponseFormat($request);
+
+        if (!$responseFormat->isValid($request, $response, $dataModel)) {
+            //throw new ResponseFormatException('Response format is not valid for request');
+            $response = $response->withStatus(500, 'Response format is not valid for request');
+            return $response;
+        }
+
         return $responseFormat->build($request, $response, $dataModel);
     }
 
@@ -117,7 +125,7 @@ abstract class AbstractResourceController implements ResourceController
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed     $dataModel
+     * @param mixed    $dataModel
      *
      * @return Response
      */
@@ -133,7 +141,8 @@ abstract class AbstractResourceController implements ResourceController
             $dataModel,
             $messages
         );
-        return $this->getResponseFormat($request)->build($request, $response, $dataModel);
+
+        return $this->getResponseFormat($request)->build($request, $response, $apiResponse);
     }
 
 }

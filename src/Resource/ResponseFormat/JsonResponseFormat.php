@@ -42,6 +42,7 @@ class JsonResponseFormat extends AbstractResponseFormat
             throw new ResponseFormatException('json_encode failed to encode');
         }
         $body->write($content);
+
         return $response->withBody($body)->withHeader('Content-Type', 'application/json');
     }
 
@@ -51,15 +52,13 @@ class JsonResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param mixed     $dataModel
+     * @param mixed    $dataModel
      *
      * @return bool
      */
     public function isValid(Request $request, Response $response, $dataModel = null)
     {
         $options = $this->getOptions($request);
-
-        $contentType = $request->getHeader('Content-Type');
 
         $validContentTypes = $options->get('validContentTypes', []);
 
@@ -68,6 +67,14 @@ class JsonResponseFormat extends AbstractResponseFormat
             return true;
         }
 
-        return in_array($contentType, $validContentTypes);
+        $contentTypes = $request->getHeader('Content-Type');
+
+        foreach ($contentTypes as $contentType) {
+            if (in_array($contentType, $validContentTypes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

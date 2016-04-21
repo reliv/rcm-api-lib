@@ -76,14 +76,12 @@ class DoctrineResourceController extends AbstractResourceController
 
     public function findById(Request $request, Response $response)
     {
-//var_dump('controller:findById'); die;
-
         $id = $this->getRouteParam($request, 'id');
         
         $result = $this->getRepository($request)->find($id);
-var_dump($result); die;
+
         $response = $this->formatResponse($request, $response, $result);
-var_dump($response->getBody()->getContents()); die;
+
         return $response;
     }
 

@@ -7,7 +7,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Builder\ResourceModelBuilder;
 use Reliv\RcmApiLib\Resource\Builder\ResponseFormatModelBuilder;
 use Reliv\RcmApiLib\Resource\Builder\RouteModelBuilder;
-use Reliv\RcmApiLib\Resource\Controller\ResourceController;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
 use Reliv\RcmApiLib\Resource\Model\ControllerModel;
 use Reliv\RcmApiLib\Resource\Model\MethodModel;
@@ -16,7 +15,6 @@ use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Model\ResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
-use Reliv\RcmApiLib\Resource\Route\Route;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Stratigility\MiddlewarePipe;
 
@@ -54,6 +52,11 @@ class MainMiddleware implements Middleware
      * @var ResponseFormatModelBuilder
      */
     protected $responseFormatModelBuilder;
+
+    /**
+     * @var bool
+     */
+    protected $verbose = true;
 
     /**
      * MainMiddleware constructor.
@@ -107,6 +110,28 @@ class MainMiddleware implements Middleware
     }
 
     /**
+     * getErrorResponse
+     *
+     * @param \Exception $exception
+     * @param Response   $response
+     *
+     * @return Response|static
+     */
+    public function getErrorResponse(\Exception $exception, Response $response)
+    {
+        $message = "An error occurred: " . $exception->getMessage();
+        if ($this->verbose) {
+            $message .= "\n" . json_encode($exception->getTrace());
+        }
+        $response = $response->withStatus(
+            500,
+            $message
+        );
+
+        return $response;
+    }
+
+    /**
      * __invoke
      *
      * @param Request       $request
@@ -139,7 +164,10 @@ class MainMiddleware implements Middleware
 
             // $resourceKey required
             if (empty($resourceKey)) {
-                throw new RouteException("'resourceController' param not found");
+                // throw new RouteException("'resourceController' param not found");
+                $response = $response->withStatus(500, "'resourceController' param not found");
+
+                return $response;
             }
 
             /** @var ResourceModel $resourceModel */
@@ -193,22 +221,17 @@ class MainMiddleware implements Middleware
                 $methodModel->getName()
             );
 
- //var_dump($request->getAttributes()); die;
-
             /** @var Request $request */
             $request = $request->withAttribute(
                 MethodModel::REQUEST_ATTRIBUTE_MODEL_METHOD,
                 $methodModel
             );
 
-
             $middlewarePipe = new MiddlewarePipe();
 
             /** @var PreServiceModel $resourcePreServiceModel */
             $resourcePreServiceModel = $resourceModel->getPreServiceModel();
             $resourcePreServiceServices = $resourcePreServiceModel->getServices();
-
-// var_dump($resourcePreServiceServices); die;
 
             // resource controller pre
             foreach ($resourcePreServiceServices as $serviceAlias => $service) {
@@ -221,7 +244,7 @@ class MainMiddleware implements Middleware
             /** @var PreServiceModel $resourceMethodPreServiceModel */
             $methodPreServiceModel = $methodModel->getPreServiceModel();
             $methodPreServiceServices = $methodPreServiceModel->getServices();
-//var_dump($methodPreServiceServices); die;
+
             // resource method pre
             foreach ($methodPreServiceServices as $serviceAlias => $service) {
                 $methodPreServiceOptions = $methodPreServiceModel->getOptions($serviceAlias);
@@ -235,25 +258,19 @@ class MainMiddleware implements Middleware
             $controllerService = $controllerModel->getService();
             $controllerOptions = $controllerModel->getOptions();
 
-//var_dump($controllerOptions); die;
-
             // run method(Request $request, Response $response);
             $method = $methodModel->getName();
-//var_dump($method); die;
+
             $request = $request->withAttribute(OptionsMiddleware::REQUEST_ATTRIBUTE_OPTIONS, $controllerOptions);
-$cresp = $controllerService->$method($request, $response);
-var_dump($cresp->getBody()->getContents()); die;
             $middlewareOptions = new OptionsMiddleware($controllerOptions);
             $middlewarePipe->pipe('/', $middlewareOptions);
             $middlewarePipe->pipe('/', [$controllerService, $method]);
             /** @var Response $response */
             $response = $middlewarePipe($request, $response, $out);
-//var_dump($response->getBody()->getContents()); die;
-            
-        } catch (\Exception $e) {
-            var_dump($e);
-            exit(1);
+
+            return $response;
+        } catch (\Exception $exception) {
+            return $this->getErrorResponse($exception, $response);
         }
-        return $response;
     }
 }

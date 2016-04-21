@@ -44,10 +44,11 @@ class OptionsMiddleware implements Middleware
      * @param Response      $response
      * @param callable|null $out
      *
-     * @return void
+     * @return mixed
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        $request->withAttribute(self::REQUEST_ATTRIBUTE_OPTIONS, $this->options);
+        $request = $request->withAttribute(self::REQUEST_ATTRIBUTE_OPTIONS, $this->options);
+        return $out($request, $response);
     }
 }

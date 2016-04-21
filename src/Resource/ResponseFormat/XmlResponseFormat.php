@@ -5,7 +5,6 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiSerializableInterface;
-use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * interface XmlResponseFormat
@@ -91,7 +90,6 @@ class XmlResponseFormat extends AbstractResponseFormat
     public function isValid(Request $request, Response $response, $dataModel = null)
     {
         $options = $this->getOptions($request);
-        $contentType = $request->getHeader('Content-Type');
 
         $validContentTypes = $options->get('validContentTypes', []);
 
@@ -100,6 +98,14 @@ class XmlResponseFormat extends AbstractResponseFormat
             return true;
         }
 
-        return in_array($contentType, $validContentTypes);
+        $contentTypes = $request->getHeader('Content-Type');
+
+        foreach ($contentTypes as $contentType) {
+            if (in_array($contentType, $validContentTypes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

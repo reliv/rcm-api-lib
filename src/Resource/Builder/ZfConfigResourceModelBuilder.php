@@ -6,7 +6,6 @@ use Reliv\RcmApiLib\Resource\Model\BaseControllerModel;
 use Reliv\RcmApiLib\Resource\Model\BaseMethodModel;
 use Reliv\RcmApiLib\Resource\Model\BasePreServiceModel;
 use Reliv\RcmApiLib\Resource\Model\BaseResourceModel;
-use Reliv\RcmApiLib\Resource\Model\BaseResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Zend\ServiceManager\ServiceLocatorInterface;

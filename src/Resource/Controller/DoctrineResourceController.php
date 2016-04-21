@@ -9,6 +9,8 @@ use Reliv\RcmApiLib\Model\ApiPopulatableInterface;
 use Reliv\RcmApiLib\Resource\Exception\EntityDoesNotHaveSingleIdentifierField;
 use Reliv\RcmApiLib\Resource\Exception\EntityDoesNotImplementApiPopulatableInterface;
 use Reliv\RcmApiLib\Resource\Exception\EntityMissingIdSetter;
+use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsed;
+use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsedException;
 use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
@@ -271,17 +273,25 @@ class DoctrineResourceController extends AbstractResourceController
 
     /**
      * Populates the given entity from the given request's body.
-     * @todo support more than just JSON in request body.
+     * If an earlier middleware parses the body into the "body"
+     * request attribute, that attribute will be used rather than
      *
      * @param $entity
-     * @param $request
+     * @param Request $request
      * @throws EntityDoesNotImplementApiPopulatableInterface
+     * @throws RequestBodyWasNotParsedException
      */
     protected function populateEntity($entity, Request $request)
     {
         if (!$entity instanceof ApiPopulatableInterface) {
             throw new EntityDoesNotImplementApiPopulatableInterface();
         }
-        $entity->populate(json_decode($request->getBody()->getContents()));
+
+        $body = $request->getAttribute('body', new RequestBodyWasNotParsedException());
+        if ($body instanceof RequestBodyWasNotParsedException) {
+            $body = $request->getBody()->getContents();
+        }
+
+        $entity->populate($body);
     }
 }

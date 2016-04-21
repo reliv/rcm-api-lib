@@ -63,7 +63,7 @@ class JsonResponseFormat extends AbstractResponseFormat
         $validContentTypes = $options->get('validContentTypes', []);
 
         // allow this for all check
-        if (in_array('*', $validContentTypes)) {
+        if (in_array('*/*', $validContentTypes)) {
             return true;
         }
 

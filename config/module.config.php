@@ -268,7 +268,7 @@ return [
             ],
             /* Resource ResponseFormat */
             'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat' => [
-                'class' => 'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat\'',
+                'class' => 'Reliv\RcmApiLib\Resource\ResponseFormat\ZfCompositeResponseFormat',
                 'arguments' => [
                     'ServiceManager',
                 ],

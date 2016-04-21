@@ -171,12 +171,12 @@ return [
                             'config' => [],
                         ],
                     ],
-                    'responseFormatServiceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
-                    'responseFormatOptions' => [
-                        'validContentTypes' => [
-                            'application/json'
-                        ],
-                    ],
+//                    'responseFormatServiceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
+//                    'responseFormatOptions' => [
+//                        'validContentTypes' => [
+//                            'application/json'
+//                        ],
+//                    ],
                 ],
             ],
             /* DEFAULT: Route */

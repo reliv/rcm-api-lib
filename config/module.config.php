@@ -102,6 +102,8 @@ return [
                 'methodMissingStatus' => 404,
                 /* Pre Controller Middleware  */
                 'preServiceNames' => [
+                    'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'=>
+                        'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'
                     // '{serviceAlias}' => '{serviceName}',
                 ],
                 'preServiceOptions' => [
@@ -197,6 +199,8 @@ return [
                 'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
             'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator' =>
                 'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
+            'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'=>
+                'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'
         ],
         'factories' => [
             /* MAIN HYDRATOR */

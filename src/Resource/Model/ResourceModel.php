@@ -81,11 +81,4 @@ interface ResourceModel
      * @return PreServiceModel
      */
     public function getPreServiceModel();
-
-    /**
-     * getResponseFormatModel
-     *
-     * @return ResponseFormatModel
-     */
-    public function getResponseFormatModel();
 }

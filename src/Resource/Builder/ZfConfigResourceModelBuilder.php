@@ -6,7 +6,6 @@ use Reliv\RcmApiLib\Resource\Model\BaseControllerModel;
 use Reliv\RcmApiLib\Resource\Model\BaseMethodModel;
 use Reliv\RcmApiLib\Resource\Model\BasePreServiceModel;
 use Reliv\RcmApiLib\Resource\Model\BaseResourceModel;
-use Reliv\RcmApiLib\Resource\Model\BaseResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -74,7 +73,7 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
     protected function buildMethodModels($resourceKey)
     {
         $defaultMethods = $this->getDefaultValue('methods', []);
-        $resourceMethods = $this->getResourceValue('methods', []);
+        $resourceMethods = $this->getResourceValue($resourceKey, 'methods', []);
 
         $methods = array_merge($defaultMethods, $resourceMethods);
 
@@ -142,40 +141,18 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
             $controllerOptions
         );
 
-
-
+        // Methods
         $methodsAllowed = $this->getMethodsAllowed($resourceKey);
         $methodModels = $this->buildMethodModels($resourceKey);
         $path = $this->getResourceValue($resourceKey, 'path');
 
-        // responseFormatModel
+        // 
         $preServiceModel = $this->buildPreServiceModel(
             $this->buildValue($resourceKey, 'preServiceNames', []),
             $this->buildValue($resourceKey, 'preServiceOptions', [])
         );
 
-        // responseFormatModel
-        $responseFormatServiceAlias = $this->buildValue(
-            $resourceKey,
-            'responseFormatServiceName',
-            'UNDEFINED'
-        );
-
-        $responseFormatService = $this->serviceManager->get(
-            $responseFormatServiceAlias
-        );
-
-        $responseFormatOptions = $this->buildOptions(
-            $resourceKey,
-            'responseFormatOptions'
-        );
-        $responseFormatModel = new BaseResponseFormatModel(
-            $responseFormatServiceAlias,
-            $responseFormatService,
-            $responseFormatOptions
-        );
-
-        $methodMissingStatus = $this->buildValue('methodMissingStatus', 404);
+        $methodMissingStatus = $this->buildValue($resourceKey, 'methodMissingStatus', 404);
 
         $resourceModel = new BaseResourceModel(
             $controllerModel,
@@ -183,7 +160,6 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
             $methodModels,
             $path,
             $preServiceModel,
-            $responseFormatModel,
             $methodMissingStatus
         );
 

@@ -17,5 +17,4 @@ namespace Reliv\RcmApiLib\Resource\Model;
  */
 class BaseResponseFormatModel extends AbstractServiceModel implements ResponseFormatModel
 {
-
 }

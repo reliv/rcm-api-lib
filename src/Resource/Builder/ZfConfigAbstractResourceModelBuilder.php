@@ -14,7 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class ZfConfigAbstractResourceModelBuilder implements ResourceModelBuilder
+abstract class ZfConfigAbstractResourceModelBuilder
 {
     /**
      * @var ServiceLocatorInterface

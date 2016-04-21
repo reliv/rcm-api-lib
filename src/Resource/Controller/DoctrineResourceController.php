@@ -78,7 +78,11 @@ class DoctrineResourceController extends AbstractResourceController
     {
         $id = $this->getRouteParam($request, 'id');
         
-        $this->getRepository($request)->find($id);
+        $result = $this->getRepository($request)->find($id);
+
+        $response = $this->formatResponse($request, $response, $result);
+
+        return $response;
     }
 
     public function find(Request $request, Response $response)

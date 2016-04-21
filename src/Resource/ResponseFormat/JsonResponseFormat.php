@@ -28,13 +28,12 @@ class JsonResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
      */
-    public function build(Request $request, Response $response, Options $options, $dataModel = null)
+    public function build(Request $request, Response $response, $dataModel = null)
     {
         $body = $response->getBody();
         $content = json_encode($dataModel);
@@ -43,9 +42,8 @@ class JsonResponseFormat extends AbstractResponseFormat
             throw new ResponseFormatException('json_encode failed to encode');
         }
         $body->write($content);
-        $response->withBody($body);
 
-        return $response;
+        return $response->withBody($body)->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -54,14 +52,13 @@ class JsonResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
-     * @param mixed     $dataModel
+     * @param mixed    $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, Options $options, $dataModel = null)
+    public function isValid(Request $request, Response $response, $dataModel = null)
     {
-        $contentType = $request->getHeader('Content-Type');
+        $options = $this->getOptions($request);
 
         $validContentTypes = $options->get('validContentTypes', []);
 
@@ -70,6 +67,14 @@ class JsonResponseFormat extends AbstractResponseFormat
             return true;
         }
 
-        return in_array($contentType, $validContentTypes);
+        $contentTypes = $request->getHeader('Content-Type');
+
+        foreach ($contentTypes as $contentType) {
+            if (in_array($contentType, $validContentTypes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

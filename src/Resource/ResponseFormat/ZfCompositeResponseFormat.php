@@ -5,6 +5,9 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
+use Reliv\RcmApiLib\Resource\Model\BaseResponseFormatModel;
+use Reliv\RcmApiLib\Resource\Model\ResponseFormatModel;
+use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Reliv\RcmApiLib\Resource\Options\Options;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -22,10 +25,6 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
      * @var ServiceLocatorInterface
      */
     protected $serviceManager;
-    /**
-     * @var array
-     */
-    protected $responseFormats = [];
 
     /**
      * ZfCompositeResponseFormat constructor.
@@ -39,65 +38,28 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
     }
 
     /**
-     * add
-     *
-     * @param ResponseFormat $responseFormat
-     *
-     * @return void
-     */
-    public function add($serviceAlias, ResponseFormat $responseFormat)
-    {
-        $this->responseFormats[$serviceAlias] = $responseFormat;
-    }
-
-    /**
-     * addByName
-     *
-     * @param string $serviceAlias
-     * @param string $serviceName
-     *
-     * @return void
-     */
-    public function addByName($serviceAlias, $serviceName)
-    {
-        if ($this->hasService($serviceAlias)) {
-            return;
-        }
-
-        /** @var ResponseFormat $responseFormat */
-        $responseFormat = $this->serviceManager->get($serviceName);
-
-        $this->add($serviceAlias, $responseFormat);
-    }
-
-    /**
-     * hasService
-     *
-     * @param string $serviceAlias
-     *
-     * @return mixed
-     */
-    public function hasService($serviceAlias)
-    {
-        return array_key_exists($serviceAlias, $this->responseFormats);
-    }
-
-    /**
      * getResponseFormats
      *
      * @param Options $options
      *
      * @return array
      */
-    public function getResponseFormats(Options $options)
+    public function getResponseFormatModels(Options $options)
     {
         $config = $options->_toArray();
 
+        $responseFormats = [];
+
         foreach ($config as $serviceAlias => $formatOptions) {
-            $this->addByName($serviceAlias, $formatOptions['serviceName']);
+            $subOptions = new GenericOptions($formatOptions);
+            $responseFormats[$serviceAlias] = new BaseResponseFormatModel(
+                $serviceAlias,
+                $this->serviceManager->get($formatOptions['serviceName']),
+                $subOptions
+            );
         }
 
-        return $this->responseFormats;
+        return $responseFormats;
     }
 
     /**
@@ -106,22 +68,26 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
      */
-    public function build(Request $request, Response $response, Options $options, $dataModel = null)
+    public function build(Request $request, Response $response, $dataModel = null)
     {
-        $responseFormats = $this->getResponseFormats($options);
+        $options = $this->getOptions($request);
+        $responseFormatModels = $this->getResponseFormatModels($options);
 
-        /** @var ResponseFormat $responseFormat */
-        foreach ($responseFormats as $serviceAlias => $responseFormat) {
-            if ($responseFormat->isValid($request, $response, $options, $dataModel)) {
-                $subOptions = $options->getOptions($serviceAlias);
+        /** @var ResponseFormatModel $responseFormatModel */
+        foreach ($responseFormatModels as $serviceAlias => $responseFormatModel) {
+            $responseFormat = $responseFormatModel->getService();
+            $subRequest = $request->withAttribute(
+                ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT,
+                $responseFormatModel
+            );
 
-                return $responseFormat->build($request, $response, $dataModel, $subOptions);
+            if ($responseFormat->isValid($request, $response, $dataModel)) {
+                return $responseFormat->build($subRequest, $response, $dataModel);
             }
         }
 
@@ -133,19 +99,30 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, Options $options, $dataModel = null)
-    {
-        $responseFormats = $this->getResponseFormats($options);
-        
-        /** @var ResponseFormat $responseFormat */
-        foreach ($responseFormats as $serviceAlias => $responseFormat) {
-            $subOptions = $options->getOptions($serviceAlias);
-            if ($responseFormat->isValid($request, $response, $subOptions, $dataModel)) {
+    public
+    function isValid(
+        Request $request,
+        Response $response,
+        $dataModel = null
+    ) {
+        $options = $this->getOptions($request);
+        $responseFormatModels = $this->getResponseFormatModels($options);
+
+        /** @var ResponseFormatModel $responseFormatModel */
+        foreach ($responseFormatModels as $serviceAlias => $responseFormatModel) {
+
+            $responseFormat = $responseFormatModel->getService();
+
+            $subRequest = $request->withAttribute(
+                ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT,
+                $responseFormatModel
+            );
+
+            if ($responseFormat->isValid($subRequest, $response, $dataModel)) {
                 return true;
             }
         }

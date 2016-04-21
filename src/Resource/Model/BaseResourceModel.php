@@ -18,6 +18,10 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 class BaseResourceModel implements ResourceModel
 {
     /**
+     * @var string
+     */
+    protected $resourceKey;
+    /**
      * @var ControllerModel
      */
     protected $controllerModel;
@@ -60,14 +64,12 @@ class BaseResourceModel implements ResourceModel
     /**
      * BaseResourceModel constructor.
      *
-     * @param ControllerModel     $controllerModel
-     * @param array               $methodsAllowed
-     * @param array               $methodModels
-     * @param string              $path
-     * @param PreServiceModel     $preServiceModel
-     * @param ResponseFormatModel $responseFormatModel
-     * @param Options             $routeAttributes
-     * @param int                 $methodMissingStatus
+     * @param ControllerModel $controllerModel
+     * @param array           $methodsAllowed
+     * @param array           $methodModels
+     * @param string          $path
+     * @param PreServiceModel $preServiceModel
+     * @param int             $methodMissingStatus
      */
     public function __construct(
         ControllerModel $controllerModel,
@@ -75,7 +77,6 @@ class BaseResourceModel implements ResourceModel
         array $methodModels,
         $path,
         PreServiceModel $preServiceModel,
-        ResponseFormatModel $responseFormatModel,
         $methodMissingStatus = 404
     ) {
         $this->controllerModel = $controllerModel;
@@ -85,9 +86,7 @@ class BaseResourceModel implements ResourceModel
         }
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
-        $this->responseFormatModel = $responseFormatModel;
         $this->methodMissingStatus = $methodMissingStatus;
-
     }
 
     /**
@@ -189,15 +188,5 @@ class BaseResourceModel implements ResourceModel
     public function getPreServiceModel()
     {
         return $this->preServiceModel;
-    }
-
-    /**
-     * getResponseFormatModel
-     *
-     * @return ResponseFormatModel
-     */
-    public function getResponseFormatModel()
-    {
-        return $this->responseFormatModel;
     }
 }

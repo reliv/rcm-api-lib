@@ -5,7 +5,6 @@ namespace Reliv\RcmApiLib\Resource\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiSerializableInterface;
-use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
  * interface XmlResponseFormat
@@ -47,13 +46,14 @@ class XmlResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param null     $dataModel
      *
      * @return Response
      */
-    public function build(Request $request, Response $response, Options $options, $dataModel = null)
+    public function build(Request $request, Response $response, $dataModel = null)
     {
+        $options = $this->getOptions($request);
+
         $body = $response->getBody();
 
         $xmlData = new \SimpleXMLElement('<?xml version="1.0"?><data></data>');
@@ -73,9 +73,8 @@ class XmlResponseFormat extends AbstractResponseFormat
         }
 
         $body->write($content);
-        $response->withBody($body);
 
-        return $response;
+        return $response->withBody($body)->withHeader('Content-Type', 'application/xml');
     }
 
     /**
@@ -84,14 +83,13 @@ class XmlResponseFormat extends AbstractResponseFormat
      *
      * @param Request  $request
      * @param Response $response
-     * @param Options  $options
      * @param mixed     $dataModel
      *
      * @return bool
      */
-    public function isValid(Request $request, Response $response, Options $options, $dataModel = null)
+    public function isValid(Request $request, Response $response, $dataModel = null)
     {
-        $contentType = $request->getHeader('Content-Type');
+        $options = $this->getOptions($request);
 
         $validContentTypes = $options->get('validContentTypes', []);
 
@@ -100,6 +98,14 @@ class XmlResponseFormat extends AbstractResponseFormat
             return true;
         }
 
-        return in_array($contentType, $validContentTypes);
+        $contentTypes = $request->getHeader('Content-Type');
+
+        foreach ($contentTypes as $contentType) {
+            if (in_array($contentType, $validContentTypes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

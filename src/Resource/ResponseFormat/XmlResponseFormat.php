@@ -98,7 +98,7 @@ class XmlResponseFormat extends AbstractResponseFormat
             return true;
         }
 
-        $contentTypes = $request->getHeader('Content-Type');
+        $contentTypes = $request->getHeader('Accept');
 
         foreach ($contentTypes as $contentType) {
             if (in_array($contentType, $validContentTypes)) {

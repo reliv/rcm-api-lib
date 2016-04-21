@@ -113,7 +113,7 @@ abstract class AbstractResourceController implements ResourceController
 
         if (!$responseFormat->isValid($request, $response, $dataModel)) {
             //throw new ResponseFormatException('Response format is not valid for request');
-            $response = $response->withStatus(500, 'Response format is not valid for request');
+            $response = $response->withStatus(500, 'Response format is not valid for request: ' . get_class($responseFormat));
             return $response;
         }
 

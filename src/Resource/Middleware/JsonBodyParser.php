@@ -26,7 +26,7 @@ class JsonBodyParser implements MiddlewareInterface
         if (in_array('application/json', $contentTypeParts)) {
             $body = json_decode($request->getBody()->getContents());
 
-            if (json_last_error()) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
                 $body = $response->getBody();
                 $body->write(
                     'MIME type was "application/json" but invalid JSON in request body.'

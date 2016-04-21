@@ -54,15 +54,10 @@ class MainMiddleware implements Middleware
     protected $responseFormatModelBuilder;
 
     /**
-     * @var bool
-     */
-    protected $verbose = true;
-
-    /**
      * MainMiddleware constructor.
      *
-     * @param RouteModelBuilder          $routeModelBuilder
-     * @param ResourceModelBuilder       $resourceModelBuilder
+     * @param RouteModelBuilder $routeModelBuilder
+     * @param ResourceModelBuilder $resourceModelBuilder
      * @param ResponseFormatModelBuilder $responseFormatModelBuilder
      */
     public function __construct(
@@ -110,32 +105,10 @@ class MainMiddleware implements Middleware
     }
 
     /**
-     * getErrorResponse
-     *
-     * @param \Exception $exception
-     * @param Response   $response
-     *
-     * @return Response|static
-     */
-    public function getErrorResponse(\Exception $exception, Response $response)
-    {
-        $message = "An error occurred: " . $exception->getMessage();
-        if ($this->verbose) {
-            $message .= "\n" . json_encode($exception->getTrace());
-        }
-        $response = $response->withStatus(
-            500,
-            $message
-        );
-
-        return $response;
-    }
-
-    /**
      * __invoke
      *
-     * @param Request       $request
-     * @param Response      $response
+     * @param Request $request
+     * @param Response $response
      * @param callable|null $out
      *
      * @return mixed
@@ -143,134 +116,132 @@ class MainMiddleware implements Middleware
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        try {
-            $routeModel = $this->getRouteModel();
-            $routeOptions = $routeModel->getOptions();
-            $routeOptions->set('httpVerb', $request->getMethod());
+        $routeModel = $this->getRouteModel();
+        $routeOptions = $routeModel->getOptions();
+        $routeOptions->set('httpVerb', $request->getMethod());
 
-            /** @var Request $request */
-            $request = $request->withAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE, $routeModel);
+        /** @var Request $request */
+        $request = $request->withAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE, $routeModel);
 
-            $route = $routeModel->getService();
+        $route = $routeModel->getService();
 
-            $match = $route->match($request, $routeOptions);
+        $match = $route->match($request, $routeOptions);
 
-            if (!$match) {
-                return $out($request, $response);
-            }
+        if (!$match) {
+            return $out($request, $response);
+        }
 
-            $resourceKey = $routeModel->getRouteParam('resourceController');
-            $request = $request->withAttribute(self::REQUEST_ATTRIBUTE_RESOURCE_KEY, $resourceKey);
+        $resourceKey = $routeModel->getRouteParam('resourceController');
+        $request = $request->withAttribute(self::REQUEST_ATTRIBUTE_RESOURCE_KEY, $resourceKey);
 
-            // $resourceKey required
-            if (empty($resourceKey)) {
-                // throw new RouteException("'resourceController' param not found");
-                $response = $response->withStatus(500, "'resourceController' param not found");
-
-                return $response;
-            }
-
-            /** @var ResourceModel $resourceModel */
-            $resourceModel = $this->getResourceModel($resourceKey);
-            $request = $request->withAttribute(
-                ResourceModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE,
-                $resourceModel
-            );
-
-            /** @var ResponseFormatModel $responseFormatModel */
-            $responseFormatModel = $this->getResponseFormatModel($resourceKey);
-            $request = $request->withAttribute(
-                ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT,
-                $responseFormatModel
-            );
-
-            $originalUri = $request->getUri();
-            $uri = $originalUri->withPath(
-                $routeModel->getRouteParam('resourceMethod')
-            );
-            $tempRequest = $request->withUri($uri);
-
-            /** @var MethodModel $methodModel */
-            $methodModel = null;
-
-            $availableMethods = $resourceModel->getMethodModels();
-
-            /** @var MethodModel $availableMethod */
-            foreach ($availableMethods as $availableMethod) {
-
-                $routeOptions = new GenericOptions(
-                    [
-                        'path' => $availableMethod->getPath(),
-                        'httpVerb' => $availableMethod->getHttpVerb(),
-                    ]
-                );
-
-                $match = $route->match($tempRequest, $routeOptions);
-                if ($match) {
-                    $methodModel = $availableMethod;
-                    break;
-                }
-            }
-
-            if (empty($methodModel)) {
-                return $response->withStatus($resourceModel->getMethodMissingStatus());
-            }
-
-            $request = $request->withAttribute(
-                self::REQUEST_ATTRIBUTE_RESOURCE_METHOD_KEY,
-                $methodModel->getName()
-            );
-
-            /** @var Request $request */
-            $request = $request->withAttribute(
-                MethodModel::REQUEST_ATTRIBUTE_MODEL_METHOD,
-                $methodModel
-            );
-
-            $middlewarePipe = new MiddlewarePipe();
-
-            /** @var PreServiceModel $resourcePreServiceModel */
-            $resourcePreServiceModel = $resourceModel->getPreServiceModel();
-            $resourcePreServiceServices = $resourcePreServiceModel->getServices();
-
-            // resource controller pre
-            foreach ($resourcePreServiceServices as $serviceAlias => $service) {
-                $resourcePreServiceOptions = $resourcePreServiceModel->getOptions($serviceAlias);
-                $middlewareOptions = new OptionsMiddleware($resourcePreServiceOptions);
-                $middlewarePipe->pipe('/', $middlewareOptions);
-                $middlewarePipe->pipe('/', $service);
-            }
-
-            /** @var PreServiceModel $resourceMethodPreServiceModel */
-            $methodPreServiceModel = $methodModel->getPreServiceModel();
-            $methodPreServiceServices = $methodPreServiceModel->getServices();
-
-            // resource method pre
-            foreach ($methodPreServiceServices as $serviceAlias => $service) {
-                $methodPreServiceOptions = $methodPreServiceModel->getOptions($serviceAlias);
-                $middlewareOptions = new OptionsMiddleware($methodPreServiceOptions);
-                $middlewarePipe->pipe('/', $middlewareOptions);
-                $middlewarePipe->pipe('/', $service);
-            }
-
-            /** @var ControllerModel $controllerModel */
-            $controllerModel = $resourceModel->getControllerModel();
-            $controllerService = $controllerModel->getService();
-            $controllerOptions = $controllerModel->getOptions();
-
-            // run method(Request $request, Response $response);
-            $method = $methodModel->getName();
-
-            $request = $request->withAttribute(OptionsMiddleware::REQUEST_ATTRIBUTE_OPTIONS, $controllerOptions);
-            $middlewareOptions = new OptionsMiddleware($controllerOptions);
-            $middlewarePipe->pipe('/', $middlewareOptions);
-            $middlewarePipe->pipe('/', [$controllerService, $method]);
-            /** @var Response $response */
-            $response = $middlewarePipe($request, $response, $out);
+        // $resourceKey required
+        if (empty($resourceKey)) {
+            // throw new RouteException("'resourceController' param not found");
+            $response = $response->withStatus(500, "'resourceController' param not found");
 
             return $response;
-        } catch (\Exception $exception) {
-            return $this->getErrorResponse($exception, $response);
         }
+
+        /** @var ResourceModel $resourceModel */
+        $resourceModel = $this->getResourceModel($resourceKey);
+        $request = $request->withAttribute(
+            ResourceModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE,
+            $resourceModel
+        );
+
+        /** @var ResponseFormatModel $responseFormatModel */
+        $responseFormatModel = $this->getResponseFormatModel($resourceKey);
+        $request = $request->withAttribute(
+            ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT,
+            $responseFormatModel
+        );
+
+        $originalUri = $request->getUri();
+        $uri = $originalUri->withPath(
+            $routeModel->getRouteParam('resourceMethod')
+        );
+        $tempRequest = $request->withUri($uri);
+
+        /** @var MethodModel $methodModel */
+        $methodModel = null;
+
+        $availableMethods = $resourceModel->getMethodModels();
+
+        /** @var MethodModel $availableMethod */
+        foreach ($availableMethods as $availableMethod) {
+            $routeOptions = new GenericOptions(
+                [
+                    'path' => $availableMethod->getPath(),
+                    'httpVerb' => $availableMethod->getHttpVerb(),
+                ]
+            );
+
+            $match = $route->match($tempRequest, $routeOptions);
+            if ($match) {
+                $methodModel = $availableMethod;
+                break;
+            }
+        }
+
+        if (empty($methodModel)) {
+            return $response->withStatus($resourceModel->getMethodMissingStatus());
+        }
+
+        $request = $request->withAttribute(
+            self::REQUEST_ATTRIBUTE_RESOURCE_METHOD_KEY,
+            $methodModel->getName()
+        );
+
+        /** @var Request $request */
+        $request = $request->withAttribute(
+            MethodModel::REQUEST_ATTRIBUTE_MODEL_METHOD,
+            $methodModel
+        );
+
+        $middlewarePipe = new MiddlewarePipe();
+
+        /** @var PreServiceModel $resourcePreServiceModel */
+        $resourcePreServiceModel = $resourceModel->getPreServiceModel();
+        $resourcePreServiceServices = $resourcePreServiceModel->getServices();
+
+        // resource controller pre
+        foreach ($resourcePreServiceServices as $serviceAlias => $service) {
+            $resourcePreServiceOptions = $resourcePreServiceModel->getOptions($serviceAlias);
+            $middlewareOptions = new OptionsMiddleware($resourcePreServiceOptions);
+            $middlewarePipe->pipe($middlewareOptions);
+            $middlewarePipe->pipe($service);
+        }
+
+        /** @var PreServiceModel $resourceMethodPreServiceModel */
+        $methodPreServiceModel = $methodModel->getPreServiceModel();
+        $methodPreServiceServices = $methodPreServiceModel->getServices();
+
+        // resource method pre
+        foreach ($methodPreServiceServices as $serviceAlias => $service) {
+            $methodPreServiceOptions = $methodPreServiceModel->getOptions($serviceAlias);
+            $middlewareOptions = new OptionsMiddleware($methodPreServiceOptions);
+            $middlewarePipe->pipe($middlewareOptions);
+            $middlewarePipe->pipe($service);
+        }
+
+        /** @var ControllerModel $controllerModel */
+        $controllerModel = $resourceModel->getControllerModel();
+        $controllerService = $controllerModel->getService();
+        $controllerOptions = $controllerModel->getOptions();
+
+        // run method(Request $request, Response $response);
+        $method = $methodModel->getName();
+
+        $request = $request->withAttribute(OptionsMiddleware::REQUEST_ATTRIBUTE_OPTIONS, $controllerOptions);
+        $middlewareOptions = new OptionsMiddleware($controllerOptions);
+        $middlewarePipe->pipe($middlewareOptions);
+        $middlewarePipe->pipe([$controllerService, $method]);
+
+        $middlewarePipe->pipe(new ErrorHandler());
+
+        /** @var Response $response */
+        $response = $middlewarePipe($request, $response, $out);
+
+        return $response;
     }
 }

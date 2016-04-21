@@ -26,74 +26,74 @@ return [
                 'methods' => [
                     /* Default Methods */
                     'create' => [
-                        'description' => "Create new resource",
+                        'description' => 'Create new resource',
                         'httpVerb' => 'POST',
                         'name' => 'create',
-                        'path' => "",
+                        'path' => '',
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
                     'upsert' => [
-                        'description' => "Update or create a resource",
+                        'description' => 'Update or create a resource',
                         'httpVerb' => 'PUT',
                         'name' => 'upsert',
-                        'path' => "",
+                        'path' => '',
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
                     'exists' => [
-                        'description' => "Check if a resource exists",
+                        'description' => 'Check if a resource exists',
                         'httpVerb' => 'GET',
                         'name' => 'exists',
-                        'path' => ":id/exists",
-                        'preServiceNames' => [],
-                        'preServiceOptions' => [],
-                    ],
-                    'findById' => [
-                        'description' => "Find resource by ID",
-                        'httpVerb' => 'GET',
-                        'name' => 'findById',
-                        'path' => "(?<id>[^/]+)",
-                        'preServiceNames' => [],
-                        'preServiceOptions' => [],
-                    ],
-                    'find' => [
-                        'description' => "Find resources",
-                        'httpVerb' => 'GET',
-                        'name' => 'find',
-                        'path' => "",
-                        'preServiceNames' => [],
-                        'preServiceOptions' => [],
-                    ],
-                    'findOne' => [
-                        'description' => "Find resources",
-                        'httpVerb' => 'GET',
-                        'name' => 'findOne',
-                        'path' => "findOne",
-                        'preServiceNames' => [],
-                        'preServiceOptions' => [],
-                    ],
-                    'deleteById' => [
-                        'description' => "Delete resource by ID",
-                        'httpVerb' => 'DELETE',
-                        'name' => 'deleteById',
-                        'path' => ":id",
+                        'path' => '(?<id>[^/]+)/exists',
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
                     'count' => [
-                        'description' => "Count resources",
+                        'description' => 'Return number of resources',
                         'httpVerb' => 'GET',
                         'name' => 'count',
-                        'path' => "count",
+                        'path' => 'count',
+                        'preServiceNames' => [],
+                        'preServiceOptions' => [],
+                    ],
+                    'findById' => [
+                        'description' => 'Find resource by ID',
+                        'httpVerb' => 'GET',
+                        'name' => 'findById',
+                        'path' => '^(?<id>[^/^count]+)[^/]*$',
+                        'preServiceNames' => [],
+                        'preServiceOptions' => [],
+                    ],
+                    'find' => [
+                        'description' => 'Find resources',
+                        'httpVerb' => 'GET',
+                        'name' => 'find',
+                        'path' => '',
+                        'preServiceNames' => [],
+                        'preServiceOptions' => [],
+                    ],
+                    'findOne' => [
+                        'description' => 'Find resources',
+                        'httpVerb' => 'GET',
+                        'name' => 'findOne',
+                        'path' => 'findOne',
+                        'preServiceNames' => [],
+                        'preServiceOptions' => [],
+                    ],
+                    'deleteById' => [
+                        'description' => 'Delete resource by ID',
+                        'httpVerb' => 'DELETE',
+                        'name' => 'deleteById',
+                        'path' => ':id',
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
                     'updateProperties' => [
-                        'description' => "Update resource properties by ID",
+                        'description' => 'Update resource properties by ID',
                         'httpVerb' => 'PUT',
                         'name' => 'updateProperties',
-                        'path' => ":id",
+                        'path' => ':id',
                         'preServiceNames' => [],
                         'preServiceOptions' => [],
                     ],
@@ -102,7 +102,7 @@ return [
                 'methodMissingStatus' => 404,
                 /* Pre Controller Middleware  */
                 'preServiceNames' => [
-                    'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'=>
+                    'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser' =>
                         'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'
                     // '{serviceAlias}' => '{serviceName}',
                 ],
@@ -132,7 +132,6 @@ return [
                     ],
                 ],
             ],
-
             /**
              *
              */
@@ -140,8 +139,9 @@ return [
                 'example-path' => [
                     /* Methods White-list */
                     'methodsAllowed' => [
+                        'count',
                         'findById',
-                        'example',
+                        'exists'
                     ],
                     /* Resource Controller */
                     'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
@@ -205,7 +205,7 @@ return [
                 'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
             'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator' =>
                 'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
-            'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'=>
+            'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser' =>
                 'Reliv\RcmApiLib\Resource\Middleware\JsonBodyParser'
         ],
         'factories' => [
@@ -244,7 +244,6 @@ return [
                     'Doctrine\ORM\EntityManager',
                 ],
             ],
-
             /* Resource Middleware */
             'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware' => [
                 'class' => 'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware',
@@ -255,7 +254,7 @@ return [
                 ],
             ],
             'Reliv\RcmApiLib\Resource\Middleware\RcmUserAcl' => [
-                
+
             ],
             'Reliv\RcmApiLib\Resource\Middleware\ZfInputFilterClass' => [
 
@@ -277,7 +276,6 @@ return [
             ],
             'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat' => [
             ],
-
             /* Resource Route */
             'Reliv\RcmApiLib\Resource\Route\RegexRoute' => [
             ],

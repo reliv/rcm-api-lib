@@ -41,8 +41,8 @@ abstract class AbstractResourceController implements ResourceController
      * getControllerOption
      *
      * @param Request $request
-     * @param string  $key
-     * @param null    $default
+     * @param string $key
+     * @param null $default
      *
      * @return Options
      */
@@ -58,8 +58,8 @@ abstract class AbstractResourceController implements ResourceController
      * getUrlParam
      *
      * @param Request $request
-     * @param string  $key
-     * @param null    $default
+     * @param string $key
+     * @param null $default
      *
      * @return null
      */
@@ -97,9 +97,9 @@ abstract class AbstractResourceController implements ResourceController
     /**
      * formatResponse
      *
-     * @param Request  $request
+     * @param Request $request
      * @param Response $response
-     * @param mixed    $dataModel
+     * @param mixed $dataModel
      *
      * @return Response
      * @throws ResponseFormatException
@@ -113,7 +113,11 @@ abstract class AbstractResourceController implements ResourceController
 
         if (!$responseFormat->isValid($request, $response, $dataModel)) {
             //throw new ResponseFormatException('Response format is not valid for request');
-            $response = $response->withStatus(500, 'Response format is not valid for request');
+            $response = $response->withStatus(
+                500,
+                'Response format is not valid for request ' . get_class($responseFormat)
+            );
+
             return $response;
         }
 
@@ -123,9 +127,9 @@ abstract class AbstractResourceController implements ResourceController
     /**
      * buildApiResponse
      *
-     * @param Request  $request
+     * @param Request $request
      * @param Response $response
-     * @param mixed    $dataModel
+     * @param mixed $dataModel
      *
      * @return Response
      */

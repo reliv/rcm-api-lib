@@ -124,6 +124,12 @@ return [
                             'application/xml'
                         ],
                     ],
+                    'DefaultResponseFormat' => [
+                        'serviceName' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
+                        'validContentTypes' => [
+                            '*/*'
+                        ],
+                    ],
                 ],
             ],
 

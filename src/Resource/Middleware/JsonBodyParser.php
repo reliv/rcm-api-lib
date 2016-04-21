@@ -21,9 +21,7 @@ class JsonBodyParser implements MiddlewareInterface
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
     {
-        $contentTypeParts = explode(';', $request->getHeader('Content-Type'));
-
-        if (in_array('application/json', $contentTypeParts)) {
+        if (in_array('application/json', $request->getHeader('Content-Type'))) {
             $body = json_decode($request->getBody()->getContents(), true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {

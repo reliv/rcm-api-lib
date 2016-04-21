@@ -2,7 +2,7 @@
 
 namespace Reliv\RcmApiLib\Resource\Exception;
 
-class EntityMissingIdSetter extends \Exception
+class DoctrineEntityException extends \Exception
 {
 
 }

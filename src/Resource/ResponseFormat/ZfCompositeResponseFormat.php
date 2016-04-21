@@ -86,7 +86,7 @@ class ZfCompositeResponseFormat extends AbstractResponseFormat
                 $responseFormatModel
             );
 
-            if ($responseFormat->isValid($request, $response, $dataModel)) {
+            if ($responseFormat->isValid($subRequest, $response, $dataModel)) {
                 return $responseFormat->build($subRequest, $response, $dataModel);
             }
         }

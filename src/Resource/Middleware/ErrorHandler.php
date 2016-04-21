@@ -57,6 +57,6 @@ class ErrorHandler implements ErrorMiddlewareInterface
         $body = $response->getBody();
         $body->write('500 Internal Server Error');
 
-        return $response->withBody($body);
+        return $response->withStatus(500)->withBody($body);
     }
 }

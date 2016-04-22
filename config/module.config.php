@@ -190,7 +190,7 @@ return [
             /* DEFAULT: Route */
             'routeServiceName' => 'Reliv\RcmApiLib\Resource\Route\RegexRoute',
             'routeOptions' => [
-                'path' => '/api/resource/(?<resourceController>[^/]+)/(?<resourceMethod>[^.]*)',
+                'path' => '(?<resourceController>[^/]+)/(?<resourceMethod>[^.]*)',
                 'routeParams' => [],
             ],
         ],

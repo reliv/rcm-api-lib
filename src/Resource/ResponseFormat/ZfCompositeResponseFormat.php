@@ -19,7 +19,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ZfCompositeResponseFormat extends AbstractResponseFormat
+class ZfCompositeResponseFormat extends AbstractResponseFormat implements ResponseFormat
 {
     /**
      * @var ServiceLocatorInterface

@@ -15,7 +15,7 @@ use Reliv\RcmApiLib\Resource\Options\Options;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class AbstractResponseFormat implements ResponseFormat
+abstract class AbstractResponseFormat
 {
     /**
      * getOptions

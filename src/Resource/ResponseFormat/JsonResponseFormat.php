@@ -15,7 +15,7 @@ use Reliv\RcmApiLib\Resource\Options\Options;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class JsonResponseFormat extends AbstractResponseFormat
+class JsonResponseFormat extends AbstractResponseFormat implements ResponseFormat
 {
     /**
      * @var string

@@ -78,7 +78,21 @@ interface ResourceModel
     /**
      * getPreServiceModel
      *
-     * @return PreServiceModel
+     * @return ServiceModelCollection
      */
     public function getPreServiceModel();
+
+    /**
+     * getPostServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getPostServiceModel();
+
+    /**
+     * getFinalServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getFinalServiceModel();
 }

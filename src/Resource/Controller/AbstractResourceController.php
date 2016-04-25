@@ -6,9 +6,13 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Http\BasicApiResponse;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
+use Reliv\RcmApiLib\Resource\Http\BasicDataResponse;
+use Reliv\RcmApiLib\Resource\Http\DataResponse;
+use Reliv\RcmApiLib\Resource\Middleware\AbstractMiddleware;
 use Reliv\RcmApiLib\Resource\Middleware\OptionsMiddleware;
 use Reliv\RcmApiLib\Resource\Model\ResponseFormatModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
+use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Reliv\RcmApiLib\Resource\Options\Options;
 use Reliv\RcmApiLib\Resource\ResponseFormat\ResponseFormat;
 
@@ -20,40 +24,8 @@ use Reliv\RcmApiLib\Resource\ResponseFormat\ResponseFormat;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class AbstractResourceController implements ResourceController
+abstract class AbstractResourceController extends AbstractMiddleware implements ResourceController
 {
-    /**
-     * getEntityName
-     *
-     * @param Request $request
-     *
-     * @return Options
-     */
-    protected function getOptions(Request $request)
-    {
-        /** @var Options $options */
-        $options = $request->getAttribute(OptionsMiddleware::REQUEST_ATTRIBUTE_OPTIONS);
-
-        return $options;
-    }
-
-    /**
-     * getControllerOption
-     *
-     * @param Request $request
-     * @param string  $key
-     * @param null    $default
-     *
-     * @return Options
-     */
-    protected function getOption(Request $request, $key, $default = null)
-    {
-        /** @var Options $options */
-        $options = $this->getOptions($request);
-
-        return $options->get($key, $default);
-    }
-
     /**
      * getUrlParam
      *
@@ -66,87 +38,11 @@ abstract class AbstractResourceController implements ResourceController
     protected function getRouteParam(Request $request, $key, $default = null)
     {
         /** @var RouteModel $routeModel */
-        $routeModel = $request->getAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE, []);
+        $routeModel = $request->getAttribute(
+            RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE,
+            []
+        );
 
         return $routeModel->getRouteParam($key, $default);
     }
-
-    /**
-     * getResponseFormat
-     *
-     * @return ResponseFormatModel
-     */
-    protected function getResponseFormatModel(Request $request)
-    {
-        return $request->getAttribute(ResponseFormatModel::REQUEST_ATTRIBUTE_MODEL_RESOURCE_FORMAT);
-    }
-
-    /**
-     * getResponseFormat
-     *
-     * @return ResponseFormat
-     */
-    protected function getResponseFormat(Request $request)
-    {
-        /** @var ResponseFormatModel $responseFormatModel */
-        $responseFormatModel = $this->getResponseFormatModel($request);
-
-        return $responseFormatModel->getService();
-    }
-
-    /**
-     * formatResponse
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param mixed    $dataModel
-     *
-     * @return Response
-     * @throws ResponseFormatException
-     */
-    protected function formatResponse(
-        Request $request,
-        Response $response,
-        $dataModel = null
-    ) {
-        $responseFormat = $this->getResponseFormat($request);
-
-        if (!$responseFormat->isValid($request, $response, $dataModel)) {
-            //throw new ResponseFormatException('Response format is not valid for request');
-            $response = $response->withStatus(
-                500,
-                'Response format is not valid for request ' . get_class($responseFormat)
-            );
-
-            return $response;
-        }
-
-        return $responseFormat->build($request, $response, $dataModel);
-    }
-
-    /**
-     * buildApiResponse
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param mixed    $dataModel
-     *
-     * @return Response
-     */
-    protected function buildApiResponse(
-        Request $request,
-        Response $response,
-        $dataModel = null,
-        $messages = []
-    ) {
-        // hydrate messages
-        // build new BasicApiResponse
-        $apiResponse = new BasicApiResponse(
-            $dataModel,
-            $messages
-        );
-
-        return $this->getResponseFormat($request)->build($request, $response, $apiResponse);
-    }
-
 }

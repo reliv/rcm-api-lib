@@ -17,5 +17,13 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
  */
 interface Middleware extends \Zend\Stratigility\MiddlewareInterface
 {
-    
+    /**
+     * Request Attribute Id
+     */
+    const REQUEST_ATTRIBUTE_RESOURCE_KEY = 'api-lib-resource-key';
+
+    /**
+     * Request Attribute Id
+     */
+    const REQUEST_ATTRIBUTE_RESOURCE_METHOD_KEY = 'api-lib-resource-method-key';
 }

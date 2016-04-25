@@ -1,23 +1,23 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\Builder;
+namespace Reliv\RcmApiLib\Resource\Provider;
 
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 
 /**
- * interface RouteModelBuilder
+ * interface RouteModelProvider
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface RouteModelBuilder
+interface RouteModelProvider
 {
     /**
-     * build
+     * get
      *
      * @return RouteModel
      */
-    public function build();
+    public function get();
 }

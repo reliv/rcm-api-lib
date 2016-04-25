@@ -36,7 +36,8 @@ class BasicDataResponse extends Response implements DataResponse
     {
         $new = clone $this;
         $new->dataBody = $dataBody;
-        return new self($new);
+
+        return $new;
     }
 
     /**

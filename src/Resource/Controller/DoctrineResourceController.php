@@ -82,7 +82,7 @@ class DoctrineResourceController extends AbstractResourceController
      * @param Response $response
      * @return Response
      */
-    public function create(Request $request, Response $response)
+    public function create(Request $request, Response $response, callable $out)
     {
         $entityName = $this->getEntityName($request);
         $entity = new $entityName();
@@ -92,7 +92,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
 
-        return $this->withDataResponse($response, $entity);
+        return $out($request, $this->withDataResponse($response, $entity));
     }
 
     /**
@@ -101,9 +101,11 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
-     * @return Response
+     * @param callable $out
+     * @return mixed
+     * @throws DoctrineEntityException
      */
-    public function upsert(Request $request, Response $response)
+    public function upsert(Request $request, Response $response, callable $out)
     {
         $entity = $this->getEntityByRequestId($request);
 
@@ -117,7 +119,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->populateEntity($entity, $request);
         $this->entityManager->flush($entity);
 
-        return $this->updateProperties($request, $response);
+        return $out($request, $this->withDataResponse($response, $entity));
     }
 
     /**
@@ -126,15 +128,16 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
-     * @return Response
+     * @param callable $out
+     * @return \Reliv\RcmApiLib\Resource\Http\DataResponse
      */
-    public function exists(Request $request, Response $response)
+    public function exists(Request $request, Response $response, callable $out)
     {
         if (is_object($this->getEntityByRequestId($request))) {
-            return $this->withDataResponse($response, true);
+            return $out($request, $this->withDataResponse($response, true));
         }
 
-        return $this->withDataResponse($response, false)->withStatus(404);
+        return $out($request, $this->withDataResponse($response->withStatus(404), false));
 
     }
 
@@ -144,17 +147,18 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
+     * @param callable $out
      * @return Response
      */
-    public function findById(Request $request, Response $response)
+    public function findById(Request $request, Response $response, callable $out)
     {
         $entity = $this->getEntityByRequestId($request);
 
         if (!is_object($entity)) {
-            return $response->withStatus(404);
+            return $out($request, $response->withStatus(404));
         }
 
-        return $this->withDataResponse($response, $entity);
+        return $out($request, $this->withDataResponse($response, $entity));
     }
 
     public function find(Request $request, Response $response)
@@ -172,9 +176,10 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
+     * @param callable $out
      * @return Response
      */
-    public function deleteById(Request $request, Response $response)
+    public function deleteById(Request $request, Response $response, callable $out)
     {
         $entity = $this->getEntityByRequestId($request);
 
@@ -185,7 +190,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->entityManager->remove($entity);
         $this->entityManager->flush($entity);
 
-        return $this->withDataResponse($response, $entity);
+        return $out($request, $this->withDataResponse($response, $entity));
     }
 
     /**
@@ -194,9 +199,10 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
+     * @param callable $out
      * @return Response
      */
-    public function count(Request $request, Response $response)
+    public function count(Request $request, Response $response, callable $out)
     {
         $entityName = $this->getEntityName($request);
         $count = $this->entityManager
@@ -207,7 +213,7 @@ class DoctrineResourceController extends AbstractResourceController
             return $response->withStatus(404);
         }
 
-        return $this->withDataResponse($response, (int)$count);
+        return $out($request, $this->withDataResponse($response, (int)$count));
     }
 
     /**
@@ -216,9 +222,11 @@ class DoctrineResourceController extends AbstractResourceController
      *
      * @param Request $request
      * @param Response $response
+     * @param callable $out
      * @return Response
+     * @throws DoctrineEntityException
      */
-    public function updateProperties(Request $request, Response $response)
+    public function updateProperties(Request $request, Response $response, callable $out)
     {
         $entity = $this->getEntityByRequestId($request);
 
@@ -229,7 +237,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->populateEntity($entity, $request);
         $this->entityManager->flush($entity);
 
-        return $this->withDataResponse($response, $entity);
+        return $out($request, $this->withDataResponse($response, $entity));
     }
 
     /**

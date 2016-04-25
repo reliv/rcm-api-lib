@@ -27,10 +27,12 @@ class ZfConfigRouteModelProvider implements RouteModelProvider
      */
     protected $routerModel;
 
+    protected $config;
+
     /**
      * ConfigRouteModelProvider constructor.
      *
-     * @param array                   $config
+     * @param array $config
      * @param ServiceLocatorInterface $serviceManager
      */
     public function __construct(
@@ -38,11 +40,7 @@ class ZfConfigRouteModelProvider implements RouteModelProvider
         ServiceLocatorInterface $serviceManager
     ) {
         $this->serviceManager = $serviceManager;
-
-        $this->routerModel = $this->buildServiceModelCollection(
-            $config['Reliv\\RcmApiLib']['resource']['routeServiceNames'],
-            $config['Reliv\\RcmApiLib']['resource']['routeOptions']
-        );
+        $this->config = $config;
     }
 
     /**
@@ -78,6 +76,13 @@ class ZfConfigRouteModelProvider implements RouteModelProvider
      */
     public function get()
     {
+        if (empty($this->routerModel)) {
+            $this->routerModel = $this->buildServiceModelCollection(
+                $this->config['Reliv\\RcmApiLib']['resource']['routeServiceNames'],
+                $this->config['Reliv\\RcmApiLib']['resource']['routeOptions']
+            );
+        }
+
         return $this->routerModel;
     }
 }

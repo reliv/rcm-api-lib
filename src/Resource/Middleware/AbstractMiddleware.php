@@ -28,7 +28,7 @@ abstract class AbstractMiddleware
      * getResourceKey
      *
      * @param Request $request
-     * @param null    $default
+     * @param null $default
      *
      * @return mixed
      */
@@ -41,7 +41,7 @@ abstract class AbstractMiddleware
      * getMethodKey
      *
      * @param Request $request
-     * @param null    $default
+     * @param null $default
      *
      * @return mixed
      */
@@ -72,8 +72,8 @@ abstract class AbstractMiddleware
      * getControllerOption
      *
      * @param Request $request
-     * @param string  $key
-     * @param null    $default
+     * @param string $key
+     * @param null $default
      *
      * @return Options
      */
@@ -89,7 +89,7 @@ abstract class AbstractMiddleware
      * getRequestData
      *
      * @param Request $request
-     * @param mixed|null    $default
+     * @param mixed|null $default
      *
      * @return mixed
      */
@@ -101,7 +101,7 @@ abstract class AbstractMiddleware
     /**
      * getDataModel
      *
-     * @param Response   $response
+     * @param Response $response
      * @param mixed|null $default
      *
      * @return mixed|null
@@ -119,13 +119,13 @@ abstract class AbstractMiddleware
      * withDataResponse
      *
      * @param Response $response
-     * @param mixed    $dataModel
+     * @param mixed $dataModel
      *
      * @return DataResponse
      */
     protected function withDataResponse(Response $response, $dataModel)
     {
-        if(!$response instanceof DataResponse) {
+        if (!$response instanceof DataResponse) {
             $response = new BasicDataResponse($response);
         }
 

@@ -1,24 +1,25 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\Builder;
+namespace Reliv\RcmApiLib\Resource\Provider;
 
 use Reliv\RcmApiLib\Resource\Model\BaseControllerModel;
 use Reliv\RcmApiLib\Resource\Model\BaseMethodModel;
-use Reliv\RcmApiLib\Resource\Model\BasePreServiceModel;
 use Reliv\RcmApiLib\Resource\Model\BaseResourceModel;
+use Reliv\RcmApiLib\Resource\Model\BaseServiceModelCollection;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
+use Reliv\RcmApiLib\Resource\Model\ServiceModelCollection;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ZFConfigResourceModelBuilder
+ * Class ZFConfigResourceModelProvider
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder implements ResourceModelBuilder
+class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvider implements ResourceModelProvider
 {
     /**
      * @var array
@@ -38,26 +39,26 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
     }
 
     /**
-     * buildPreServiceModel
+     * buildServiceModelCollection
      *
-     * @param $preServiceNames
-     * @param $preServiceOptionsArrays
+     * @param array $serviceNames
+     * @param array $serviceOptionsArrays
      *
-     * @return BasePreServiceModel
+     * @return ServiceModelCollection
      */
-    protected function buildPreServiceModel($preServiceNames, $preServiceOptionsArrays)
+    protected function buildServiceModelCollection($serviceNames, $serviceOptionsArrays)
     {
         $preServices = [];
-        foreach ($preServiceNames as $serviceAlias => $preServiceName) {
-            $preServices[$serviceAlias] = $this->serviceManager->get($preServiceName);
+        foreach ($serviceNames as $serviceAlias => $serviceName) {
+            $preServices[$serviceAlias] = $this->serviceManager->get($serviceName);
         }
 
         $preServiceOptions = [];
-        foreach ($preServiceOptionsArrays as $serviceAlias => $preServiceOptionsArray) {
-            $preServiceOptions[$serviceAlias] = new GenericOptions($preServiceOptionsArray);
+        foreach ($serviceOptionsArrays as $serviceAlias => $serviceOptionsArray) {
+            $preServiceOptions[$serviceAlias] = new GenericOptions($serviceOptionsArray);
         }
 
-        return new BasePreServiceModel(
+        return new BaseServiceModelCollection(
             $preServices,
             $preServiceOptions
         );
@@ -85,12 +86,14 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
                 $methods[$allowedMethod]['name'] = $allowedMethod;
                 $methodOptions = new GenericOptions($methods[$allowedMethod]);
 
-                $preServiceNames = $methodOptions->get('preServiceNames', []);
-                $preServiceOptionsArrays = $methodOptions->get('preServiceOptions', []);
+                $preServiceModel = $this->buildServiceModelCollection(
+                    $methodOptions->get('preServiceNames', []),
+                    $methodOptions->get('preServiceOptions', [])
+                );
 
-                $preService = $this->buildPreServiceModel(
-                    $preServiceNames,
-                    $preServiceOptionsArrays
+                $postServiceModel = $this->buildServiceModelCollection(
+                    $methodOptions->get('postServiceNames', []),
+                    $methodOptions->get('postServiceOptions', [])
                 );
 
                 $validMethods[$allowedMethod] = new BaseMethodModel(
@@ -98,7 +101,8 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
                     $methodOptions->get('description'),
                     $methodOptions->get('httpVerb'),
                     $methodOptions->get('path'),
-                    $preService
+                    $preServiceModel,
+                    $postServiceModel
                 );
             }
         }
@@ -107,13 +111,13 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
     }
 
     /**
-     * build
+     * get
      *
      * @param string $resourceKey
      *
      * @return ResourceModel
      */
-    public function build($resourceKey)
+    public function get($resourceKey)
     {
         if (array_key_exists($resourceKey, $this->resourceModels)) {
             return $this->resourceModels[$resourceKey];
@@ -146,9 +150,19 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
         $methodModels = $this->buildMethodModels($resourceKey);
         $path = $this->getResourceValue($resourceKey, 'path');
 
-        $preServiceModel = $this->buildPreServiceModel(
+        $preServiceModel = $this->buildServiceModelCollection(
             $this->buildValue($resourceKey, 'preServiceNames', []),
             $this->buildValue($resourceKey, 'preServiceOptions', [])
+        );
+
+        $postServiceModel = $this->buildServiceModelCollection(
+            $this->buildValue($resourceKey, 'postServiceNames', []),
+            $this->buildValue($resourceKey, 'postServiceOptions', [])
+        );
+
+        $finalServiceModel = $this->buildServiceModelCollection(
+            $this->buildValue($resourceKey, 'finalServiceNames', []),
+            $this->buildValue($resourceKey, 'finalServiceOptions', [])
         );
 
         $methodMissingStatus = $this->buildValue($resourceKey, 'methodMissingStatus', 404);
@@ -159,6 +173,8 @@ class ZfConfigResourceModelBuilder extends ZfConfigAbstractResourceModelBuilder 
             $methodModels,
             $path,
             $preServiceModel,
+            $postServiceModel,
+            $finalServiceModel,
             $methodMissingStatus
         );
 

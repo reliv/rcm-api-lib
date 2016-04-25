@@ -92,7 +92,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
 
-        return $this->formatResponse($request, $response, $entity);
+        return $this->withDataResponse($response, $entity);
     }
 
     /**
@@ -131,10 +131,10 @@ class DoctrineResourceController extends AbstractResourceController
     public function exists(Request $request, Response $response)
     {
         if (is_object($this->getEntityByRequestId($request))) {
-            return $this->formatResponse($request, $response, true);
+            return $this->withDataResponse($response, true);
         }
 
-        return $this->formatResponse($request, $response, false)->withStatus(404);
+        return $this->withDataResponse($response, false)->withStatus(404);
 
     }
 
@@ -154,7 +154,7 @@ class DoctrineResourceController extends AbstractResourceController
             return $response->withStatus(404);
         }
 
-        return $this->formatResponse($request, $response, $entity);
+        return $this->withDataResponse($response, $entity);
     }
 
     public function find(Request $request, Response $response)
@@ -185,7 +185,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->entityManager->remove($entity);
         $this->entityManager->flush($entity);
 
-        return $this->formatResponse($request, $response, $entity);
+        return $this->withDataResponse($response, $entity);
     }
 
     /**
@@ -207,7 +207,7 @@ class DoctrineResourceController extends AbstractResourceController
             return $response->withStatus(404);
         }
 
-        return $this->formatResponse($request, $response, (int)$count);
+        return $this->withDataResponse($response, (int)$count);
     }
 
     /**
@@ -229,7 +229,7 @@ class DoctrineResourceController extends AbstractResourceController
         $this->populateEntity($entity, $request);
         $this->entityManager->flush($entity);
 
-        return $this->formatResponse($request, $response, $entity);
+        return $this->withDataResponse($response, $entity);
     }
 
     /**
@@ -278,7 +278,7 @@ class DoctrineResourceController extends AbstractResourceController
             );
         }
 
-        $body = $request->getAttribute('body', new RequestBodyWasNotParsedException());
+        $body = $this->getRequestData('dataBody', new RequestBodyWasNotParsedException());
         if ($body instanceof RequestBodyWasNotParsedException) {
             $body = $request->getBody()->getContents();
         }

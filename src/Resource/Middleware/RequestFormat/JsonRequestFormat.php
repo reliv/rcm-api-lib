@@ -5,9 +5,19 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Stratigility\MiddlewareInterface;
 
-class JsonBodyParser implements MiddlewareInterface
+/**
+ * Class JsonRequestFormat
+ *
+ * PHP version 5
+ *
+ * @category  Reliv
+ * @copyright 2016 Reliv International
+ * @license   License.txt New BSD License
+ * @version   Release: <package_version>
+ * @link      https://github.com/reliv
+ */
+class JsonRequestFormat implements Middleware
 {
     /**
      * If the request is of type application/json, this middleware
@@ -33,7 +43,7 @@ class JsonBodyParser implements MiddlewareInterface
                 return $response->withStatus(400)->withBody($body);
             }
 
-            $request = $request->withAttribute('body', $body);
+            $request = $request->withAttribute('dataBody', $body);
         }
 
         return $out($request, $response);

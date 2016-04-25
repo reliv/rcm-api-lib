@@ -1,20 +1,20 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\Builder;
+namespace Reliv\RcmApiLib\Resource\Provider;
 
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Reliv\RcmApiLib\Resource\Options\Options;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ZfConfigAbstractResourceModelBuilder
+ * Class ZfConfigAbstractResourceModelProvider
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class ZfConfigAbstractResourceModelBuilder
+abstract class ZfConfigAbstractResourceModelProvider
 {
     /**
      * @var ServiceLocatorInterface
@@ -32,7 +32,7 @@ abstract class ZfConfigAbstractResourceModelBuilder
     protected $resourcesOptions;
 
     /**
-     * ZfConfigResourceModelBuilder constructor.
+     * ZfConfigResourceModelProvider constructor.
      *
      * @param array                   $config
      * @param ServiceLocatorInterface $serviceManager

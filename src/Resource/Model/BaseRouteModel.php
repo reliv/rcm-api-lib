@@ -10,7 +10,7 @@ namespace Reliv\RcmApiLib\Resource\Model;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class BaseRouteModel extends AbstractServiceModel implements RouteModel
+class BaseRouteModel extends AbstractServiceModelCollection implements RouteModel
 {
     /**
      * @var array

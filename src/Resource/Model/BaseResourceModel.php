@@ -47,36 +47,38 @@ class BaseResourceModel implements ResourceModel
     protected $path;
 
     /**
-     * @var PreServiceModel
+     * @var ServiceModelCollection
      */
     protected $preServiceModel;
 
     /**
-     * @var ResponseFormatModel
+     * @var ServiceModelCollection
      */
-    protected $responseFormatModel;
+    protected $postServiceModel;
 
     /**
-     * @var Options
+     * @var ServiceModelCollection
      */
-    protected $routeAttributes;
+    protected $finalServiceModel;
 
     /**
-     * BaseResourceModel constructor.
-     *
-     * @param ControllerModel $controllerModel
-     * @param array           $methodsAllowed
-     * @param array           $methodModels
-     * @param string          $path
-     * @param PreServiceModel $preServiceModel
-     * @param int             $methodMissingStatus
+     * @param ControllerModel        $controllerModel
+     * @param array                  $methodsAllowed
+     * @param array                  $methodModels
+     * @param string                 $path
+     * @param ServiceModelCollection $preServiceModel
+     * @param ServiceModelCollection $postServiceModel
+     * @param ServiceModelCollection $finalServiceModel
+     * @param int                    $methodMissingStatus
      */
     public function __construct(
         ControllerModel $controllerModel,
         array $methodsAllowed,
         array $methodModels,
         $path,
-        PreServiceModel $preServiceModel,
+        ServiceModelCollection $preServiceModel,
+        ServiceModelCollection $postServiceModel,
+        ServiceModelCollection $finalServiceModel,
         $methodMissingStatus = 404
     ) {
         $this->controllerModel = $controllerModel;
@@ -86,6 +88,8 @@ class BaseResourceModel implements ResourceModel
         }
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
+        $this->postServiceModel = $postServiceModel;
+        $this->finalServiceModel = $finalServiceModel;
         $this->methodMissingStatus = $methodMissingStatus;
     }
 
@@ -183,10 +187,30 @@ class BaseResourceModel implements ResourceModel
     /**
      * getPreServiceModel
      *
-     * @return PreServiceModel
+     * @return ServiceModelCollection
      */
     public function getPreServiceModel()
     {
         return $this->preServiceModel;
+    }
+
+    /**
+     * getPostServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getPostServiceModel()
+    {
+        return $this->postServiceModel;
+    }
+
+    /**
+     * getFinalServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getFinalServiceModel()
+    {
+        return $this->finalServiceModel;
     }
 }

@@ -48,7 +48,14 @@ interface MethodModel
     /**
      * getPreService
      *
-     * @return PreServiceModel
+     * @return ServiceModelCollection
      */
     public function getPreServiceModel();
+
+    /**
+     * getPostServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getPostServiceModel();
 }

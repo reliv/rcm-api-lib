@@ -1,6 +1,6 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\ResponseFormat;
+namespace Reliv\RcmApiLib\Resource\Middleware\ResponseFormat;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -41,18 +41,23 @@ class XmlResponseFormat extends AbstractResponseFormat implements ResponseFormat
     }
 
     /**
-     * build
-     * - Set the format to the Response
+     * __invoke
      *
-     * @param Request  $request
-     * @param Response $response
-     * @param null     $dataModel
+     * @param Request       $request
+     * @param Response      $response
+     * @param callable|null $next
      *
-     * @return Response
+     * @return \Psr\Http\Message\MessageInterface
      */
-    public function build(Request $request, Response $response, $dataModel = null)
-    {
-        $options = $this->getOptions($request);
+    public function __invoke(
+        Request $request,
+        Response $response,
+        callable $next = null
+    ) {
+        if (!$this->isValidAcceptType($request)) {
+            return $next($request, $response);
+        }
+        $dataModel = $this->getDataModel($response);
 
         $body = $response->getBody();
 
@@ -74,38 +79,9 @@ class XmlResponseFormat extends AbstractResponseFormat implements ResponseFormat
 
         $body->write($content);
 
-        return $response->withBody($body)->withHeader('Content-Type', 'application/xml');
-    }
-
-    /**
-     * isValid
-     * - Is this ResponseFormat valid for the request
-     *
-     * @param Request  $request
-     * @param Response $response
-     * @param mixed     $dataModel
-     *
-     * @return bool
-     */
-    public function isValid(Request $request, Response $response, $dataModel = null)
-    {
-        $options = $this->getOptions($request);
-
-        $validContentTypes = $options->get('validContentTypes', []);
-
-        // allow this for all check
-        if (in_array('*/*', $validContentTypes)) {
-            return true;
-        }
-
-        $contentTypes = $request->getHeader('Accept');
-
-        foreach ($contentTypes as $contentType) {
-            if (in_array($contentType, $validContentTypes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $response->withBody($body)->withHeader(
+            'Content-Type',
+            'application/xml'
+        );
     }
 }

@@ -33,9 +33,14 @@ class BaseMethodModel implements MethodModel
     protected $path;
 
     /**
-     * @var PreServiceModel
+     * @var ServiceModelCollection
      */
     protected $preServiceModel;
+
+    /**
+     * @var ServiceModelCollection
+     */
+    protected $postServiceModel;
 
     /**
      * BaseMethodModel constructor.
@@ -44,20 +49,23 @@ class BaseMethodModel implements MethodModel
      * @param string          $description
      * @param string          $httpVerb
      * @param string          $path
-     * @param PreServiceModel $preServiceModel
+     * @param ServiceModelCollection $preServiceModel
+     * @param ServiceModelCollection $postServiceModel
      */
     public function __construct(
         $name,
         $description,
         $httpVerb,
         $path,
-        PreServiceModel $preServiceModel
+        ServiceModelCollection $preServiceModel,
+        ServiceModelCollection $postServiceModel
     ) {
         $this->name = $name;
         $this->description = $description;
         $this->httpVerb = $httpVerb;
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
+        $this->postServiceModel = $postServiceModel;
     }
 
     /**
@@ -103,10 +111,20 @@ class BaseMethodModel implements MethodModel
     /**
      * getPreService
      *
-     * @return PreServiceModel
+     * @return ServiceModelCollection
      */
     public function getPreServiceModel()
     {
         return $this->preServiceModel;
+    }
+
+    /**
+     * getPostServiceModel
+     *
+     * @return ServiceModelCollection
+     */
+    public function getPostServiceModel()
+    {
+        return $this->postServiceModel;
     }
 }

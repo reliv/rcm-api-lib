@@ -10,7 +10,7 @@ namespace Reliv\RcmApiLib\Resource\Model;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface RouteModel extends ServiceModel
+interface RouteModel extends ServiceModelCollection
 {
     /**
      * Request Attribute Id

@@ -101,27 +101,6 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
             return $out($request, $response);
         }
 
-        return $this->pipeResource(
-            $request,
-            $response,
-            $out
-        );
-    }
-
-    /**
-     * pipeResource
-     *
-     * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
-     *
-     * @return mixed
-     */
-    public function pipeResource(
-        Request $request,
-        Response $response,
-        callable $out = null
-    ) {
         $resourceModel = $this->getResourceModel($request);
         $methodModel = $this->getMethodModel($request);
 

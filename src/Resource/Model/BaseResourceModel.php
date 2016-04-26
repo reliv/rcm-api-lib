@@ -29,7 +29,7 @@ class BaseResourceModel implements ResourceModel
     /**
      * @var array ['{methodName}' => {MethodModel}]
      */
-    protected $methodModels;
+    protected $methodModels = [];
 
     /**
      * @var array
@@ -62,10 +62,10 @@ class BaseResourceModel implements ResourceModel
     protected $finalServiceModel;
 
     /**
-     * @param ControllerModel        $controllerModel
-     * @param array                  $methodsAllowed
-     * @param array                  $methodModels
-     * @param string                 $path
+     * @param ControllerModel $controllerModel
+     * @param array $methodsAllowed
+     * @param array $methodModels
+     * @param string $path
      * @param ServiceModelCollection $preServiceModel
      * @param ServiceModelCollection $postServiceModel
      * @param ServiceModelCollection $finalServiceModel
@@ -95,7 +95,7 @@ class BaseResourceModel implements ResourceModel
     /**
      * addMethod
      *
-     * @param string      $methodName
+     * @param string $methodName
      * @param MethodModel $methodModel
      *
      * @return void

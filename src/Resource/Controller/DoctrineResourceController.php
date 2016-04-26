@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiPopulatableInterface;
+use Reliv\RcmApiLib\Model\HttpStatusCodeApiMessage;
 use Reliv\RcmApiLib\Resource\Exception\DoctrineEntityException;
 use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsedException;
 
@@ -155,20 +156,35 @@ class DoctrineResourceController extends AbstractResourceController
         $entity = $this->getEntityByRequestId($request);
 
         if (!is_object($entity)) {
-            return $out($request, $response->withStatus(404));
+            return $out($request, $response->withStatus(404)
+            );
         }
 
         return $out($request, $this->withDataResponse($response, $entity));
     }
 
-    public function find(Request $request, Response $response)
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param callable $out
+     * @return mixed
+     */
+    public function find(Request $request, Response $response, callable $out)
     {
-
+        //@TODO implement
+        return $out($request, $this->withDataResponse($response, '501 find is Not Implemented'));
     }
 
-    public function findOne(Request $request, Response $response)
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @param callable $out
+     * @return mixed
+     */
+    public function findOne(Request $request, Response $response, callable $out)
     {
-
+        //@TODO implement
+        return $out($request, $this->withDataResponse($response, '501 findOne is Not Implemented'));
     }
 
     /**

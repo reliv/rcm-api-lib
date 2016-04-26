@@ -73,44 +73,52 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
      */
     protected function buildMethodModels($resourceKey)
     {
-        $defaultMethods = $this->getDefaultValue('methods', []);
-        $resourceMethods = $this->getResourceValue($resourceKey, 'methods', []);
+        $methods = $this->getDefaultValue('methods', []);
+        $userMethods = $this->getResourceValue($resourceKey, 'methods', []);
 
-        $methods = array_merge($defaultMethods, $resourceMethods);
+        $customMethods = [];
 
-        $allowedMethods = $this->getMethodsAllowed($resourceKey);
-        $validMethods = [];
-
-        foreach ($allowedMethods as $allowedMethod) {
-            if (array_key_exists($allowedMethod, $methods)) {
-                $methods[$allowedMethod]['name'] = $allowedMethod;
-                $methodOptions = new GenericOptions($methods[$allowedMethod]);
-
-                $preServiceModel = $this->buildServiceModelCollection(
-                    $methodOptions->get('preServiceNames', []),
-                    $methodOptions->get('preServiceOptions', [])
-                );
-
-                $postServiceModel = $this->buildServiceModelCollection(
-                    $methodOptions->get('postServiceNames', []),
-                    $methodOptions->get('postServiceOptions', [])
-                );
-
-                $options = $methodOptions->getOptions('options');
-
-                $validMethods[$allowedMethod] = new BaseMethodModel(
-                    $methodOptions->get('name'),
-                    $methodOptions->get('description'),
-                    $methodOptions->get('httpVerb'),
-                    $methodOptions->get('path'),
-                    $preServiceModel,
-                    $postServiceModel,
-                    $options
-                );
+        foreach ($userMethods as $key => $method) {
+            if (array_key_exists($key, $methods)) {
+                $methods[$key] = array_merge($methods[$key], $method);
+            } else {
+                $customMethods[$key] = $method;
             }
         }
 
-        return $validMethods;
+        $methods = array_merge($customMethods, $methods);
+
+        $returnMethods = [];
+
+        foreach ($methods as $key => $method) {
+            $methodOptions = new GenericOptions($method);
+
+            $preServiceModel = $this->buildServiceModelCollection(
+                $methodOptions->get('preServiceNames', []),
+                $methodOptions->get('preServiceOptions', [])
+            );
+
+            $postServiceModel = $this->buildServiceModelCollection(
+                $methodOptions->get('postServiceNames', []),
+                $methodOptions->get('postServiceOptions', [])
+            );
+
+            $options = $methodOptions->getOptions('options');
+
+            $name = $methodOptions->get('name', $key);
+
+            $returnMethods[$name] = new BaseMethodModel(
+                $name,
+                $methodOptions->get('description'),
+                $methodOptions->get('httpVerb'),
+                $methodOptions->get('path'),
+                $preServiceModel,
+                $postServiceModel,
+                $options
+            );
+        }
+
+        return $returnMethods;
     }
 
     /**

@@ -182,18 +182,15 @@ return [
             /* Methods White-list */
             'methodsAllowed' => [
                 'count',
+                'exists',
                 'findById',
-                'exists'
+                'find',
             ],
+            'methods' =>[],
             /* Resource Controller */
             'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
             'controllerOptions' => [
                 'entity' => 'Rcm\Entity\Language',
-            ],
-            /* Resource Controller Method Definitions */
-            'methods' => [
-                //'example' => [
-                //],
             ],
             /* Path */
             'path' => 'example-path',

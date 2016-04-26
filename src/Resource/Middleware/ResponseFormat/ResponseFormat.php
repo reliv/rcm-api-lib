@@ -2,8 +2,6 @@
 
 namespace Reliv\RcmApiLib\Resource\Middleware\ResponseFormat;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Middleware\Middleware;
 
 /**

@@ -44,6 +44,15 @@ interface ResourceModel extends OptionsModel
     public function getMethodModels();
 
     /**
+     * getAvailableMethodModels
+     * Return only the methods in the available list
+     * Shall be ordered by the methodsModels list
+     *
+     * @return array
+     */
+    public function getAvailableMethodModels();
+
+    /**
      * getMethod
      *
      * @param string $name

@@ -225,7 +225,7 @@ return [
     ],
     /* DEFAULT: Route */
     'routeServiceNames' => [
-//        'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO RM
+//        'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO REMOVE THIS
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
     'routeOptions' => [],

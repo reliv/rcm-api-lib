@@ -233,6 +233,6 @@ return [
     ],
     /* DEFAULT: Error Handlers */
     'errorServiceNames' => [
-        'errorHandler' => 'Reliv\RcmApiLib\Resource\Middleware\Error',
+        'errorHandler' => 'Reliv\RcmApiLib\Resource\Middleware\Error\TriggerErrorHandler',
     ],
 ];

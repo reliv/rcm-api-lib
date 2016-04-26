@@ -44,8 +44,6 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
         $routePipe->pipe([$this, 'postRoute']);
         $routePipe->pipeServices($errorModel);
 
-        var_dump($routePipe); die;
-
         return $routePipe(
             $request,
             $response,

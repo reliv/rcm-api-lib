@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Middleware\ErrorMiddlewareInterface;
 
 /**
- * Class ErrorHandler
+ * Class TriggerErrorHandler
  *
  * PHP version 5
  *

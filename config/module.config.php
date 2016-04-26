@@ -78,9 +78,8 @@ return [
                     'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider',
                 ],
             ],
-            'Reliv\RcmApiLib\Resource\Middleware\Error' => [
-                'class' => 'Reliv\RcmApiLib\Resource\Middleware\Error\ErrorHandler',
-            ],
+            'Reliv\RcmApiLib\Resource\Middleware\Error\TriggerErrorHandler' => [],
+            'Reliv\RcmApiLib\Resource\Middleware\Error\NonThrowingErrorHandler' => [],
             /* Model Providers */
             'Reliv\RcmApiLib\Resource\Provider\ErrorModelProvider' => [
                 'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigErrorModelProvider',

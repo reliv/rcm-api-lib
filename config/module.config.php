@@ -72,9 +72,9 @@ return [
             'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat' =>[
             ],
             // Response Formatter
-            'Reliv\RcmApiLib\Resource\ResponseFormat\Middleware\JsonResponseFormat' => [
+            'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\JsonResponseFormat' => [
             ],
-            'Reliv\RcmApiLib\Resource\ResponseFormat\Middleware\XmlResponseFormat' => [
+            'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\XmlResponseFormat' => [
             ],
             // Main
             'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware' => [

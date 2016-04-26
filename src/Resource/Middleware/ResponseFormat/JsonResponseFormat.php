@@ -5,6 +5,7 @@ namespace Reliv\RcmApiLib\Resource\Middleware\ResponseFormat;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
+use Reliv\RcmApiLib\Resource\Http\DataResponse;
 
 /**
  * interface ResponseFormat
@@ -19,8 +20,8 @@ class JsonResponseFormat extends AbstractResponseFormat implements ResponseForma
     /**
      * __invoke
      *
-     * @param Request       $request
-     * @param Response      $response
+     * @param Request $request
+     * @param Response $response
      * @param callable|null $next
      *
      * @return \Psr\Http\Message\MessageInterface

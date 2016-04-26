@@ -24,7 +24,7 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
     /**
      * pipe
      *
-     * @param MiddlewarePipe         $middlewarePipe
+     * @param MiddlewarePipe $middlewarePipe
      * @param ServiceModelCollection $model
      *
      * @return void
@@ -49,8 +49,8 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
     /**
      * __invoke
      *
-     * @param Request       $request
-     * @param Response      $response
+     * @param Request $request
+     * @param Response $response
      * @param callable|null $out
      *
      * @return mixed
@@ -66,22 +66,24 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
         /// /// /// /// /// /// /// ///
 
         // ROUTE
-        $middlewarePipe = new MiddlewarePipe();
+        $routePipe = new MiddlewarePipe();
 
-        $this->pipe($middlewarePipe, $routeModel);
+        $this->pipe($routePipe, $routeModel);
+        $routePipe->pipe([$this, 'postRoute']);
+        $routePipe->pipe(new ErrorHandler());
 
-        return $middlewarePipe(
+        return $routePipe(
             $request,
             $response,
-            [$this, 'postRoute']
+            $out
         );
     }
 
     /**
      * postRoute
      *
-     * @param Request       $request
-     * @param Response      $response
+     * @param Request $request
+     * @param Response $response
      * @param callable|null $out
      *
      * @return mixed
@@ -99,27 +101,6 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
             return $out($request, $response);
         }
 
-        return $this->pipeResource(
-            $request,
-            $response,
-            $out
-        );
-    }
-
-    /**
-     * pipeResource
-     *
-     * @param Request       $request
-     * @param Response      $response
-     * @param callable|null $out
-     *
-     * @return mixed
-     */
-    public function pipeResource(
-        Request $request,
-        Response $response,
-        callable $out = null
-    ) {
         $resourceModel = $this->getResourceModel($request);
         $methodModel = $this->getMethodModel($request);
 
@@ -158,37 +139,10 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
         $resourcePostServiceModel = $resourceModel->getPostServiceModel();
         $this->pipe($middlewarePipe, $resourcePostServiceModel);
 
-        return $middlewarePipe(
-            $request,
-            $response,
-            [$this, 'pipeFinal']
-        );
-    }
-
-    /**
-     * pipeFinal
-     *
-     * @param Request       $request
-     * @param Response      $response
-     * @param callable|null $out
-     *
-     * @return mixed
-     */
-    public function pipeFinal(
-        Request $request,
-        Response $response,
-        callable $out = null
-    ) {
-
-        $middlewarePipe = new MiddlewarePipe();
-        $resourceModel = $this->getResourceModel($request);
-        $resourceFinalServiceModel = $resourceModel->getPostServiceModel();
+        /** @var ServiceModelCollection $resourcePostServiceModel */
+        $resourceFinalServiceModel = $resourceModel->getFinalServiceModel();
         $this->pipe($middlewarePipe, $resourceFinalServiceModel);
 
-        return $middlewarePipe(
-            $request,
-            $response,
-            $out
-        );
+        return $middlewarePipe($request,$response, $out);
     }
 }

@@ -140,9 +140,9 @@ return [
          * '{serviceAlias}' => '{serviceName}',
          */
         'finalServiceNames' => [
-            'JsonResponseFormat' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
-            'XmlResponseFormat' => 'Reliv\RcmApiLib\Resource\ResponseFormat\XmlResponseFormat',
-            'DefaultResponseFormat' => 'Reliv\RcmApiLib\Resource\ResponseFormat\JsonResponseFormat',
+            'JsonResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\JsonResponseFormat',
+            'XmlResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\XmlResponseFormat',
+            'DefaultResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\JsonResponseFormat',
         ],
         /*
          * '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],

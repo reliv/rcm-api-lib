@@ -190,6 +190,8 @@ return [
                 'find',
                 //Writes
 //                'upsert',
+//                'create',
+//                'updateProperties',
             ],
             'methods' => [],
             /* Resource Controller */
@@ -200,12 +202,12 @@ return [
             /* Path */
             'path' => 'example-path',
             /* Pre Controller Middleware */
-            'preServiceNames' => [
-                //'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\Acl\RcmUserAcl',
-                //'ZfInputFilterClass' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterClass',
-                //'ZfInputFilterConfig' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterConfig',
-                //'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterService',
-            ],
+//            'preServiceNames' => [
+//                'RcmUserAcl' => 'Reliv\RcmApiLib\Resource\Middleware\Acl\RcmUserAcl',
+//                'ZfInputFilterClass' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterClass',
+//                'ZfInputFilterConfig' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterConfig',
+//                'ZfInputFilterService' => 'Reliv\RcmApiLib\Resource\Middleware\InputFilter\ZfInputFilterService',
+//            ],
             'preServiceOptions' => [
                 'RcmUserAcl' => [
                     'resourceId' => '{resourceId}',
@@ -225,7 +227,6 @@ return [
     ],
     /* DEFAULT: Route */
     'routeServiceNames' => [
-//        'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO REMOVE THIS
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
     'routeOptions' => [],

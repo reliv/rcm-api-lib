@@ -13,7 +13,7 @@ use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 
 /**
- * Class RegExRoute
+ * Class CurlyBraceVarRouter This is a router that allows paths like /fun/{id}
  *
  * PHP version 5
  *
@@ -43,7 +43,6 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
         callable $out = null
     ) {
         $routeModel = $this->getRouteModel($request);
-        $routeOptions = $this->getOptions($request);
 
         //It is every router's job to add the RouteModel attribute to the request
         /** @var Request $request */
@@ -75,7 +74,6 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
 
         /** @var ResourceModel $resourceModel */
         $resourceModel = $this->getResourceModel($request);
-        $routeModel = $this->getRouteModel($request);
 
         /** @var MethodModel $methodModel */
         $methodModel = null;

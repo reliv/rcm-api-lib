@@ -48,7 +48,7 @@ return [
                 'httpVerb' => 'GET',
                 'name' => 'exists',
                 'options' => [],
-                'path' => '(?<id>[^/]+)/exists',
+                'path' => '{id}/exists',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -70,7 +70,7 @@ return [
                 'httpVerb' => 'GET',
                 'name' => 'findById',
                 'options' => [],
-                'path' => '^(?<id>[^/^count]+)[^/]*$',
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -103,7 +103,7 @@ return [
                 'httpVerb' => 'DELETE',
                 'name' => 'deleteById',
                 'options' => [],
-                'path' => ':id',
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -114,7 +114,7 @@ return [
                 'httpVerb' => 'PUT',
                 'name' => 'updateProperties',
                 'options' => [],
-                'path' => ':id',
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -225,12 +225,7 @@ return [
     'routeServiceNames' => [
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
-    'routeOptions' => [
-        'baseRoute' => [
-            'path' => '(?<resourceController>[^/]+)/(?<resourceMethod>[^.]*)',
-            'routeParams' => [],
-        ]
-    ],
+    'routeOptions' => [],
     /* DEFAULT: Error Handlers */
     'errorServiceNames' => [
         'errorHandler' => 'Reliv\RcmApiLib\Resource\Middleware\Error\TriggerErrorHandler',

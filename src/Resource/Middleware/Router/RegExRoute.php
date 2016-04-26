@@ -1,10 +1,12 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\Middleware;
+namespace Reliv\RcmApiLib\Resource\Middleware\Router;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Middleware\AbstractModelMiddleware;
+use Reliv\RcmApiLib\Resource\Middleware\Middleware;
 use Reliv\RcmApiLib\Resource\Model\MethodModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
@@ -113,5 +115,4 @@ class RegExRoute extends AbstractModelMiddleware implements Middleware
         /** @var Response $response */
         return $out($request, $response);
     }
-
 }

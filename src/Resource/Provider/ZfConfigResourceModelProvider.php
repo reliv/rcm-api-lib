@@ -96,13 +96,16 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
                     $methodOptions->get('postServiceOptions', [])
                 );
 
+                $options = $methodOptions->getOptions('options');
+
                 $validMethods[$allowedMethod] = new BaseMethodModel(
                     $methodOptions->get('name'),
                     $methodOptions->get('description'),
                     $methodOptions->get('httpVerb'),
                     $methodOptions->get('path'),
                     $preServiceModel,
-                    $postServiceModel
+                    $postServiceModel,
+                    $options
                 );
             }
         }
@@ -165,7 +168,7 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
             $this->buildValue($resourceKey, 'finalServiceOptions', [])
         );
 
-        $methodMissingStatus = $this->buildValue($resourceKey, 'methodMissingStatus', 404);
+        $options = $this->buildOptions($resourceKey, 'options');
 
         $resourceModel = new BaseResourceModel(
             $controllerModel,
@@ -175,7 +178,7 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
             $preServiceModel,
             $postServiceModel,
             $finalServiceModel,
-            $methodMissingStatus
+            $options
         );
 
         $this->resourceModels[$resourceKey] = $resourceModel;

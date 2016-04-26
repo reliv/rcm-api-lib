@@ -36,21 +36,6 @@ return [
                 'Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory',
         ],
         'config_factories' => [
-            /* Resource Providers */
-            'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider' => [
-                'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigResourceModelProvider',
-                'arguments' => [
-                    'Config',
-                    'ServiceManager',
-                ],
-            ],
-            'Reliv\RcmApiLib\Resource\Provider\RouteModelProvider' => [
-                'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigRouteModelProvider',
-                'arguments' => [
-                    'Config',
-                    'ServiceManager',
-                ],
-            ],
             /* Resource Controller */
             'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController' => [
                 'arguments' => [
@@ -81,18 +66,42 @@ return [
                 'class' => 'Reliv\RcmApiLib\Resource\Middleware\MainMiddleware',
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Provider\RouteModelProvider',
+                    'Reliv\RcmApiLib\Resource\Provider\ErrorModelProvider',
                     'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider',
                 ],
             ],
-            'Reliv\RcmApiLib\Resource\Middleware\Route' => [
-                'class' => 'Reliv\RcmApiLib\Resource\Middleware\RegExRoute',
+            'Reliv\RcmApiLib\Resource\Middleware\Router' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Middleware\Router\RegExRoute',
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Provider\RouteModelProvider',
+                    'Reliv\RcmApiLib\Resource\Provider\ErrorModelProvider',
                     'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider',
                 ],
             ],
-            /* Resource Route */
-            'Reliv\RcmApiLib\Resource\Route\RegexRoute' => [
+            'Reliv\RcmApiLib\Resource\Middleware\Error' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Middleware\Error\ErrorHandler',
+            ],
+            /* Model Providers */
+            'Reliv\RcmApiLib\Resource\Provider\ErrorModelProvider' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigErrorModelProvider',
+                'arguments' => [
+                    'Config',
+                    'ServiceManager',
+                ],
+            ],
+            'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigResourceModelProvider',
+                'arguments' => [
+                    'Config',
+                    'ServiceManager',
+                ],
+            ],
+            'Reliv\RcmApiLib\Resource\Provider\RouteModelProvider' => [
+                'class' => 'Reliv\RcmApiLib\Resource\Provider\ZfConfigRouteModelProvider',
+                'arguments' => [
+                    'Config',
+                    'ServiceManager',
+                ],
             ],
         ],
     ],

@@ -2,11 +2,10 @@
 
 namespace Reliv\RcmApiLib\Resource\Model;
 
-use Reliv\RcmApiLib\Resource\Exception\ServiceMissingException;
 use Reliv\RcmApiLib\Resource\Options\Options;
 
 /**
- * Class ServiceModel
+ * Class OptionsModel
  *
  * PHP version 5
  *
@@ -18,20 +17,12 @@ use Reliv\RcmApiLib\Resource\Options\Options;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-interface ServiceModel extends OptionsModel
+interface OptionsModel
 {
     /**
-     * getAlias
+     * getOptions
      *
-     * @return string
+     * @return Options
      */
-    public function getAlias();
-    
-    /**
-     * getService
-     *
-     * @return object  Middleware compatible
-     * @throws ServiceMissingException
-     */
-    public function getService();
+    public function getOptions();
 }

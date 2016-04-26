@@ -30,7 +30,7 @@ class RegexRoute extends AbstractRoute
         $routeModel = $request->getAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE);
 
         $path = $options->get('path');
-        $httpVerb = $options->get('httpVerb');
+        $httpVerb = $options->get('httpVerb', 'GET');
 
         if(empty($path)) {
             throw new RouteException('Path option required');

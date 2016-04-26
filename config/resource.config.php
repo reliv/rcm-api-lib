@@ -129,7 +129,7 @@ return [
          * '{serviceAlias}' => '{serviceName}',
          */
         'preServiceNames' => [
-            'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO put back
+            'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',
         ],
         /*
          * '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],

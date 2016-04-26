@@ -1,26 +1,35 @@
 <?php
 
 
-namespace Reliv\RcmApiLib\Resource\Middleware;
+namespace Reliv\RcmApiLib\Resource\Middleware\Error;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Stratigility\ErrorMiddlewareInterface;
+use Reliv\RcmApiLib\Resource\Middleware\ErrorMiddlewareInterface;
 
-class ErrorHandler implements ErrorMiddlewareInterface
+/**
+ * Class NonThrowingErrorHandler
+ *
+ * PHP version 5
+ *
+ * @category  Reliv
+ * @copyright 2015 Reliv International
+ * @license   License.txt
+ * @version   Release: <package_version>
+ * @link      https://github.com/reliv
+ */
+class NonThrowingErrorHandler implements ErrorMiddlewareInterface
 {
+    /**
+     * @var bool
+     */
     protected $displayErrors = false;
 
-    protected $letExceptionsBubbleToTop = true;
-
     /**
-     * @param bool $letExceptionsBubbleToTop If this is true, exceptions will fly
-     * and PHP will halt. We suggest setting this to true unless you are running PHP
-     * as a long running service similar to a node app.
+     * NonThrowingErrorHandler constructor.
      */
-    public function __construct($letExceptionsBubbleToTop = true)
+    public function __construct()
     {
-        $this->letExceptionsBubbleToTop = $letExceptionsBubbleToTop;
         $this->displayErrors = in_array(ini_get('display_errors'), ['1', 'On', 'true']);
     }
 
@@ -40,12 +49,6 @@ class ErrorHandler implements ErrorMiddlewareInterface
      */
     public function __invoke($error, Request $request, Response $response, callable $out = null)
     {
-        if ($this->letExceptionsBubbleToTop) {
-            //Insure the error shows up in the php error.log
-            trigger_error($error, E_USER_ERROR);
-            //Execution does NOT proceed past this line.
-        }
-
         //Show error in browser if display_errors is on in php.ini
         if ($this->displayErrors) {
             $body = $response->getBody();

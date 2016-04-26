@@ -5,11 +5,9 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Middleware\Error\ErrorHandler;
 use Reliv\RcmApiLib\Resource\Model\ControllerModel;
-use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Model\ServiceModelCollection;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stratigility\MiddlewarePipe;
 
 /**
  * Class MainMiddleware
@@ -21,31 +19,6 @@ use Zend\Stratigility\MiddlewarePipe;
  */
 class MainMiddleware extends AbstractModelMiddleware implements Middleware
 {
-    /**
-     * pipe
-     *
-     * @param MiddlewarePipe $middlewarePipe
-     * @param ServiceModelCollection $model
-     *
-     * @return void
-     */
-    public function pipe(
-        MiddlewarePipe $middlewarePipe,
-        ServiceModelCollection $model
-    ) {
-        $services = $model->getServices();
-
-        // resource controller pre
-        foreach ($services as $serviceAlias => $service) {
-            $options = $model->getOptions(
-                $serviceAlias
-            );
-            $middlewareOptions = new OptionsMiddleware($options);
-            $middlewarePipe->pipe($middlewareOptions);
-            $middlewarePipe->pipe($service);
-        }
-    }
-
     /**
      * __invoke
      *
@@ -62,15 +35,14 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
         callable $out = null
     ) {
         $routeModel = $this->getRouteModel($request);
-
-        /// /// /// /// /// /// /// ///
+        $errorModel = $this->getErrorModel();
 
         // ROUTE
         $routePipe = new MiddlewarePipe();
 
-        $this->pipe($routePipe, $routeModel);
+        $routePipe->pipeServices($routeModel);
         $routePipe->pipe([$this, 'postRoute']);
-        $routePipe->pipe(new ErrorHandler());
+        $routePipe->pipeServices($errorModel);
 
         return $routePipe(
             $request,
@@ -108,11 +80,11 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
 
         /** @var ServiceModelCollection $resourcePreServiceModel */
         $resourcePreServiceModel = $resourceModel->getPreServiceModel();
-        $this->pipe($middlewarePipe, $resourcePreServiceModel);
+        $middlewarePipe->pipeServices($resourcePreServiceModel);
 
         /** @var ServiceModelCollection $resourceMethodPreServiceModel */
         $methodPreServiceModel = $methodModel->getPreServiceModel();
-        $this->pipe($middlewarePipe, $methodPreServiceModel);
+        $middlewarePipe->pipeServices($methodPreServiceModel);
 
         /** @var ControllerModel $controllerModel */
         $controllerModel = $resourceModel->getControllerModel();
@@ -133,15 +105,15 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
 
         /** @var ServiceModelCollection $resourceMethodPostServiceModel */
         $methodPostServiceModel = $methodModel->getPostServiceModel();
-        $this->pipe($middlewarePipe, $methodPostServiceModel);
+        $middlewarePipe->pipeServices($methodPostServiceModel);
 
         /** @var ServiceModelCollection $resourcePostServiceModel */
         $resourcePostServiceModel = $resourceModel->getPostServiceModel();
-        $this->pipe($middlewarePipe, $resourcePostServiceModel);
+        $middlewarePipe->pipeServices($resourcePostServiceModel);
 
         /** @var ServiceModelCollection $resourcePostServiceModel */
         $resourceFinalServiceModel = $resourceModel->getFinalServiceModel();
-        $this->pipe($middlewarePipe, $resourceFinalServiceModel);
+        $middlewarePipe->pipeServices($resourceFinalServiceModel);
 
         return $middlewarePipe($request,$response, $out);
     }

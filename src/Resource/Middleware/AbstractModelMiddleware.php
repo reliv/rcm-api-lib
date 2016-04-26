@@ -3,11 +3,13 @@
 namespace Reliv\RcmApiLib\Resource\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider;
-use Reliv\RcmApiLib\Resource\Provider\RouteModelProvider;
+use Reliv\RcmApiLib\Resource\Model\ErrorModel;
 use Reliv\RcmApiLib\Resource\Model\MethodModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
+use Reliv\RcmApiLib\Resource\Provider\ModelProvider;
+use Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider;
+use Reliv\RcmApiLib\Resource\Provider\RouteModelProvider;
 
 /**
  * Class AbstractModelMiddleware
@@ -30,23 +32,39 @@ abstract class AbstractModelMiddleware extends AbstractMiddleware
     protected $resourceModelProvider;
 
     /**
-     * @var RouteModelProvider
+     * @var ModelProvider
      */
     protected $routeModelProvider;
 
     /**
-     * MainMiddleware constructor.
+     * @var ModelProvider
+     */
+    protected $errorModelProvider;
+
+    /**
+     * AbstractModelMiddleware constructor.
      *
-     * @param RouteModelProvider    $routeModelProvider
+     * @param ModelProvider         $routeModelProvider
+     * @param ModelProvider         $errorModelProvider
      * @param ResourceModelProvider $resourceModelProvider
      */
     public function __construct(
-        RouteModelProvider $routeModelProvider,
+        ModelProvider $routeModelProvider,
+        ModelProvider $errorModelProvider,
         ResourceModelProvider $resourceModelProvider
-    )
-    {
-        $this->resourceModelProvider = $resourceModelProvider;
+    ) {
         $this->routeModelProvider = $routeModelProvider;
+        $this->errorModelProvider = $errorModelProvider;
+        $this->resourceModelProvider = $resourceModelProvider;
+    }
+
+    /**
+     * getErrorModel
+     *
+     * @return ErrorModel
+     */
+    public function getErrorModel() {
+        return $this->errorModelProvider->get();
     }
 
     /**

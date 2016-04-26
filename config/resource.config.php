@@ -17,6 +17,7 @@ return [
         'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
         'controllerOptions' => [
             'entity' => null,
+            'allowDeepWheres' => false, //Security is best when this is false
         ],
         /* DEFAULT: Resource Controller Method Definitions */
         'methods' => [
@@ -65,12 +66,12 @@ return [
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
             ],
-            'findById' => [
-                'description' => 'Find resource by ID',
+            'findOne' => [
+                'description' => 'Find resources',
                 'httpVerb' => 'GET',
-                'name' => 'findById',
+                'name' => 'findOne',
                 'options' => [],
-                'path' => '{id}',
+                'path' => 'findOne',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -82,17 +83,6 @@ return [
                 'name' => 'find',
                 'options' => [],
                 'path' => '',
-                'preServiceNames' => [],
-                'preServiceOptions' => [],
-                'postServiceNames' => [],
-                'postServiceOptions' => [],
-            ],
-            'findOne' => [
-                'description' => 'Find resources',
-                'httpVerb' => 'GET',
-                'name' => 'findOne',
-                'options' => [],
-                'path' => 'findOne',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -113,6 +103,17 @@ return [
                 'description' => 'Update resource properties by ID',
                 'httpVerb' => 'PUT',
                 'name' => 'updateProperties',
+                'options' => [],
+                'path' => '{id}',
+                'preServiceNames' => [],
+                'preServiceOptions' => [],
+                'postServiceNames' => [],
+                'postServiceOptions' => [],
+            ],
+            'findById' => [
+                'description' => 'Find resource by ID',
+                'httpVerb' => 'GET',
+                'name' => 'findById',
                 'options' => [],
                 'path' => '{id}',
                 'preServiceNames' => [],
@@ -181,19 +182,20 @@ return [
         'example-path' => [
             /* Methods White-list */
             'methodsAllowed' => [
+                //Reads
                 'count',
+                'exists',
                 'findById',
-                'exists'
+                'findOne',
+                'find',
+                //Writes
+//                'upsert',
             ],
+            'methods' => [],
             /* Resource Controller */
             'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
             'controllerOptions' => [
-                'entity' => 'Rcm\Entity\Language',
-            ],
-            /* Resource Controller Method Definitions */
-            'methods' => [
-                //'example' => [
-                //],
+                'entity' => 'Rcm\Entity\Country',
             ],
             /* Path */
             'path' => 'example-path',
@@ -223,6 +225,7 @@ return [
     ],
     /* DEFAULT: Route */
     'routeServiceNames' => [
+//        'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO RM
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
     'routeOptions' => [],

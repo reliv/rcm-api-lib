@@ -13,7 +13,7 @@ use Reliv\RcmApiLib\Resource\Model\ResourceModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 
 /**
- * Class RegExRoute
+ * Class CurlyBraceVarRouter This is a router that allows paths like /fun/{id}
  *
  * PHP version 5
  *
@@ -43,7 +43,6 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
         callable $out = null
     ) {
         $routeModel = $this->getRouteModel($request);
-        $routeOptions = $this->getOptions($request);
 
         //It is every router's job to add the RouteModel attribute to the request
         /** @var Request $request */
@@ -75,12 +74,13 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
 
         /** @var ResourceModel $resourceModel */
         $resourceModel = $this->getResourceModel($request);
-        $routeModel = $this->getRouteModel($request);
 
         /** @var MethodModel $methodModel */
         $methodModel = null;
 
-        $availableMethods = $resourceModel->getMethodModels();
+        $availableMethods = $resourceModel->getAvailableMethodModels();
+
+        $aPathMatched = false;
 
         /** @var MethodModel $availableMethod */
         foreach ($availableMethods as $availableMethod) {
@@ -90,23 +90,24 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
             $path = $availableMethod->getPath();
             $httpVerb = $availableMethod->getHttpVerb();
 
-            if (empty($path)) {
-                throw new RouteException('Path option required');
+            $regex = '/^' . str_replace(['{', '}', '/'], ['(?<', '>[^/]+)', '\/'], $path) . '$/';
+
+
+            $pathMatched = preg_match($regex, $uri, $captures);
+
+            if ($pathMatched) {
+                $aPathMatched = true;
             }
 
-            $regex = '/' . str_replace(['{', '}', '/'], ['(?<', '>[^/]+)', '\/'], $path) . '/';
-
-            // $uri = '/api/resource/hi/there/oh/yeah';
-            $routeMatched = (bool)preg_match($regex, $uri, $captures);
-            $verbMatched = empty($httpVerb) || $request->getMethod() === $httpVerb;
-
-            if (!$routeMatched || !$verbMatched) {
-                //Route did not match, try next one.
+            if (!(empty($httpVerb) || $request->getMethod() === $httpVerb)
+                || !$pathMatched
+            ) {//Route did not match, try next one.
                 continue;
             }
 
             $methodModel = $availableMethod;
 
+            //Put the route params in the request
             foreach ($captures as $key => $val) {
                 if (!is_numeric($key)) {
                     $routeModel->setRouteParam($key, $val);
@@ -117,6 +118,11 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
         }
 
         if (empty($methodModel)) {
+            if ($aPathMatched) {
+                //If a Path matched but an http verb did not, return 405 Method not allowed
+                return $response->withStatus(405);
+            }
+
             //Route is not for us so leave
             return $out($request, $response);
         }

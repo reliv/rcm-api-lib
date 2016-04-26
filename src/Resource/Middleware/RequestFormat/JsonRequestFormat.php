@@ -1,10 +1,10 @@
 <?php
 
-
-namespace Reliv\RcmApiLib\Resource\Middleware;
+namespace Reliv\RcmApiLib\Resource\Middleware\RequestFormat;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Resource\Middleware\Middleware;
 
 /**
  * Class JsonRequestFormat

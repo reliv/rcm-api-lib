@@ -35,7 +35,7 @@ abstract class AbstractServiceModelCollection
     /**
      * AbstractServiceModelCollection constructor.
      *
-     * @param array $services       ['{serviceAlias}' => {Middleware}]
+     * @param array $services       ['{serviceAlias}' => {callable}]
      * @param array $serviceOptions ['{serviceAlias}' => {Options}]
      */
     public function __construct(
@@ -55,11 +55,11 @@ abstract class AbstractServiceModelCollection
      * addService
      *
      * @param string     $serviceAlias
-     * @param Middleware $service
+     * @param callable $service
      *
      * @return void
      */
-    protected function addService($serviceAlias, Middleware $service)
+    protected function addService($serviceAlias, callable $service)
     {
         $this->services[$serviceAlias] = $service;
     }
@@ -80,7 +80,7 @@ abstract class AbstractServiceModelCollection
     /**
      * getServices
      *
-     * @return array ['{serviceAlias}' => {Middleware}]
+     * @return array ['{serviceAlias}' => {callable}]
      */
     public function getServices()
     {

@@ -2,46 +2,46 @@
 
 namespace Reliv\RcmApiLib\Resource\Provider;
 
+use Reliv\RcmApiLib\Resource\Model\BaseErrorModel;
 use Reliv\RcmApiLib\Resource\Model\BaseRouteModel;
+use Reliv\RcmApiLib\Resource\Model\ErrorModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * class ZfConfigRouteModelProvider
+ * class ZfConfigErrorModelProvider
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ZfConfigRouteModelProvider extends ZfConfigAbstractModelProvider implements ModelProvider
+class ZfConfigErrorModelProvider extends ZfConfigAbstractModelProvider implements ModelProvider
 {
     /**
-     * @var RouteModel
+     * @var ErrorModel
      */
-    protected $routerModel;
+    protected $errorModel;
 
     /**
      * get
      *
-     * @return RouteModel
+     * @return ErrorModel
      */
     public function get()
     {
-        if (empty($this->routerModel)) {
+        if (empty($this->errorModel)) {
             $services = $this->buildServiceArray(
-                $this->config['Reliv\\RcmApiLib']['resource']['routeServiceNames']
+                $this->config['Reliv\\RcmApiLib']['resource']['errorServiceNames']
             );
-            $servicesOptions = $this->buildOptionArray(
-                $this->config['Reliv\\RcmApiLib']['resource']['routeOptions']
-            );
-            $this->routerModel = new BaseRouteModel(
+            // Options cannot be supported
+            $this->errorModel = new BaseErrorModel(
                 $services,
-                $servicesOptions
+                []
             );
         }
 
-        return $this->routerModel;
+        return $this->errorModel;
     }
 }

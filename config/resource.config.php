@@ -25,6 +25,7 @@ return [
                 'description' => 'Create new resource',
                 'httpVerb' => 'POST',
                 'name' => 'create',
+                'options' => [],
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
@@ -35,6 +36,7 @@ return [
                 'description' => 'Update or create a resource',
                 'httpVerb' => 'PUT',
                 'name' => 'upsert',
+                'options' => [],
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
@@ -45,7 +47,8 @@ return [
                 'description' => 'Check if a resource exists',
                 'httpVerb' => 'GET',
                 'name' => 'exists',
-                'path' => '(?<id>[^/]+)/exists',
+                'options' => [],
+                'path' => '{id}/exists',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -55,6 +58,7 @@ return [
                 'description' => 'Return number of resources',
                 'httpVerb' => 'GET',
                 'name' => 'count',
+                'options' => [],
                 'path' => 'count',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
@@ -65,7 +69,8 @@ return [
                 'description' => 'Find resource by ID',
                 'httpVerb' => 'GET',
                 'name' => 'findById',
-                'path' => '^(?<id>[^/^count]+)[^/]*$',
+                'options' => [],
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -75,6 +80,7 @@ return [
                 'description' => 'Find resources',
                 'httpVerb' => 'GET',
                 'name' => 'find',
+                'options' => [],
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
@@ -85,6 +91,7 @@ return [
                 'description' => 'Find resources',
                 'httpVerb' => 'GET',
                 'name' => 'findOne',
+                'options' => [],
                 'path' => 'findOne',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
@@ -95,7 +102,8 @@ return [
                 'description' => 'Delete resource by ID',
                 'httpVerb' => 'DELETE',
                 'name' => 'deleteById',
-                'path' => ':id',
+                'options' => [],
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
@@ -105,15 +113,16 @@ return [
                 'description' => 'Update resource properties by ID',
                 'httpVerb' => 'PUT',
                 'name' => 'updateProperties',
-                'path' => ':id',
+                'options' => [],
+                'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
             ],
         ],
-        /* DEFAULT: Status to return if a method is not defined */
-        'methodMissingStatus' => 404,
+        /* Resource Options */
+        'options' => [],
         /* Pre Controller Middleware  */
         /*
          * '{serviceAlias}' => '{serviceName}',
@@ -186,8 +195,6 @@ return [
                 //'example' => [
                 //],
             ],
-            /* */
-            'methodMissingStatus' => 404,
             /* Path */
             'path' => 'example-path',
             /* Pre Controller Middleware */
@@ -216,7 +223,11 @@ return [
     ],
     /* DEFAULT: Route */
     'routeServiceNames' => [
-        'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Route',
+        'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
     'routeOptions' => [],
+    /* DEFAULT: Error Handlers */
+    'errorServiceNames' => [
+        'errorHandler' => 'Reliv\RcmApiLib\Resource\Middleware\Error\TriggerErrorHandler',
+    ],
 ];

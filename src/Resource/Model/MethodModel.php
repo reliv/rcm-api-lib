@@ -10,7 +10,7 @@ namespace Reliv\RcmApiLib\Resource\Model;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface MethodModel
+interface MethodModel extends OptionsModel
 {
     /**
      * Request Attribute Id

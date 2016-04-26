@@ -37,9 +37,9 @@ class BaseResourceModel implements ResourceModel
     protected $methodsAllowed = [];
 
     /**
-     * @var int
+     * @var Options
      */
-    protected $methodMissingStatus = 404;
+    protected $options;
 
     /**
      * @var string
@@ -69,7 +69,6 @@ class BaseResourceModel implements ResourceModel
      * @param ServiceModelCollection $preServiceModel
      * @param ServiceModelCollection $postServiceModel
      * @param ServiceModelCollection $finalServiceModel
-     * @param int                    $methodMissingStatus
      */
     public function __construct(
         ControllerModel $controllerModel,
@@ -79,18 +78,18 @@ class BaseResourceModel implements ResourceModel
         ServiceModelCollection $preServiceModel,
         ServiceModelCollection $postServiceModel,
         ServiceModelCollection $finalServiceModel,
-        $methodMissingStatus = 404
+        Options $options
     ) {
         $this->controllerModel = $controllerModel;
         $this->methodsAllowed = $methodsAllowed;
         foreach ($methodModels as $methodName => $methodModel) {
             $this->addMethod($methodName, $methodModel);
         }
+        $this->options = $options;
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
         $this->postServiceModel = $postServiceModel;
         $this->finalServiceModel = $finalServiceModel;
-        $this->methodMissingStatus = $methodMissingStatus;
     }
 
     /**
@@ -165,15 +164,15 @@ class BaseResourceModel implements ResourceModel
     }
 
     /**
-     * getMissingMethodStatus
+     * getPreOptions
      *
-     * @return int
+     * @return Options
      */
-    public function getMethodMissingStatus()
+    public function getOptions()
     {
-        return (int)$this->methodMissingStatus;
+        return $this->options;
     }
-
+    
     /**
      * getPath
      *

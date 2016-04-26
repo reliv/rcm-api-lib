@@ -54,7 +54,10 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
 
         $uriParts = explode('/', $request->getUri()->getPath());
 
-        if (count($uriParts) == 0) {
+        //Cut off the first /
+        array_shift($uriParts);
+
+        if (count($uriParts) == 0 || empty($uriParts[0])) {
             //Route is not for us so leave
             return $out($request, $response);
         }
@@ -75,7 +78,7 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
         $routeModel = $this->getRouteModel($request);
 
         /** @var MethodModel $methodModel */
-//        $methodModel = null;
+        $methodModel = null;
 
         $availableMethods = $resourceModel->getMethodModels();
 
@@ -91,9 +94,7 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
                 throw new RouteException('Path option required');
             }
 
-            // '#/api/resource/(?<resourcePath>[a-z]+)/(?<resourceMethod>[^.]+)#';
-            // $regex = '/\/api\/resource\/(?<resourcePath>[a-z]+)\/(?<resourceMethod>[^.]+)/';
-            $regex = "#{$path}#";
+            $regex = '/' . str_replace(['{', '}', '/'], ['(?<', '>[^/]+)', '\/'], $path) . '/';
 
             // $uri = '/api/resource/hi/there/oh/yeah';
             $routeMatched = (bool)preg_match($regex, $uri, $captures);

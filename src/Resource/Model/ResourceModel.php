@@ -15,7 +15,7 @@ use Reliv\RcmApiLib\Resource\Options\Options;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface ResourceModel
+interface ResourceModel extends OptionsModel
 {
     /**
      * Request Attribute Id
@@ -60,13 +60,6 @@ interface ResourceModel
      * @return bool
      */
     public function hasMethod($name);
-
-    /**
-     * getMissingMethodStatus
-     *
-     * @return int
-     */
-    public function getMethodMissingStatus();
 
     /**
      * getPath

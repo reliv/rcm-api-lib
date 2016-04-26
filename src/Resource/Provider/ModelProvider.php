@@ -2,22 +2,22 @@
 
 namespace Reliv\RcmApiLib\Resource\Provider;
 
-use Reliv\RcmApiLib\Resource\Model\RouteModel;
+use Reliv\RcmApiLib\Resource\Model\ServiceModelCollection;
 
 /**
- * interface RouteModelProvider
+ * interface ModelProvider
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-interface RouteModelProvider
+interface ModelProvider
 {
     /**
      * get
      *
-     * @return RouteModel
+     * @return ServiceModelCollection
      */
     public function get();
 }

@@ -2,6 +2,8 @@
 
 namespace Reliv\RcmApiLib\Resource\Model;
 
+use Reliv\RcmApiLib\Resource\Options\Options;
+
 /**
  * class BaseMethodModel
  *
@@ -28,6 +30,11 @@ class BaseMethodModel implements MethodModel
     protected $httpVerb;
 
     /**
+     * @var Options
+     */
+    protected $options;
+
+    /**
      * @var string
      */
     protected $path;
@@ -51,6 +58,7 @@ class BaseMethodModel implements MethodModel
      * @param string          $path
      * @param ServiceModelCollection $preServiceModel
      * @param ServiceModelCollection $postServiceModel
+     * @param Options                $options
      */
     public function __construct(
         $name,
@@ -58,7 +66,8 @@ class BaseMethodModel implements MethodModel
         $httpVerb,
         $path,
         ServiceModelCollection $preServiceModel,
-        ServiceModelCollection $postServiceModel
+        ServiceModelCollection $postServiceModel,
+        Options $options
     ) {
         $this->name = $name;
         $this->description = $description;
@@ -66,6 +75,7 @@ class BaseMethodModel implements MethodModel
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
         $this->postServiceModel = $postServiceModel;
+        $this->options = $options;
     }
 
     /**
@@ -96,6 +106,16 @@ class BaseMethodModel implements MethodModel
     public function getHttpVerb()
     {
         return strtoupper((string)$this->httpVerb);
+    }
+    
+    /**
+     * getPreOptions
+     *
+     * @return Options
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**

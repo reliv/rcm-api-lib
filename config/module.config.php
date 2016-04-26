@@ -85,7 +85,7 @@ return [
                 ],
             ],
             'Reliv\RcmApiLib\Resource\Middleware\Route' => [
-                'class' => 'Reliv\RcmApiLib\Resource\Middleware\RegExRoute',
+                'class' => 'Reliv\RcmApiLib\Resource\Middleware\Router\CurlyBraceVarRouter',
                 'arguments' => [
                     'Reliv\RcmApiLib\Resource\Provider\RouteModelProvider',
                     'Reliv\RcmApiLib\Resource\Provider\ResourceModelProvider',

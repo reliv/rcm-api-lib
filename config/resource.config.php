@@ -218,10 +218,5 @@ return [
     'routeServiceNames' => [
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Route',
     ],
-    'routeOptions' => [
-        'baseRoute' => [
-            'path' => '(?<resourceController>[^/]+)/(?<resourceMethod>[^.]*)',
-            'routeParams' => [],
-        ]
-    ],
+    'routeOptions' => [],
 ];

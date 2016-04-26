@@ -1,10 +1,12 @@
 <?php
 
-namespace Reliv\RcmApiLib\Resource\Middleware;
+namespace Reliv\RcmApiLib\Resource\Middleware\Router;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Exception\RouteException;
+use Reliv\RcmApiLib\Resource\Middleware\AbstractModelMiddleware;
+use Reliv\RcmApiLib\Resource\Middleware\Middleware;
 use Reliv\RcmApiLib\Resource\Model\MethodModel;
 use Reliv\RcmApiLib\Resource\Model\RouteModel;
 use Reliv\RcmApiLib\Resource\Model\ResourceModel;
@@ -23,13 +25,13 @@ use Reliv\RcmApiLib\Resource\Options\GenericOptions;
  * @version   Release: <package_version>
  * @link      https://github.com/reliv
  */
-class RegExRoute extends AbstractModelMiddleware implements Middleware
+class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
 {
     /**
      * __invoke
      *
-     * @param Request       $request
-     * @param Response      $response
+     * @param Request $request
+     * @param Response $response
      * @param callable|null $out
      *
      * @return mixed
@@ -42,66 +44,79 @@ class RegExRoute extends AbstractModelMiddleware implements Middleware
     ) {
         $routeModel = $this->getRouteModel($request);
         $routeOptions = $this->getOptions($request);
-        $routeOptions->set('httpVerb', $request->getMethod());
 
+        //It is every router's job to add the RouteModel attribute to the request
         /** @var Request $request */
         $request = $request->withAttribute(
             RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE,
             $routeModel
         );
 
-        $route = new \Reliv\RcmApiLib\Resource\Route\RegexRoute();
+        $uriParts = explode('/', $request->getUri()->getPath());
 
-        $match = $route->match($request, $routeOptions);
-
-        if (!$match) {
+        if (count($uriParts) == 0) {
+            //Route is not for us so leave
             return $out($request, $response);
         }
 
-        $resourceKey = $routeModel->getRouteParam('resourceController');
+        $resourceKey = $uriParts[0];
 
         $request = $request->withAttribute(
             self::REQUEST_ATTRIBUTE_RESOURCE_KEY,
             $resourceKey
         );
 
-        // $resourceKey required
-        if (empty($resourceKey)) {
-            throw new RouteException("'resourceController' param not found");
-        }
+        //Cut the resource key off the path. We don't need it anymore
+        array_shift($uriParts);
+        $uri = implode('/', $uriParts);
 
         /** @var ResourceModel $resourceModel */
         $resourceModel = $this->getResourceModel($request);
         $routeModel = $this->getRouteModel($request);
 
-        $originalUri = $request->getUri();
-        $uri = $originalUri->withPath(
-            $routeModel->getRouteParam('resourceMethod')
-        );
-        $tempRequest = $request->withUri($uri);
-
         /** @var MethodModel $methodModel */
-        $methodModel = null;
+//        $methodModel = null;
 
         $availableMethods = $resourceModel->getMethodModels();
 
         /** @var MethodModel $availableMethod */
         foreach ($availableMethods as $availableMethod) {
-            $routeOptions = new GenericOptions(
-                [
-                    'path' => $availableMethod->getPath(),
-                    'httpVerb' => $availableMethod->getHttpVerb(),
-                ]
-            );
+            /** @var RouteModel $routeModel */
+            $routeModel = $request->getAttribute(RouteModel::REQUEST_ATTRIBUTE_MODEL_ROUTE);
 
-            $match = $route->match($tempRequest, $routeOptions);
-            if ($match) {
-                $methodModel = $availableMethod;
-                break;
+            $path = $availableMethod->getPath();
+            $httpVerb = $availableMethod->getHttpVerb();
+
+            if (empty($path)) {
+                throw new RouteException('Path option required');
             }
+
+            // '#/api/resource/(?<resourcePath>[a-z]+)/(?<resourceMethod>[^.]+)#';
+            // $regex = '/\/api\/resource\/(?<resourcePath>[a-z]+)\/(?<resourceMethod>[^.]+)/';
+            $regex = "#{$path}#";
+
+            // $uri = '/api/resource/hi/there/oh/yeah';
+            $routeMatched = (bool)preg_match($regex, $uri, $captures);
+            $verbMatched = empty($httpVerb) || $request->getMethod() === $httpVerb;
+
+            if (!$routeMatched || !$verbMatched) {
+                //Route did not match, try next one.
+                continue;
+            }
+
+            $methodModel = $availableMethod;
+
+            foreach ($captures as $key => $val) {
+                if (!is_numeric($key)) {
+                    $routeModel->setRouteParam($key, $val);
+                }
+            }
+
+            break;
         }
 
         if (empty($methodModel)) {
+            //Route is not for us so leave
             return $out($request, $response);
         }
 
@@ -111,7 +126,7 @@ class RegExRoute extends AbstractModelMiddleware implements Middleware
         );
 
         /** @var Response $response */
+
         return $out($request, $response);
     }
-
 }

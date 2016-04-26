@@ -156,8 +156,7 @@ class DoctrineResourceController extends AbstractResourceController
         $entity = $this->getEntityByRequestId($request);
 
         if (!is_object($entity)) {
-            return $out($request, $response->withStatus(404)
-            );
+            return $out($request, $response->withStatus(404));
         }
 
         return $out($request, $this->withDataResponse($response, $entity));

@@ -5,6 +5,7 @@ namespace Reliv\RcmApiLib\Resource\Controller;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Http\BasicApiResponse;
+use Reliv\RcmApiLib\Resource\Exception\InvalidWhereException;
 use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
 use Reliv\RcmApiLib\Resource\Http\BasicDataResponse;
 use Reliv\RcmApiLib\Resource\Http\DataResponse;
@@ -30,8 +31,8 @@ abstract class AbstractResourceController extends AbstractMiddleware implements 
      * getUrlParam
      *
      * @param Request $request
-     * @param string  $key
-     * @param null    $default
+     * @param string $key
+     * @param null $default
      *
      * @return null
      */
@@ -44,5 +45,29 @@ abstract class AbstractResourceController extends AbstractMiddleware implements 
         );
 
         return $routeModel->getRouteParam($key, $default);
+    }
+
+    public function getWhere(Request $request)
+    {
+        $allowDeepWheres = $this->getOption($request, 'allowDeepWheres', false);
+
+        $params = $request->getQueryParams();
+        if (!array_key_exists('where', $params)) {
+            return [];
+        }
+
+        $where = json_decode($params['where'], true);
+
+        if ($allowDeepWheres) {
+            return $where;
+        }
+
+        foreach ($where as $whereChunk) {
+            if (is_array($whereChunk)) {
+                throw new InvalidWhereException();
+            }
+        }
+
+        return $where;
     }
 }

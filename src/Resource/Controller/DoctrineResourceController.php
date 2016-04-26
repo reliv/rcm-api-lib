@@ -3,11 +3,13 @@
 namespace Reliv\RcmApiLib\Resource\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiPopulatableInterface;
 use Reliv\RcmApiLib\Model\HttpStatusCodeApiMessage;
 use Reliv\RcmApiLib\Resource\Exception\DoctrineEntityException;
+use Reliv\RcmApiLib\Resource\Exception\InvalidWhereException;
 use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsedException;
 
 /**
@@ -108,16 +110,24 @@ class DoctrineResourceController extends AbstractResourceController
      */
     public function upsert(Request $request, Response $response, callable $out)
     {
-        $entity = $this->getEntityByRequestId($request);
+        $idFieldName = $this->getEntityIdFieldName($this->getEntityName($request));
+        $body = $this->getRequestData($request, []);
+
+        if (!array_key_exists($idFieldName, $body)) {
+            return $response->withStatus(400);
+        }
+
+        $entity = $this->getRepository($request)->findOneBy([$idFieldName => $body[$idFieldName]]);
 
         if (!is_object($entity)) {
             $entityName = $this->getEntityName($request);
             $entity = new $entityName();
-            $this->setEntityId($entity, $this->getRouteParam($request, 'id'));
+            $this->populateEntity($entity, $request);
             $this->entityManager->persist($entity);
+        } else {
+            $this->populateEntity($entity, $request);
         }
 
-        $this->populateEntity($entity, $request);
         $this->entityManager->flush($entity);
 
         return $out($request, $this->withDataResponse($response, $entity));
@@ -163,6 +173,8 @@ class DoctrineResourceController extends AbstractResourceController
     }
 
     /**
+     * @TODO add "where" support
+     *
      * @param Request $request
      * @param Response $response
      * @param callable $out
@@ -170,8 +182,21 @@ class DoctrineResourceController extends AbstractResourceController
      */
     public function find(Request $request, Response $response, callable $out)
     {
-        //@TODO implement
-        return $out($request, $this->withDataResponse($response, '501 find is Not Implemented'));
+        $repo = $this->getRepository($request);
+
+        try {
+            $where = $this->getWhere($request);
+        } catch (InvalidWhereException $e) {
+            return $response->withStatus(400);
+        }
+
+        try {
+            $results = $repo->findBy($where);
+        } catch (ORMException $e) {
+            return $response->withStatus(400);
+        }
+
+        return $out($request, $this->withDataResponse($response, $results));
     }
 
     /**
@@ -182,8 +207,21 @@ class DoctrineResourceController extends AbstractResourceController
      */
     public function findOne(Request $request, Response $response, callable $out)
     {
-        //@TODO implement
-        return $out($request, $this->withDataResponse($response, '501 findOne is Not Implemented'));
+        $repo = $this->getRepository($request);
+
+        try {
+            $where = $this->getWhere($request);
+        } catch (InvalidWhereException $e) {
+            return $response->withStatus(400);
+        }
+
+        try {
+            $results = $repo->findOneBy($where);
+        } catch (ORMException $e) {
+            return $response->withStatus(400);
+        }
+
+        return $out($request, $this->withDataResponse($response, $results));
     }
 
     /**
@@ -219,16 +257,31 @@ class DoctrineResourceController extends AbstractResourceController
      */
     public function count(Request $request, Response $response, callable $out)
     {
-        $entityName = $this->getEntityName($request);
-        $count = $this->entityManager
-            ->createQuery('SELECT COUNT(e) FROM ' . $entityName . ' e')
-            ->getSingleScalarResult();
-
-        if (!class_exists($entityName)) {
-            return $response->withStatus(404);
+        try {
+            $where = $this->getWhere($request);
+        } catch (InvalidWhereException $e) {
+            return $response->withStatus(400);
         }
 
-        return $out($request, $this->withDataResponse($response, (int)$count));
+        if (empty($where)) {
+            //When there is no "where", running a query is likely faster than findBy.
+            $entityName = $this->getEntityName($request);
+            $count = $this->entityManager
+                ->createQuery('SELECT COUNT(e) FROM ' . $entityName . ' e')
+                ->getSingleScalarResult();
+
+            return $out($request, $this->withDataResponse($response, (int)$count));
+        }
+
+        $repo = $this->getRepository($request);
+
+        try {
+            $results = $repo->findBy($where);
+        } catch (ORMException $e) {
+            return $response->withStatus(400);
+        }
+
+        return $out($request, $this->withDataResponse($response, count($results)));
     }
 
     /**
@@ -241,8 +294,11 @@ class DoctrineResourceController extends AbstractResourceController
      * @return Response
      * @throws DoctrineEntityException
      */
-    public function updateProperties(Request $request, Response $response, callable $out)
-    {
+    public function updateProperties(
+        Request $request,
+        Response $response,
+        callable $out
+    ) {
         $entity = $this->getEntityByRequestId($request);
 
         if (!is_object($entity)) {
@@ -264,11 +320,12 @@ class DoctrineResourceController extends AbstractResourceController
      * @throws DoctrineEntityException
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    protected function setEntityId($entity, $id)
-    {
+    protected function setEntityId(
+        $entity,
+        $id
+    ) {
         $entityName = get_class($entity);
-        $meta = $this->entityManager->getClassMetadata($entityName);
-        $idName = $meta->getSingleIdentifierFieldName();
+        $idName = $this->getEntityIdFieldName($entityName);
         if (empty($idName)) {
             throw new DoctrineEntityException(
                 'Could not get SingleIdentifierFieldName for entity ' . $entityName
@@ -283,6 +340,13 @@ class DoctrineResourceController extends AbstractResourceController
         $entity->$setter($id);
     }
 
+    protected function getEntityIdFieldName($entityName)
+    {
+        $meta = $this->entityManager->getClassMetadata($entityName);
+
+        return $meta->getSingleIdentifierFieldName();
+    }
+
     /**
      * Populates the given entity from the given request's body.
      * If an earlier middleware parses the body into the "body"
@@ -293,19 +357,16 @@ class DoctrineResourceController extends AbstractResourceController
      * @param Request $request
      * @throws DoctrineEntityException
      */
-    protected function populateEntity($entity, Request $request)
-    {
+    protected function populateEntity(
+        $entity,
+        Request $request
+    ) {
         if (!$entity instanceof ApiPopulatableInterface) {
             throw new DoctrineEntityException(
                 'Entity ' . get_class($entity) . ' not instance of ApiPopulatableInterface'
             );
         }
 
-        $body = $this->getRequestData('dataBody', new RequestBodyWasNotParsedException());
-        if ($body instanceof RequestBodyWasNotParsedException) {
-            $body = $request->getBody()->getContents();
-        }
-
-        $entity->populate($body);
+        $entity->populate($this->getRequestData($request, []));
     }
 }

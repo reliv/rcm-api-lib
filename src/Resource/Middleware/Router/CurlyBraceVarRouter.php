@@ -90,7 +90,7 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
             $path = $availableMethod->getPath();
             $httpVerb = $availableMethod->getHttpVerb();
 
-            $regex = '/' . str_replace(['{', '}', '/'], ['(?<', '>[^/]+)', '\/'], $path) . '/';
+            $regex = '/^' . str_replace(['{', '}', '/'], ['(?<', '>[^/]+)', '\/'], $path) . '$/';
 
 
             $pathMatched = preg_match($regex, $uri, $captures);

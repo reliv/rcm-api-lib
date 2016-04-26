@@ -8,7 +8,7 @@ use Reliv\RcmApiLib\Resource\Exception\ResponseFormatException;
 use Reliv\RcmApiLib\Resource\Http\DataResponse;
 
 /**
- * interface ResponseFormat
+ * Class ResponseFormat
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International

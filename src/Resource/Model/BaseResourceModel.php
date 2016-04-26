@@ -136,6 +136,25 @@ class BaseResourceModel implements ResourceModel
     }
 
     /**
+     * getAvailableMethodModels
+     *
+     * @return array
+     */
+    public function getAvailableMethodModels()
+    {
+        $methodModels = $this->getMethodModels();
+        $methodsAllowed = $this->getMethodsAllowed();
+        $availableMethodModels = [];
+        foreach ($methodModels as $name => $methodModel) {
+            if (in_array($name, $methodsAllowed)) {
+                $availableMethodModels[$name] = $methodModel;
+            }
+        }
+
+        return $availableMethodModels;
+    }
+
+    /**
      * getMethod
      *
      * @param string $name
@@ -172,7 +191,7 @@ class BaseResourceModel implements ResourceModel
     {
         return $this->options;
     }
-    
+
     /**
      * getPath
      *

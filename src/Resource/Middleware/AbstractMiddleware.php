@@ -4,10 +4,12 @@ namespace Reliv\RcmApiLib\Resource\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Reliv\RcmApiLib\Model\ApiSerializableInterface;
 use Reliv\RcmApiLib\Resource\Http\BasicDataResponse;
 use Reliv\RcmApiLib\Resource\Http\DataResponse;
 use Reliv\RcmApiLib\Resource\Options\GenericOptions;
 use Reliv\RcmApiLib\Resource\Options\Options;
+use Zend\Stdlib\JsonSerializable;
 
 /**
  * Class AbstractMiddleware
@@ -28,7 +30,7 @@ abstract class AbstractMiddleware
      * getResourceKey
      *
      * @param Request $request
-     * @param null $default
+     * @param null    $default
      *
      * @return mixed
      */
@@ -41,7 +43,7 @@ abstract class AbstractMiddleware
      * getMethodKey
      *
      * @param Request $request
-     * @param null $default
+     * @param null    $default
      *
      * @return mixed
      */
@@ -72,8 +74,8 @@ abstract class AbstractMiddleware
      * getControllerOption
      *
      * @param Request $request
-     * @param string $key
-     * @param null $default
+     * @param string  $key
+     * @param null    $default
      *
      * @return Options
      */
@@ -88,7 +90,7 @@ abstract class AbstractMiddleware
     /**
      * getRequestData
      *
-     * @param Request $request
+     * @param Request    $request
      * @param mixed|null $default
      *
      * @return mixed
@@ -101,7 +103,7 @@ abstract class AbstractMiddleware
     /**
      * getDataModel
      *
-     * @param Response $response
+     * @param Response   $response
      * @param mixed|null $default
      *
      * @return mixed|null
@@ -116,10 +118,56 @@ abstract class AbstractMiddleware
     }
 
     /**
+     * getDataModelArray
+     *
+     * @param Response $response
+     * @param array    $ignore
+     * @param array    $default
+     *
+     * @return array|mixed|null
+     */
+    public function getDataModelArray(Response $response, $ignore = [], $default = [])
+    {
+        $dataModel = $this->getDataModel($response, []);
+
+        if (is_array($dataModel)) {
+            return $dataModel;
+        }
+
+        if ($dataModel instanceof ApiSerializableInterface) {
+            return $dataModel->toArray($ignore);
+        }
+        
+        $toArrayMethod = null;
+
+        if (method_exists($dataModel, '__toArray')) {
+            $toArrayMethod = '__toArray';
+        }
+
+        if (method_exists($dataModel, 'toArray')) {
+            $toArrayMethod = 'toArray';
+        }
+
+        if ($toArrayMethod !== null) {
+            $array = $dataModel->toArray();
+            $return = [];
+            foreach ($array as $key => $value) {
+                if (!in_array($key, $ignore)) {
+                    $return[$key] = $value;
+                }
+            }
+
+            return $return;
+        }
+
+        return $default;
+    }
+
+    /**
      * withDataResponse
      *
      * @param Response $response
-     * @param mixed $dataModel
+     * @param mixed    $dataModel
      *
      * @return DataResponse
      */

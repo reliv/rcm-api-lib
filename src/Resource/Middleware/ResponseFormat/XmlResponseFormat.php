@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiSerializableInterface;
 
 /**
- * interface XmlResponseFormat
+ * Class XmlResponseFormat
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
@@ -57,7 +57,7 @@ class XmlResponseFormat extends AbstractResponseFormat implements ResponseFormat
         if (!$this->isValidAcceptType($request)) {
             return $next($request, $response);
         }
-        $dataModel = $this->getDataModel($response);
+        $dataModel = $this->getDataModelArray($response, null);
 
         $body = $response->getBody();
 
@@ -67,12 +67,6 @@ class XmlResponseFormat extends AbstractResponseFormat implements ResponseFormat
 
         if (is_array($dataModel)) {
             $this->arrayToXml($dataModel, $xmlData);
-
-            $content = $xmlData->asXML();
-        }
-
-        if ($dataModel instanceof ApiSerializableInterface) {
-            $this->arrayToXml($dataModel->toArray(), $xmlData);
 
             $content = $xmlData->asXML();
         }

@@ -36,9 +36,15 @@ class ZfConfigErrorModelProvider extends ZfConfigAbstractModelProvider implement
                 $this->config['Reliv\\RcmApiLib']['resource']['errorServiceNames']
             );
             // Options cannot be supported
+            $servicesOptions = [];
+
+            $servicePriorities = $this->buildOptionArray(
+                $this->config['Reliv\\RcmApiLib']['resource']['errorServicePriority']
+            );
             $this->errorModel = new BaseErrorModel(
                 $services,
-                []
+                $servicesOptions,
+                $servicePriorities
             );
         }
 

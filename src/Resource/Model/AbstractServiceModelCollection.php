@@ -23,6 +23,11 @@ use Reliv\RcmApiLib\Resource\Options\Options;
 abstract class AbstractServiceModelCollection
 {
     /**
+     * @var \SplPriorityQueue
+     */
+    protected $servicesIndex;
+    
+    /**
      * @var array
      */
     protected $services = [];
@@ -33,17 +38,32 @@ abstract class AbstractServiceModelCollection
     protected $serviceOptions = [];
 
     /**
+     * @var array
+     */
+    protected $servicePriorities = [];
+
+    /**
      * AbstractServiceModelCollection constructor.
      *
-     * @param array $services       ['{serviceAlias}' => {callable}]
-     * @param array $serviceOptions ['{serviceAlias}' => {Options}]
+     * @param array $services          ['{serviceAlias}' => {callable}]
+     * @param array $serviceOptions    ['{serviceAlias}' => {Options}]
+     * @param array $servicePriorities ['{serviceAlias}' => {int}]
      */
     public function __construct(
         array $services,
-        array $serviceOptions
+        array $serviceOptions,
+        array $servicePriorities
     ) {
+        $this->servicesIndex = new \SplPriorityQueue();
+
+        $cnt = count($services);
         foreach ($services as $serviceAlias => $service) {
-            $this->addService($serviceAlias, $service);
+            $servicePriority = $cnt;
+            if (array_key_exists($serviceAlias, $servicePriorities)) {
+                $servicePriority = $servicePriorities[$serviceAlias];
+            }
+            $this->addService($serviceAlias, $service, $servicePriority);
+            $cnt--;
         }
 
         foreach ($serviceOptions as $serviceAlias => $serviceOption) {
@@ -54,13 +74,15 @@ abstract class AbstractServiceModelCollection
     /**
      * addService
      *
-     * @param string     $serviceAlias
+     * @param string   $serviceAlias
      * @param callable $service
+     * @param int      $priority
      *
      * @return void
      */
-    protected function addService($serviceAlias, callable $service)
+    protected function addService($serviceAlias, callable $service, $priority = 0)
     {
+        $this->servicesIndex->insert($serviceAlias, $priority);
         $this->services[$serviceAlias] = $service;
     }
 
@@ -84,7 +106,12 @@ abstract class AbstractServiceModelCollection
      */
     public function getServices()
     {
-        return $this->services;
+        $services = [];
+        foreach ($this->servicesIndex as $serviceAlias) {
+            $services[$serviceAlias] = $this->services[$serviceAlias];
+        }
+
+        return $services;
     }
 
     /**
@@ -130,5 +157,21 @@ abstract class AbstractServiceModelCollection
         }
 
         return new GenericOptions();
+    }
+
+    /**
+     * getPriority
+     *
+     * @param string $serviceAlias
+     *
+     * @return int
+     */
+    public function getPriority($serviceAlias)
+    {
+        if (array_key_exists($serviceAlias, $this->servicePriorities)) {
+            return $this->servicePriorities[$serviceAlias];
+        }
+
+        return 0;
     }
 }

@@ -126,8 +126,6 @@ class CurlyBraceVarRouter extends AbstractModelMiddleware implements Middleware
             $methodModel->getName()
         );
 
-        /** @var Response $response */
-
         return $out($request, $response);
     }
 }

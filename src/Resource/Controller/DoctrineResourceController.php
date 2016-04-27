@@ -2,15 +2,14 @@
 
 namespace Reliv\RcmApiLib\Resource\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Model\ApiPopulatableInterface;
-use Reliv\RcmApiLib\Model\HttpStatusCodeApiMessage;
 use Reliv\RcmApiLib\Resource\Exception\DoctrineEntityException;
 use Reliv\RcmApiLib\Resource\Exception\InvalidWhereException;
-use Reliv\RcmApiLib\Resource\Exception\RequestBodyWasNotParsedException;
 
 /**
  * Class DoctrineResourceController
@@ -93,7 +92,12 @@ class DoctrineResourceController extends AbstractResourceController
         $this->populateEntity($entity, $request);
 
         $this->entityManager->persist($entity);
-        $this->entityManager->flush($entity);
+
+        try {
+            $this->entityManager->flush($entity);
+        } catch (UniqueConstraintViolationException $e) {
+            return $response->withStatus(409);
+        }
 
         return $out($request, $this->withDataResponse($response, $entity));
     }
@@ -173,7 +177,8 @@ class DoctrineResourceController extends AbstractResourceController
     }
 
     /**
-     * @TODO add "where" support
+     * Returns a list of all enitites that match the json encoded "where" query param.
+     * If "where" is not in the query, all entities are returned.
      *
      * @param Request $request
      * @param Response $response
@@ -248,7 +253,6 @@ class DoctrineResourceController extends AbstractResourceController
 
     /**
      * Returns the count of the entities given.
-     * @TODO take ?where=something into account if it is in the request
      *
      * @param Request $request
      * @param Response $response

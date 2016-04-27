@@ -111,10 +111,6 @@ class MainMiddleware extends AbstractModelMiddleware implements Middleware
         $resourcePostServiceModel = $resourceModel->getPostServiceModel();
         $middlewarePipe->pipeServices($resourcePostServiceModel);
 
-        /** @var ServiceModelCollection $resourcePostServiceModel */
-        $resourceFinalServiceModel = $resourceModel->getFinalServiceModel();
-        $middlewarePipe->pipeServices($resourceFinalServiceModel);
-
         return $middlewarePipe($request,$response, $out);
     }
 }

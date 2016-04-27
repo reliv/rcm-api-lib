@@ -39,7 +39,7 @@ interface ServiceModelCollection
     public function getService($serviceAlias);
 
     /**
-     * hasPreService
+     * hasService
      *
      * @param string $serviceAlias
      *
@@ -48,7 +48,7 @@ interface ServiceModelCollection
     public function hasService($serviceAlias);
 
     /**
-     * getPreOptions
+     * getOptions
      *
      * @param string $serviceAlias
      *
@@ -56,4 +56,12 @@ interface ServiceModelCollection
      */
     public function getOptions($serviceAlias);
 
+    /**
+     * getPriority
+     *
+     * @param string $serviceAlias
+     * 
+     * @return int
+     */
+    public function getPriority($serviceAlias);
 }

@@ -17,7 +17,8 @@ return [
         'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
         'controllerOptions' => [
             'entity' => null,
-            'allowDeepWheres' => false, //Security is best when this is false
+            // Security is best when 'allowDeepWheres' is false
+            'allowDeepWheres' => false,
         ],
         /* DEFAULT: Resource Controller Method Definitions */
         'methods' => [
@@ -30,8 +31,10 @@ return [
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'upsert' => [
                 'description' => 'Update or create a resource',
@@ -41,8 +44,10 @@ return [
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'exists' => [
                 'description' => 'Check if a resource exists',
@@ -52,8 +57,10 @@ return [
                 'path' => '{id}/exists',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'count' => [
                 'description' => 'Return number of resources',
@@ -63,8 +70,10 @@ return [
                 'path' => 'count',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'findOne' => [
                 'description' => 'Find resources',
@@ -74,8 +83,10 @@ return [
                 'path' => 'findOne',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'find' => [
                 'description' => 'Find resources',
@@ -85,8 +96,10 @@ return [
                 'path' => '',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'deleteById' => [
                 'description' => 'Delete resource by ID',
@@ -96,8 +109,10 @@ return [
                 'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'updateProperties' => [
                 'description' => 'Update resource properties by ID',
@@ -107,8 +122,10 @@ return [
                 'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
             'findById' => [
                 'description' => 'Find resource by ID',
@@ -118,9 +135,13 @@ return [
                 'path' => '{id}',
                 'preServiceNames' => [],
                 'preServiceOptions' => [],
+                'preServicePriority' => [],
                 'postServiceNames' => [],
                 'postServiceOptions' => [],
+                'postServicePriority' => [],
             ],
+        ],
+        'methodPriority' => [
         ],
         /* Resource Options */
         'options' => [],
@@ -137,19 +158,15 @@ return [
         'preServiceOptions' => [
         ],
         /*
+         * '{serviceAlias}' => {priority},
+         */
+        'preServicePriority' => [
+            'JsonRequestFormat' => 1000,
+        ],
+        /*
          * '{serviceAlias}' => '{serviceName}',
          */
         'postServiceNames' => [
-        ],
-        /*
-         * '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],
-         */
-        'postServiceOptions' => [
-        ],
-        /*
-         * '{serviceAlias}' => '{serviceName}',
-         */
-        'finalServiceNames' => [
             'JsonResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\JsonResponseFormat',
             'XmlResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\XmlResponseFormat',
             'DefaultResponseFormat' => 'Reliv\RcmApiLib\Resource\Middleware\ResponseFormat\JsonResponseFormat',
@@ -157,7 +174,7 @@ return [
         /*
          * '{serviceAlias}' => [ '{optionKey}' => '{optionValue}' ],
          */
-        'finalServiceOptions' => [
+        'postServiceOptions' => [
             'JsonResponseFormat' => [
                 'accepts' => [
                     'application/json'
@@ -173,6 +190,11 @@ return [
                     '*/*'
                 ],
             ],
+        ],
+        'postServicePriority' => [
+            'JsonRequestFormat' => 1000,
+            'XmlResponseFormat' => 900,
+            'DefaultResponseFormat' => 800
         ],
     ],
     /**
@@ -194,7 +216,7 @@ return [
             'methods' => [],
             /* Resource Controller */
             'controllerServiceName' => 'Reliv\RcmApiLib\Resource\Controller\DoctrineResourceController',
-            'controllerOptions' => [
+            'controllerServiceOptions' => [
                 'entity' => 'Rcm\Entity\Country',
             ],
             /* Path */
@@ -225,12 +247,13 @@ return [
     ],
     /* DEFAULT: Route */
     'routeServiceNames' => [
-//        'JsonRequestFormat' => 'Reliv\RcmApiLib\Resource\Middleware\RequestFormat\JsonRequestFormat',//@TODO RM
         'baseRoute' => 'Reliv\RcmApiLib\Resource\Middleware\Router',
     ],
-    'routeOptions' => [],
+    'routeServiceOptions' => [],
+    'routeServicePriority' => [],
     /* DEFAULT: Error Handlers */
     'errorServiceNames' => [
         'errorHandler' => 'Reliv\RcmApiLib\Resource\Middleware\Error\TriggerErrorHandler',
     ],
+    'errorServicePriority' => [],
 ];

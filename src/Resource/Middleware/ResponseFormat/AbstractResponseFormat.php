@@ -4,7 +4,6 @@ namespace Reliv\RcmApiLib\Resource\Middleware\ResponseFormat;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Reliv\RcmApiLib\Resource\Middleware\AbstractMiddleware;
-use Reliv\RcmApiLib\Resource\Provider\ResponseFormatModelProvider;
 
 /**
  * Class AbstractResponseFormat

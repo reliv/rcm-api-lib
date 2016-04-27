@@ -34,11 +34,15 @@ class ZfConfigRouteModelProvider extends ZfConfigAbstractModelProvider implement
                 $this->config['Reliv\\RcmApiLib']['resource']['routeServiceNames']
             );
             $servicesOptions = $this->buildOptionArray(
-                $this->config['Reliv\\RcmApiLib']['resource']['routeOptions']
+                $this->config['Reliv\\RcmApiLib']['resource']['routeServiceOptions']
+            );
+            $servicePriorities = $this->buildOptionArray(
+                $this->config['Reliv\\RcmApiLib']['resource']['routeServicePriority']
             );
             $this->routerModel = new BaseRouteModel(
                 $services,
-                $servicesOptions
+                $servicesOptions,
+                $servicePriorities
             );
         }
 

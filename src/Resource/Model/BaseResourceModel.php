@@ -21,10 +21,16 @@ class BaseResourceModel implements ResourceModel
      * @var string
      */
     protected $resourceKey;
+    
     /**
      * @var ControllerModel
      */
     protected $controllerModel;
+
+    /**
+     * @var
+     */
+    protected $methodsIndex;
 
     /**
      * @var array ['{methodName}' => {MethodModel}]
@@ -57,51 +63,64 @@ class BaseResourceModel implements ResourceModel
     protected $postServiceModel;
 
     /**
-     * @var ServiceModelCollection
+     * @var array
      */
-    protected $finalServiceModel;
+    protected $methodPriorities;
 
     /**
-     * @param ControllerModel $controllerModel
-     * @param array $methodsAllowed
-     * @param array $methodModels
-     * @param string $path
+     * BaseResourceModel constructor.
+     *
+     * @param ControllerModel        $controllerModel
+     * @param array                  $methodsAllowed
+     * @param array                  $methodModels
+     * @param array                  $methodPriorities
+     * @param string                 $path
      * @param ServiceModelCollection $preServiceModel
      * @param ServiceModelCollection $postServiceModel
-     * @param ServiceModelCollection $finalServiceModel
+     * @param Options                $options
      */
     public function __construct(
         ControllerModel $controllerModel,
         array $methodsAllowed,
         array $methodModels,
+        array $methodPriorities,
         $path,
         ServiceModelCollection $preServiceModel,
         ServiceModelCollection $postServiceModel,
-        ServiceModelCollection $finalServiceModel,
         Options $options
     ) {
+        $this->methodsIndex = new \SplPriorityQueue();
         $this->controllerModel = $controllerModel;
         $this->methodsAllowed = $methodsAllowed;
+
+        $cnt = count($methodModels);
         foreach ($methodModels as $methodName => $methodModel) {
-            $this->addMethod($methodName, $methodModel);
+            $priority = $cnt;
+            if (array_key_exists($methodName, $methodPriorities)) {
+                $priority = $methodPriorities[$methodName];
+            }
+            $this->addMethod($methodName, $methodModel, $priority);
+            $cnt--;
         }
         $this->options = $options;
         $this->path = $path;
         $this->preServiceModel = $preServiceModel;
         $this->postServiceModel = $postServiceModel;
-        $this->finalServiceModel = $finalServiceModel;
+        $this->methodPriorities = $methodPriorities;
     }
 
     /**
      * addMethod
      *
-     * @param string $methodName
+     * @param string      $methodName
      * @param MethodModel $methodModel
+     * @param int         $priority
      *
      * @return void
      */
-    protected function addMethod($methodName, MethodModel $methodModel)
+    protected function addMethod($methodName, MethodModel $methodModel, $priority = 0)
     {
+        $this->methodsIndex->insert($methodName, $priority);
         $this->methodModels[$methodName] = $methodModel;
     }
 
@@ -132,7 +151,12 @@ class BaseResourceModel implements ResourceModel
      */
     public function getMethodModels()
     {
-        return $this->methodModels;
+        $methodModels = [];
+        foreach ($this->methodsIndex as $serviceAlias) {
+            $methodModels[$serviceAlias] = $this->methodModels[$serviceAlias];
+        }
+
+        return $methodModels;
     }
 
     /**
@@ -223,12 +247,12 @@ class BaseResourceModel implements ResourceModel
     }
 
     /**
-     * getFinalServiceModel
+     * getPriorities
      *
-     * @return ServiceModelCollection
+     * @return array
      */
-    public function getFinalServiceModel()
+    public function getPriorities()
     {
-        return $this->finalServiceModel;
+        return $this->methodPriorities;
     }
 }

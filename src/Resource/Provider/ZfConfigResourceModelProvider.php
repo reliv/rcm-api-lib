@@ -43,24 +43,29 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
      *
      * @param array $serviceNames
      * @param array $serviceOptionsArrays
+     * @param array $servicePriorities
      *
-     * @return ServiceModelCollection
+     * @return BaseServiceModelCollection
      */
-    protected function buildServiceModelCollection($serviceNames, $serviceOptionsArrays)
-    {
-        $preServices = [];
+    protected function buildServiceModelCollection(
+        array $serviceNames,
+        array $serviceOptionsArrays,
+        array $servicePriorities
+    ) {
+        $services = [];
         foreach ($serviceNames as $serviceAlias => $serviceName) {
-            $preServices[$serviceAlias] = $this->serviceManager->get($serviceName);
+            $services[$serviceAlias] = $this->serviceManager->get($serviceName);
         }
 
-        $preServiceOptions = [];
+        $serviceOptions = [];
         foreach ($serviceOptionsArrays as $serviceAlias => $serviceOptionsArray) {
-            $preServiceOptions[$serviceAlias] = new GenericOptions($serviceOptionsArray);
+            $serviceOptions[$serviceAlias] = new GenericOptions($serviceOptionsArray);
         }
 
         return new BaseServiceModelCollection(
-            $preServices,
-            $preServiceOptions
+            $services,
+            $serviceOptions,
+            $servicePriorities
         );
     }
 
@@ -80,7 +85,7 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
 
         foreach ($userMethods as $key => $method) {
             if (array_key_exists($key, $methods)) {
-                $methods[$key] = array_merge($methods[$key], $method);
+                $methods[$key] = array_merge_recursive($methods[$key], $method);
             } else {
                 $customMethods[$key] = $method;
             }
@@ -95,12 +100,14 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
 
             $preServiceModel = $this->buildServiceModelCollection(
                 $methodOptions->get('preServiceNames', []),
-                $methodOptions->get('preServiceOptions', [])
+                $methodOptions->get('preServiceOptions', []),
+                $methodOptions->get('preServicePriority', [])
             );
 
             $postServiceModel = $this->buildServiceModelCollection(
                 $methodOptions->get('postServiceNames', []),
-                $methodOptions->get('postServiceOptions', [])
+                $methodOptions->get('postServiceOptions', []),
+                $methodOptions->get('postServicePriority', [])
             );
 
             $options = $methodOptions->getOptions('options');
@@ -119,6 +126,21 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
         }
 
         return $returnMethods;
+    }
+
+    /**
+     * buildMethodPriorities
+     *
+     * @param $resourceKey
+     *
+     * @return mixed
+     */
+    public function getMethodPriorities($resourceKey)
+    {
+        $defaultMethodPriorities = $this->getDefaultValue('methodPriority', []);
+        $userMethodPriorities = $this->getResourceValue($resourceKey, 'methodPriority', []);
+
+        return array_merge($defaultMethodPriorities, $userMethodPriorities);
     }
 
     /**
@@ -147,7 +169,7 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
 
         $controllerOptions = $this->buildOptions(
             $resourceKey,
-            'controllerOptions'
+            'controllerServiceOptions'
         );
 
         $controllerModel = new BaseControllerModel(
@@ -158,22 +180,20 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
 
         // Methods
         $methodsAllowed = $this->getMethodsAllowed($resourceKey);
+        $methodPriorities = $this->getMethodPriorities($resourceKey);
         $methodModels = $this->buildMethodModels($resourceKey);
         $path = $this->getResourceValue($resourceKey, 'path');
 
         $preServiceModel = $this->buildServiceModelCollection(
-            $this->buildValue($resourceKey, 'preServiceNames', []),
-            $this->buildValue($resourceKey, 'preServiceOptions', [])
+            $this->buildMergeValue($resourceKey, 'preServiceNames', []),
+            $this->buildMergeValue($resourceKey, 'preServiceOptions', []),
+            $this->buildMergeValue($resourceKey, 'preServicePriority', [])
         );
 
         $postServiceModel = $this->buildServiceModelCollection(
-            $this->buildValue($resourceKey, 'postServiceNames', []),
-            $this->buildValue($resourceKey, 'postServiceOptions', [])
-        );
-
-        $finalServiceModel = $this->buildServiceModelCollection(
-            $this->buildValue($resourceKey, 'finalServiceNames', []),
-            $this->buildValue($resourceKey, 'finalServiceOptions', [])
+            $this->buildMergeValue($resourceKey, 'postServiceNames', []),
+            $this->buildMergeValue($resourceKey, 'postServiceOptions', []),
+            $this->buildMergeValue($resourceKey, 'postServicePriority', [])
         );
 
         $options = $this->buildOptions($resourceKey, 'options');
@@ -182,10 +202,10 @@ class ZfConfigResourceModelProvider extends ZfConfigAbstractResourceModelProvide
             $controllerModel,
             $methodsAllowed,
             $methodModels,
+            $methodPriorities,
             $path,
             $preServiceModel,
             $postServiceModel,
-            $finalServiceModel,
             $options
         );
 

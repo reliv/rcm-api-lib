@@ -92,9 +92,9 @@ interface ResourceModel extends OptionsModel
     public function getPostServiceModel();
 
     /**
-     * getFinalServiceModel
+     * getPriorities
      *
-     * @return ServiceModelCollection
+     * @return array
      */
-    public function getFinalServiceModel();
+    public function getPriorities();
 }

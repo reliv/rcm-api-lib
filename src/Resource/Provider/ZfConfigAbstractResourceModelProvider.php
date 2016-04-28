@@ -98,6 +98,24 @@ abstract class ZfConfigAbstractResourceModelProvider
     }
 
     /**
+     * buildMergeValue
+     *
+     * @param string $resourceKey
+     * @param string $key
+     * @param array $default
+     *
+     * @return mixed
+     */
+    protected function buildMergeValue($resourceKey, $key, $default = [])
+    {
+        $defaultValue = $this->getDefaultValue($key, []);
+
+        $resourceValue = $this->getResourceValue($resourceKey, $key, []);
+
+        return array_merge($defaultValue, $resourceValue);
+    }
+
+    /**
      * buildOptions
      *
      * @param string $resourceKey

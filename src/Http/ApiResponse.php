@@ -112,7 +112,6 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
             throw new \Exception(json_last_error_msg());
         }
 
-
         return $json;
     }
 

@@ -14,8 +14,6 @@ return [
         'InputFilterApiMessagesHydrator' => [
             'primaryMessage' => 'Some information was missing or invalid',
         ],
-        /* */
-        'resource' => require __DIR__ . '/resource.config.php',
     ],
     'service_manager' => [
         'invokables' => [

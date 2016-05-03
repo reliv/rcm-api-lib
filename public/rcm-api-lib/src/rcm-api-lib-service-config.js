@@ -4,6 +4,6 @@
 angular.module('rcmApiLib').value(
     'rcmApiLibServiceConfig',
     {
-        defaultMessage: 'An unknown error occured while making request'
+        defaultMessage: 'An unknown error occurred while making request'
     }
 );

@@ -1,44 +1,46 @@
 /**
  * Class ApiMessage
  */
-angular.module('rcmApiLib')
-    .factory(
+angular.module('rcmApiLib').factory(
     'rcmApiLibApiMessage',
-    function ($http, $log) {
-
-        /**
-         * Class ApiMessage
-         */
-        return function (value) {
-            var self = this;
-            self.type = 'rcmApiLib';
-            self.source = 'client';
-            self.code = 'error';
-            self.value = 'An unknown error occured while making request';
-            self.primary = null;
-            self.params = [];
-            self.key = '';
-            // Client only property
-            self.level = 'warning';
+    [
+        'rcmApiLibServiceConfig',
+        function (rcmApiLibServiceConfig) {
 
             /**
-             * buildKey
+             * Class ApiMessage
              */
-            self.buildKey = function () {
-                self.key = self.type + '.' + self.source + '.' + self.code;
-            };
+            return function (value) {
+                var self = this;
+                self.type = 'rcmApiLib';
+                self.source = 'client';
+                self.code = 'error';
+                self.value = rcmApiLibServiceConfig.defaultMessage;
+                self.primary = null;
+                self.params = [];
+                self.key = '';
+                // Client only property
+                self.level = 'warning';
 
-            /**
-             * init
-             */
-            self.init = function (value) {
-                self.buildKey();
-                if(value) {
-                    self.value = value;
-                }
-            };
+                /**
+                 * buildKey
+                 */
+                self.buildKey = function () {
+                    self.key = self.type + '.' + self.source + '.' + self.code;
+                };
 
-            self.init(value);
-        };
-    }
+                /**
+                 * init
+                 */
+                self.init = function (value) {
+                    self.buildKey();
+                    if (value) {
+                        self.value = value;
+                    }
+                };
+
+                self.init(value);
+            };
+        }
+    ]
 );

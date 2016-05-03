@@ -95,20 +95,25 @@ class HttpStatusCodeApiMessage extends ApiMessage
             508 => 'Loop Detected',
             511 => 'Network Authentication Required',
         ];
-
+    
     /**
-     * @param int $statusCode
+     * HttpStatusCodeApiMessage constructor.
      *
-     * @throws \Exception
+     * @param int   $statusCode
+     * @param array $params
+     * @param bool  $primary
+     * @param array $reasonPhrases
      */
     public function __construct(
         $statusCode = 200,
         $params = [],
-        $primary = true
+        $primary = true,
+        array $reasonPhrases = []
     ) {
         $this->setStatusCode($statusCode);
         $this->setParams($params);
         $this->setPrimary($primary);
+        $this->reasonPhrases = array_merge($this->reasonPhrases, $reasonPhrases);
     }
 
     /**

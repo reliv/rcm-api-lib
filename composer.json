@@ -22,7 +22,6 @@
     "php": ">=5.5",
     "zendframework/zendframework": "2.*",
     "rwoverdijk/assetmanager": "1.*",
-    "reliv/zf-config-factories": "3.*",
     "rcm/i18n": "1.*"
   },
   "autoload": {

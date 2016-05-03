@@ -96,9 +96,8 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
     }
 
     /**
-     * getContent
-     *
      * @return string
+     * @throws \Exception
      */
     public function getContent()
     {
@@ -107,7 +106,13 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
             'messages' => $this->getApiMessages(),
         ];
 
-        return json_encode($content);
+        $json = json_encode($content);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception(json_last_error_msg());
+        }
+
+        return $json;
     }
 
     /**

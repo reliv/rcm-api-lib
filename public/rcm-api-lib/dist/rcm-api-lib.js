@@ -27,38 +27,52 @@ angular.module('rcmApiLib')
             return function () {
 
                 var self = this;
+
                 /**
                  * URL of request (can contain parsable params in format {myParam})
                  * @type {string}
                  */
                 self.url = '';
+
                 /**
                  * URL Params that will replace parsable params in url
                  * @type {object}
                  */
                 self.urlParams = null;
+
                 /**
                  * POST PUT DELETE data
                  * @type {object}
                  */
                 self.data = null;
+
                 /**
                  * GET query params
                  * @type {object}
                  */
                 self.params = null;
+
+                /**
+                 * Expected response type
+                 * - if the response data is not of these types
+                 *   the response will be considered an error
+                 */
+                self.responseTypes = ['object', 'array', 'null'];
+
                 /**
                  * Loading callback, used to track loading state
                  * @param {boolean} loading
                  */
                 self.loading = function (loading) {
                 };
+
                 /**
                  * Success callback, called if http and API is successful (error code == 0)
                  * @param {object} data
                  */
                 self.success = function (data) {
                 };
+
                 /**
                  * Error callback, called if http or API is fails (error code > 0)
                  * @param data
@@ -173,331 +187,308 @@ angular.module('rcmApiLib').factory(
  */
 angular.module('rcmApiLib')
     .factory(
-    'rcmApiLibService',
-    [
-        '$http',
-        '$log',
-        'rcmApiLibServiceConfig',
-        'rcmApiLibApiData',
-        'rcmApiLibApiMessage',
-        'rcmApiLibApiParams',
-        function ($http, $log, rcmApiLibServiceConfig, rcmApiLibApiData, rcmApiLibApiMessage, rcmApiLibApiParams) {
+        'rcmApiLibService',
+        [
+            '$http',
+            '$log',
+            'rcmApiLibServiceConfig',
+            'rcmApiLibApiData',
+            'rcmApiLibApiMessage',
+            'rcmApiLibApiParams',
+            function ($http, $log, rcmApiLibServiceConfig, rcmApiLibApiData, rcmApiLibApiMessage, rcmApiLibApiParams) {
 
-            var self = this;
+                var self = this;
 
-            /**
-             * config
-             * @type {rcmApiLibServiceConfig|*}
-             */
-            self.config = rcmApiLibServiceConfig;
+                /**
+                 * config
+                 * @type {rcmApiLibServiceConfig|*}
+                 */
+                self.config = rcmApiLibServiceConfig;
 
-            /**
-             * cache
-             * @type {{}}
-             */
-            self.cache = {};
+                /**
+                 * cache
+                 * @type {{}}
+                 */
+                self.cache = {};
 
-            /**
-             * Class ApiParams
-             * @constructor
-             */
-            self.ApiParams = rcmApiLibApiParams;
+                /**
+                 * Class ApiParams
+                 * @constructor
+                 */
+                self.ApiParams = rcmApiLibApiParams;
 
-            /**
-             * Class ApiData - Format expected from server
-             * @constructor
-             */
-            self.ApiData = rcmApiLibApiData;
+                /**
+                 * Class ApiData - Format expected from server
+                 * @constructor
+                 */
+                self.ApiData = rcmApiLibApiData;
 
-            /**
-             * Class ApiMessage - Format expected for ApiMessages
-             * @constructor
-             */
-            self.ApiMessage = rcmApiLibApiMessage;
+                /**
+                 * Class ApiMessage - Format expected for ApiMessages
+                 * @constructor
+                 */
+                self.ApiMessage = rcmApiLibApiMessage;
 
-            /**
-             * GET
-             * @param apiParams
-             * @param {bool} cache - if you ask for cache it will try to get it from and set it to the cache
-             * @returns {*}
-             */
-            self.getCached = function (apiParams, cacheId) {
+                /**
+                 * GET
+                 * @param apiParams
+                 * @param {bool} cache - if you ask for cache it will try to get it from and set it to the cache
+                 * @returns {*}
+                 */
+                self.getCached = function (apiParams, cacheId) {
 
-                apiParams = self.buildApiParams(apiParams);
+                    apiParams = self.buildApiParams(apiParams);
 
-                apiParams.loading(true);
+                    apiParams.loading(true);
 
-                if (!cacheId) {
-                    cacheId = apiParams.url;
-                }
+                    if (!cacheId) {
+                        cacheId = apiParams.url;
+                    }
 
-                self.getCache(
-                    cacheId,
-                    function (cacheData) {
-                        self.apiSuccess(
-                            self.cache[apiParams.url],
-                            apiParams,
-                            'CACHE',
-                            null,
-                            null
+                    self.getCache(
+                        cacheId,
+                        function (cacheData) {
+                            self.apiSuccess(
+                                self.cache[apiParams.url],
+                                apiParams,
+                                'CACHE',
+                                null,
+                                null
+                            );
+                        },
+                        function () {
+                            apiParams.cacheId = cacheId;
+
+                            self.get(
+                                apiParams
+                            );
+                        }
+                    )
+                };
+
+                /**
+                 * GET
+                 * @param apiParams
+                 */
+                self.get = function (apiParams) {
+
+                    apiParams = self.buildApiParams(apiParams);
+
+                    apiParams.loading(true);
+
+                    $http(
+                        {
+                            method: 'GET',
+                            url: apiParams.url,
+                            params: apiParams.params
+                        }
+                    )
+                        .success(
+                            function (data, status, headers, config) {
+                                self.apiSuccess(data, apiParams, status, headers, config)
+                            }
+                        )
+                        .error(
+                            function (data, status, headers, config) {
+                                self.apiError(data, apiParams, status, headers, config)
+                            }
                         );
-                    },
-                    function () {
-                        apiParams.cacheId = cacheId;
+                };
 
-                        self.get(
-                            apiParams
+                /**
+                 * POST
+                 * @param apiParams
+                 */
+                self.post = function (apiParams) {
+
+                    apiParams = self.buildApiParams(apiParams);
+
+                    apiParams.loading(true);
+
+                    $http(
+                        {
+                            method: 'POST',
+                            url: apiParams.url,
+                            data: apiParams.data,
+                            params: apiParams.params
+                        }
+                    )
+                        .success(
+                            function (data, status, headers, config) {
+                                self.apiSuccess(data, apiParams, status, headers, config)
+                            }
+                        )
+                        .error(
+                            function (data, status, headers, config) {
+                                self.apiError(data, apiParams, status, headers, config)
+                            }
+                        );
+                };
+
+                /**
+                 * PATCH
+                 * @param apiParams
+                 */
+                self.patch = function (apiParams) {
+
+                    apiParams = self.buildApiParams(apiParams);
+
+                    apiParams.loading(true);
+
+                    $http(
+                        {
+                            method: 'PATCH',
+                            url: apiParams.url,
+                            data: apiParams.data, // angular.toJson(data)
+                            params: apiParams.params
+                        }
+                    )
+                        .success(
+                            function (data, status, headers, config) {
+                                self.apiSuccess(data, apiParams, status, headers, config)
+                            }
+                        )
+                        .error(
+                            function (data, status, headers, config) {
+                                self.apiError(data, apiParams, status, headers, config)
+                            }
+                        );
+                };
+
+                /**
+                 * PUT
+                 * @param apiParams
+                 */
+                self.put = function (apiParams) {
+
+                    apiParams = self.buildApiParams(apiParams);
+
+                    apiParams.loading(true);
+
+                    $http(
+                        {
+                            method: 'PUT',
+                            url: apiParams.url,
+                            data: apiParams.data,
+                            params: apiParams.params
+                        }
+                    )
+                        .success(
+                            function (data, status, headers, config) {
+                                self.apiSuccess(data, apiParams, status, headers, config)
+                            }
+                        )
+                        .error(
+                            function (data, status, headers, config) {
+                                self.apiError(data, apiParams, status, headers, config)
+                            }
+                        );
+                };
+
+                /**
+                 * DELETE
+                 * @param apiParams
+                 */
+                self.del = function (apiParams) {
+
+                    apiParams = self.buildApiParams(apiParams);
+
+                    apiParams.loading(true);
+
+                    $http(
+                        {
+                            method: 'DELETE',
+                            url: apiParams.url,
+                            data: apiParams.data,
+                            params: apiParams.params
+                        }
+                    )
+                        .success(
+                            function (data, status, headers, config) {
+                                self.apiSuccess(data, apiParams, status, headers, config)
+                            }
+                        )
+                        .error(
+                            function (data, status, headers, config) {
+                                self.apiError(data, apiParams, status, headers, config)
+                            }
+                        );
+                };
+
+                /**
+                 * buildApiParams
+                 * @param apiParams
+                 * @returns {*}
+                 */
+                self.buildApiParams = function (apiParams) {
+                    var apiParamsObject = new self.ApiParams();
+                    apiParamsObject.populate(apiParams);
+                    apiParamsObject.url = self.formatUrl(apiParamsObject.url, apiParamsObject.urlParams);
+
+                    return apiParamsObject;
+                };
+
+                /**
+                 * Parse URL string and replace {#} with param value by key
+                 * @param {string} str
+                 * @param {array} urlParams
+                 * @returns {string}
+                 */
+                self.formatUrl = function (str, urlParams) {
+
+                    if (typeof urlParams !== 'object' || urlParams === null) {
+                        return str;
+                    }
+
+                    for (var arg in urlParams) {
+                        str = str.replace(
+                            RegExp("\\{" + arg + "\\}", "gi"),
+                            urlParams[arg]
                         );
                     }
-                )
-            };
 
-            /**
-             * GET
-             * @param apiParams
-             */
-            self.get = function (apiParams) {
-
-                apiParams = self.buildApiParams(apiParams);
-
-                apiParams.loading(true);
-
-                $http(
-                    {
-                        method: 'GET',
-                        url: apiParams.url,
-                        params: apiParams.params
-                    }
-                )
-                    .success(
-                    function (data, status, headers, config) {
-                        self.apiSuccess(data, apiParams, status, headers, config)
-                    }
-                )
-                    .error(
-                    function (data, status, headers, config) {
-                        self.apiError(data, apiParams, status, headers, config)
-                    }
-                );
-            };
-
-            /**
-             * POST
-             * @param apiParams
-             */
-            self.post = function (apiParams) {
-
-                apiParams = self.buildApiParams(apiParams);
-
-                apiParams.loading(true);
-
-                $http(
-                    {
-                        method: 'POST',
-                        url: apiParams.url,
-                        data: apiParams.data,
-                        params: apiParams.params
-                    }
-                )
-                    .success(
-                    function (data, status, headers, config) {
-                        self.apiSuccess(data, apiParams, status, headers, config)
-                    }
-                )
-                    .error(
-                    function (data, status, headers, config) {
-                        self.apiError(data, apiParams, status, headers, config)
-                    }
-                );
-            };
-
-            /**
-             * PATCH
-             * @param apiParams
-             */
-            self.patch = function (apiParams) {
-
-                apiParams = self.buildApiParams(apiParams);
-
-                apiParams.loading(true);
-
-                $http(
-                    {
-                        method: 'PATCH',
-                        url: apiParams.url,
-                        data: apiParams.data, // angular.toJson(data)
-                        params: apiParams.params
-                    }
-                )
-                    .success(
-                    function (data, status, headers, config) {
-                        self.apiSuccess(data, apiParams, status, headers, config)
-                    }
-                )
-                    .error(
-                    function (data, status, headers, config) {
-                        self.apiError(data, apiParams, status, headers, config)
-                    }
-                );
-            };
-
-            /**
-             * PUT
-             * @param apiParams
-             */
-            self.put = function (apiParams) {
-
-                apiParams = self.buildApiParams(apiParams);
-
-                apiParams.loading(true);
-
-                $http(
-                    {
-                        method: 'PUT',
-                        url: apiParams.url,
-                        data: apiParams.data,
-                        params: apiParams.params
-                    }
-                )
-                    .success(
-                    function (data, status, headers, config) {
-                        self.apiSuccess(data, apiParams, status, headers, config)
-                    }
-                )
-                    .error(
-                    function (data, status, headers, config) {
-                        self.apiError(data, apiParams, status, headers, config)
-                    }
-                );
-            };
-
-            /**
-             * DELETE
-             * @param apiParams
-             */
-            self.del = function (apiParams) {
-
-                apiParams = self.buildApiParams(apiParams);
-
-                apiParams.loading(true);
-
-                $http(
-                    {
-                        method: 'DELETE',
-                        url: apiParams.url,
-                        data: apiParams.data,
-                        params: apiParams.params
-                    }
-                )
-                    .success(
-                    function (data, status, headers, config) {
-                        self.apiSuccess(data, apiParams, status, headers, config)
-                    }
-                )
-                    .error(
-                    function (data, status, headers, config) {
-                        self.apiError(data, apiParams, status, headers, config)
-                    }
-                );
-            };
-
-            /**
-             * buildApiParams
-             * @param apiParams
-             * @returns {*}
-             */
-            self.buildApiParams = function (apiParams) {
-                var apiParamsObject = new self.ApiParams();
-                apiParamsObject.populate(apiParams);
-                apiParamsObject.url = self.formatUrl(apiParamsObject.url, apiParamsObject.urlParams);
-
-                return apiParamsObject;
-            };
-
-            /**
-             * Parse URL string and replace {#} with param value by key
-             * @param {string} str
-             * @param {array} urlParams
-             * @returns {string}
-             */
-            self.formatUrl = function (str, urlParams) {
-
-                if (typeof urlParams !== 'object' || urlParams === null) {
                     return str;
-                }
+                };
 
-                for (var arg in urlParams) {
-                    str = str.replace(
-                        RegExp("\\{" + arg + "\\}", "gi"),
-                        urlParams[arg]
+                /**
+                 * setCache
+                 * @param cacheId
+                 * @param data
+                 */
+                self.setCache = function (cacheId, data) {
+                    if (cacheId) {
+                        self.cache[cacheId] = angular.copy(data);
+                    }
+                };
+
+                /**
+                 * getCache
+                 * @param cacheId
+                 * @param cacheCallback
+                 * @param noCacheCallback
+                 */
+                self.getCache = function (cacheId, cacheCallback, noCacheCallback) {
+
+                    var cacheData = self.cache[cacheId];
+
+                    if (cacheData) {
+                        cacheCallback(cacheData);
+                    } else {
+                        noCacheCallback();
+                    }
+                };
+
+                /**
+                 *
+                 * @param data
+                 * @param apiParams
+                 */
+                self.apiError = function (data, apiParams, status, headers, config) {
+
+                    $log.error(
+                        'An API error occurred, status: ' + status + ' returned: ',
+                        data
                     );
-                }
-
-                return str;
-            };
-
-            /**
-             * setCache
-             * @param cacheId
-             * @param data
-             */
-            self.setCache = function (cacheId, data) {
-                if (cacheId) {
-                    self.cache[cacheId] = angular.copy(data);
-                }
-            };
-
-            /**
-             * getCache
-             * @param cacheId
-             * @param cacheCallback
-             * @param noCacheCallback
-             */
-            self.getCache = function (cacheId, cacheCallback, noCacheCallback) {
-
-                var cacheData = self.cache[cacheId];
-
-                if (cacheData) {
-                    cacheCallback(cacheData);
-                } else {
-                    noCacheCallback();
-                }
-            };
-
-            /**
-             *
-             * @param data
-             * @param apiParams
-             */
-            self.apiError = function (data, apiParams, status, headers, config) {
-
-                $log.error(
-                    'An API error occured, status: ' + status + ' returned: ',
-                    data
-                );
-
-                self.prepareErrorData(
-                    data,
-                    apiParams,
-                    function (data) {
-                        apiParams.loading(false);
-                        apiParams.error(data, status, headers, config);
-                    },
-                    status
-                );
-            };
-
-            /**
-             * apiSuccess
-             * @param data
-             * @param apiParams
-             * @param status
-             * @param headers
-             * @param config
-             */
-            self.apiSuccess = function (data, apiParams, status, headers, config) {
-
-                if (status != 200 || typeof data !== 'object') {
 
                     self.prepareErrorData(
                         data,
@@ -507,63 +498,147 @@ angular.module('rcmApiLib')
                             apiParams.error(data, status, headers, config);
                         },
                         status
-                    )
-                } else {
-
-                    self.prepareData(
-                        data,
-                        apiParams,
-                        function (data) {
-                            self.setCache(apiParams.cacheId, data);
-                            apiParams.loading(false);
-                            apiParams.success(data, status, headers, config);
-                        }
                     );
-                }
-            };
+                };
 
-            /**
-             * prepareErrorData
-             * @param data
-             * @param apiParams
-             * @param callback
-             * @param status
-             */
-            self.prepareErrorData = function (data, apiParams, callback, status) {
+                /**
+                 * apiSuccess
+                 * @param data
+                 * @param apiParams
+                 * @param status
+                 * @param headers
+                 * @param config
+                 */
+                self.apiSuccess = function (data, apiParams, status, headers, config) {
 
-                if (typeof data !== 'object' || data === null) {
-                    data = new self.ApiData();
-                }
+                    if (status != 200 || !self.isValidDataType(data, apiParams)) {
+                        $log.error(
+                            'API returned responseType ('+
+                            self.getDataType(data) +
+                            ') that is not supported or invalid status ('+
+                            status +
+                            ') data: ',
+                            data
+                        );
+                        self.prepareErrorData(
+                            data,
+                            apiParams,
+                            function (data) {
+                                apiParams.loading(false);
+                                apiParams.error(data, status, headers, config);
+                            },
+                            status
+                        )
+                    } else {
+                        self.prepareData(
+                            data,
+                            apiParams,
+                            function (data) {
+                                self.setCache(apiParams.cacheId, data);
+                                apiParams.loading(false);
+                                apiParams.success(data, status, headers, config);
+                            }
+                        );
+                    }
+                };
 
-                if (!data.messages) {
-                    data.messages = [];
-                }
+                /**
+                 * prepareErrorData
+                 * @param data
+                 * @param apiParams
+                 * @param callback
+                 * @param status
+                 */
+                self.prepareErrorData = function (data, apiParams, callback, status) {
+                    var preparedData = self.buildValidDataFormat(data);
 
-                if (data.messages.length < 1) {
-                    var message = new self.ApiMessage(self.config.defaultMessage);
-                    data.messages.primary = true;
-                    data.messages = [message];
-                }
+                    if (preparedData.messages.length < 1) {
+                        var message = new self.ApiMessage(self.config.defaultMessage);
+                        preparedData.messages.primary = true;
+                        preparedData.messages = [message];
+                    }
 
-                self.prepareData(data, apiParams, callback);
-            };
+                    callback(preparedData)
+                };
 
-            /**
-             * prepareData
-             * @param data
-             * @param apiParams
-             * @param callback
-             */
-            self.prepareData = function (data, apiParams, callback) {
+                /**
+                 * prepareData
+                 * @param data
+                 * @param apiParams
+                 * @param callback
+                 */
+                self.prepareData = function (data, apiParams, callback) {
+                    callback(self.buildValidDataFormat(data));
+                };
 
-                data = angular.extend(new self.ApiData(), data);
-                callback(data);
-            };
+                /**
+                 * isValidDataType
+                 * @param data
+                 * @param apiParams
+                 * @returns {boolean}
+                 */
+                self.isValidDataType = function (data, apiParams) {
 
-            return self;
-        }
-    ]
-);
+                    var dataType = self.getDataType(data);
+
+                    return (apiParams.responseTypes.indexOf(dataType) > -1);
+                };
+
+                /**
+                 * getDataType
+                 * @param data
+                 * @returns {*}
+                 */
+                self.getDataType = function (data) {
+
+                    if (typeof data === 'undefined' || data === null) {
+                        return 'null';
+                    }
+
+                    if (Array.isArray(data)) {
+                        return 'array';
+                    }
+
+                    return typeof data;
+                };
+
+                /**
+                 * buildValidDataFormat
+                 * @param data
+                 * @returns {self.ApiData}
+                 */
+                self.buildValidDataFormat = function (data) {
+                    var preparedData = new self.ApiData();
+
+                    if (self.isValidDataFormat(data)) {
+                        preparedData = angular.extend(preparedData, data);
+                        return preparedData;
+                    }
+
+                    preparedData.data = data;
+                    return preparedData;
+                };
+
+                /**
+                 * isValidDataFormat
+                 * @param data
+                 * @returns {boolean|string}
+                 */
+                self.isValidDataFormat = function (data) {
+
+                    if (typeof data !== 'object' || data === null) {
+                        return false;
+                    }
+
+                    return (typeof data.messages !== 'undefined' && typeof data.data !== 'undefined' && typeof Array.isArray(
+                        data.messages
+                    ));
+                };
+
+                return self;
+            }
+        ]
+    );
 
 
 /**

@@ -5,9 +5,9 @@ angular.module('rcmApiLib')
     .factory(
         'rcmApiLibMessageService',
         [
-            '$log',
             'rcmApiLibApiMessage',
-            function ($log, rcmApiLibApiMessage) {
+            'RcmEventManagerClass',
+            function (rcmApiLibApiMessage, RcmEventManagerClass) {
 
                 /**
                  * self
@@ -15,10 +15,24 @@ angular.module('rcmApiLib')
                 var self = this;
 
                 /**
+                 *
+                 * @type {RcmEventManagerClass|*}
+                 */
+                var eventManager = new RcmEventManagerClass();
+
+                /**
                  * messages
                  * @type {{}}
                  */
                 self.messages = {};
+
+                /**
+                 * getEventManager
+                 * @returns {RcmEventManager}
+                 */
+                self.getEventManager = function () {
+                    return eventManager;
+                };
 
                 /**
                  * getNamespace
@@ -40,6 +54,7 @@ angular.module('rcmApiLib')
                 var addNamespaceMessage = function (namespace, message) {
                     namespace = self.createNamespace(namespace);
                     self.messages[namespace].push(message);
+                    eventManager.trigger('rcmApiLibApiMessage.addMessage', {namespace: namespace, message: message});
                 };
 
                 /**
@@ -64,6 +79,7 @@ angular.module('rcmApiLib')
                     namespace = getNamespace(namespace);
 
                     self.messages[namespace] = [];
+                    eventManager.trigger('rcmApiLibApiMessage.clearMessages', namespace);
                 };
 
                 /**
@@ -75,6 +91,7 @@ angular.module('rcmApiLib')
                     if (!self.messages[namespace]) {
                         self.messages[namespace] = []
                     }
+                    eventManager.trigger('rcmApiLibApiMessage.createNamespace', namespace);
                     return namespace;
                 };
 

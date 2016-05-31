@@ -17,24 +17,31 @@ angular.module('rcmApiLib')
              * @param attrs
              */
             var link = function ($scope, elm, attrs) {
+                var eventManager = rcmApiLibMessageService.getEventManager();
                 var namespace = "DEFAULT";
                 if(attrs.namespace) {
                     namespace = attrs.namespace;
                 }
                 // Create namespace
                 rcmApiLibMessageService.createNamespace(namespace);
-                $scope.$watch(
-                    function () {
-                        return rcmApiLibMessageService.messages[namespace];
-                    },
-                    function () {
-                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
 
+                eventManager.on(
+                    'rcmApiLibApiMessage.addMessage',
+                    function (response) {
+                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
                         // Scroll to message
                         if($scope.messages.length > 0) {
                             elm[0].scrollIntoView(true);
                         }
-                    }
+                    },
+                    namespace
+                );
+                eventManager.on(
+                    'rcmApiLibApiMessage.clearMessages',
+                    function (response) {
+                        $scope.messages = [];
+                    },
+                    namespace
                 );
                 $scope.messages = rcmApiLibMessageService.getMessages(namespace);
             };

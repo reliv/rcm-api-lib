@@ -1,7 +1,7 @@
 /**
  * rcmApiLib Module
  */
-angular.module('rcmApiLib', []);
+angular.module('rcmApiLib', ['RcmJsLib']);
 
 /**
  * rcmApiLib Module
@@ -668,9 +668,9 @@ angular.module('rcmApiLib')
     .factory(
         'rcmApiLibMessageService',
         [
-            '$log',
             'rcmApiLibApiMessage',
-            function ($log, rcmApiLibApiMessage) {
+            'RcmEventManagerClass',
+            function (rcmApiLibApiMessage, RcmEventManagerClass) {
 
                 /**
                  * self
@@ -678,10 +678,24 @@ angular.module('rcmApiLib')
                 var self = this;
 
                 /**
+                 *
+                 * @type {RcmEventManagerClass|*}
+                 */
+                var eventManager = new RcmEventManagerClass();
+
+                /**
                  * messages
                  * @type {{}}
                  */
                 self.messages = {};
+
+                /**
+                 * getEventManager
+                 * @returns {RcmEventManager}
+                 */
+                self.getEventManager = function () {
+                    return eventManager;
+                };
 
                 /**
                  * getNamespace
@@ -703,6 +717,7 @@ angular.module('rcmApiLib')
                 var addNamespaceMessage = function (namespace, message) {
                     namespace = self.createNamespace(namespace);
                     self.messages[namespace].push(message);
+                    eventManager.trigger('rcmApiLibApiMessage.addMessage', {namespace: namespace, message: message});
                 };
 
                 /**
@@ -727,6 +742,7 @@ angular.module('rcmApiLib')
                     namespace = getNamespace(namespace);
 
                     self.messages[namespace] = [];
+                    eventManager.trigger('rcmApiLibApiMessage.clearMessages', namespace);
                 };
 
                 /**
@@ -738,6 +754,7 @@ angular.module('rcmApiLib')
                     if (!self.messages[namespace]) {
                         self.messages[namespace] = []
                     }
+                    eventManager.trigger('rcmApiLibApiMessage.createNamespace', namespace);
                     return namespace;
                 };
 
@@ -921,24 +938,31 @@ angular.module('rcmApiLib')
              * @param attrs
              */
             var link = function ($scope, elm, attrs) {
+                var eventManager = rcmApiLibMessageService.getEventManager();
                 var namespace = "DEFAULT";
                 if(attrs.namespace) {
                     namespace = attrs.namespace;
                 }
                 // Create namespace
                 rcmApiLibMessageService.createNamespace(namespace);
-                $scope.$watch(
-                    function () {
-                        return rcmApiLibMessageService.messages[namespace];
-                    },
-                    function () {
-                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
 
+                eventManager.on(
+                    'rcmApiLibApiMessage.addMessage',
+                    function (response) {
+                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
                         // Scroll to message
                         if($scope.messages.length > 0) {
                             elm[0].scrollIntoView(true);
                         }
-                    }
+                    },
+                    namespace
+                );
+                eventManager.on(
+                    'rcmApiLibApiMessage.clearMessages',
+                    function (response) {
+                        $scope.messages = [];
+                    },
+                    namespace
                 );
                 $scope.messages = rcmApiLibMessageService.getMessages(namespace);
             };

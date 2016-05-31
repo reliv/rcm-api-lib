@@ -25,7 +25,7 @@ angular.module('rcmApiLib')
                 rcmApiLibMessageService.createNamespace(namespace);
                 $scope.$watch(
                     function () {
-                        return rcmApiLibMessageService.messages;
+                        return rcmApiLibMessageService.messages[namespace];
                     },
                     function () {
                         $scope.messages = rcmApiLibMessageService.getMessages(namespace);

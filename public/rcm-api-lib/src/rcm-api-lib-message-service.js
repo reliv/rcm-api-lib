@@ -5,10 +5,9 @@ angular.module('rcmApiLib')
     .factory(
         'rcmApiLibMessageService',
         [
-            '$log',
             'rcmApiLibApiMessage',
             'RcmEventManagerClass',
-            function ($log, rcmApiLibApiMessage, RcmEventManagerClass) {
+            function (rcmApiLibApiMessage, RcmEventManagerClass) {
 
                 /**
                  * self

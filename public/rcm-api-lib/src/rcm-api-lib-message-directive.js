@@ -4,58 +4,74 @@
  */
 angular.module('rcmApiLib')
     .directive(
-    'rcmApiLibMessageDirective',
-    [
-        '$log',
-        'rcmApiLibMessageService',
-        function ($log, rcmApiLibMessageService) {
+        'rcmApiLibMessageDirective',
+        [
+            '$log',
+            'rcmApiLibMessageService',
+            function ($log, rcmApiLibMessageService) {
 
-            /**
-             * link
-             * @param $scope
-             * @param elm
-             * @param attrs
-             */
-            var link = function ($scope, elm, attrs) {
-                var eventManager = rcmApiLibMessageService.getEventManager();
-                var namespace = "DEFAULT";
-                if(attrs.namespace) {
-                    namespace = attrs.namespace;
-                }
-                // Create namespace
-                rcmApiLibMessageService.createNamespace(namespace);
+                /**
+                 * link
+                 * @param $scope
+                 * @param elm
+                 * @param attrs
+                 */
+                var link = function ($scope, elm, attrs) {
+                    var eventManager = rcmApiLibMessageService.getEventManager();
+                    if(!$scope.namespace) {
+                        $scope.namespace = rcmApiLibMessageService.getDefaultNamespace();
+                    }
 
-                eventManager.on(
-                    'rcmApiLibApiMessage.addMessage',
-                    function (response) {
-                        $scope.messages = rcmApiLibMessageService.getMessages(namespace);
+                    // Create namespace
+                    rcmApiLibMessageService.createNamespace($scope.namespace);
+                    $scope.apiLibDirectiveMessages = {};
+
+                    var setMessages = function (namespace, messages) {
+                        $scope.apiLibDirectiveMessages[namespace] = messages;
                         // Scroll to message
-                        if($scope.messages.length > 0) {
+                        if (messages.length) {
                             elm[0].scrollIntoView(true);
                         }
-                    },
-                    namespace
-                );
-                eventManager.on(
-                    'rcmApiLibApiMessage.clearMessages',
-                    function (response) {
-                        $scope.messages = [];
-                    },
-                    namespace
-                );
-                $scope.messages = rcmApiLibMessageService.getMessages(namespace);
-            };
+                    };
 
-            return {
-                link: link,
-                scope: {},
-                template: '' +
-                '<div ng-hide="messages.length < 1">' +
-                ' <div ng-repeat="message in messages" class="alert alert-{{message.level}}" role="alert">' +
-                '  <div class="message">{{message.value}}</div>' +
-                ' </div>' +
-                '</div>'
+                    var clearMessages = function (namespace) {
+                        $scope.apiLibDirectiveMessages[namespace] = [];
+                    };
+
+                    eventManager.on(
+                        'rcmApiLibApiMessage.addMessage',
+                        function (response) {
+                            setMessages(
+                                $scope.namespace,
+                                rcmApiLibMessageService.getMessages($scope.namespace)
+                            );
+                        },
+                        $scope.namespace
+                    );
+
+                    eventManager.on(
+                        'rcmApiLibApiMessage.clearMessages',
+                        function (response) {
+                            clearMessages($scope.namespace);
+                        },
+                        $scope.namespace
+                    );
+
+                    $scope.apiLibDirectiveMessages = rcmApiLibMessageService.getMessages($scope.namespace);
+                };
+
+                return {
+                    link: link,
+                    scope: {
+                        namespace: '@namespace'
+                    },
+                    template: '' +
+                    '<div ng-show="apiLibDirectiveMessages[namespace].length">' +
+                    ' <div ng-repeat="message in apiLibDirectiveMessages[namespace]" class="alert alert-{{message.level}}" role="alert">' +
+                    '  <div class="message">{{message.value}}</div>' +
+                    ' </div>' +
+                    '</div>'
+                }
             }
-        }
-    ]
-);
+        ]
+    );

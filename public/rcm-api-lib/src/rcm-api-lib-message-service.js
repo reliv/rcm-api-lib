@@ -21,6 +21,12 @@ angular.module('rcmApiLib')
                 var eventManager = new RcmEventManagerClass();
 
                 /**
+                 * defaultNamespace
+                 * @type {string}
+                 */
+                var defaultNamespace = 'DEFAULT';
+
+                /**
                  * messages
                  * @type {{}}
                  */
@@ -35,13 +41,21 @@ angular.module('rcmApiLib')
                 };
 
                 /**
+                 * getDefaultNamespace
+                 * @returns {string}
+                 */
+                self.getDefaultNamespace = function () {
+                    return defaultNamespace;
+                };
+
+                /**
                  * getNamespace
                  * @param namespace
                  * @returns {*}
                  */
                 var getNamespace = function (namespace) {
                     if (typeof namespace !== 'string') {
-                        namespace = "DEFAULT"
+                        namespace = defaultNamespace
                     }
                     return namespace;
                 };
@@ -125,7 +139,7 @@ angular.module('rcmApiLib')
                 self.addMessage = function (message, namespace) {
                     if (!self.isValidMessage(message)) {
                         console.warn(
-                            "rcmApiLibApiMessage.addMessage recieved an invalid message",
+                            "rcmApiLibApiMessage.addMessage received an invalid message",
                             message
                         );
                         return;

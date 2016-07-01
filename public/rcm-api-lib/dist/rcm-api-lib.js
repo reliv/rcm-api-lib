@@ -485,7 +485,7 @@ angular.module('rcmApiLib')
                  */
                 self.apiError = function (data, apiParams, status, headers, config) {
 
-                    $log.error(
+                    $log.info(
                         'An API error occurred, status: ' + status + ' returned: ',
                         data
                     );
@@ -512,7 +512,7 @@ angular.module('rcmApiLib')
                 self.apiSuccess = function (data, apiParams, status, headers, config) {
 
                     if (status != 200 || !self.isValidDataType(data, apiParams)) {
-                        $log.error(
+                        $log.info(
                             'API returned responseType ('+
                             self.getDataType(data) +
                             ') that is not supported or invalid status ('+

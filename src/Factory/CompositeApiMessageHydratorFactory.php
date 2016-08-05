@@ -21,7 +21,7 @@ class CompositeApiMessageHydratorFactory implements FactoryInterface
 
         $queue = new \SplPriorityQueue();
 
-        foreach ($config['Reliv\\RcmApiLib']['CompositeApiMessageHydrators'] as $priority => $hydratorService) {
+        foreach ($config['Reliv\\RcmApiLib']['CompositeApiMessageHydrators'] as $hydratorService => $priority) {
             $queue->insert($hydratorService, $priority);
         }
 

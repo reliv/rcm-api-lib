@@ -161,6 +161,7 @@ angular.module('rcmApiLib')
                             self.addMessage(message, namespace);
                         }
                     );
+                    eventManager.trigger('rcmApiLibApiMessage.addMessages', {namespace: namespace, messages: self.getMessages(namespace)});
                 };
 
                 /**

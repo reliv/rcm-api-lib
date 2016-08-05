@@ -824,6 +824,7 @@ angular.module('rcmApiLib')
                             self.addMessage(message, namespace);
                         }
                     );
+                    eventManager.trigger('rcmApiLibApiMessage.addMessages', {namespace: namespace, messages: self.getMessages(namespace)});
                 };
 
                 /**
@@ -941,9 +942,10 @@ angular.module('rcmApiLib')
     .directive(
         'rcmApiLibMessageDirective',
         [
-            '$log',
             'rcmApiLibMessageService',
-            function ($log, rcmApiLibMessageService) {
+            function (
+                rcmApiLibMessageService
+            ) {
 
                 /**
                  * link
@@ -952,38 +954,71 @@ angular.module('rcmApiLib')
                  * @param attrs
                  */
                 var link = function ($scope, elm, attrs) {
+
                     var eventManager = rcmApiLibMessageService.getEventManager();
-                    if(!$scope.namespace) {
+
+                    if (!$scope.namespace) {
                         $scope.namespace = rcmApiLibMessageService.getDefaultNamespace();
                     }
 
-                    // Create namespace
+                    /**
+                     * Create namespace
+                     */
                     rcmApiLibMessageService.createNamespace($scope.namespace);
+
                     $scope.apiLibDirectiveMessages = {};
 
-                    var setMessages = function (namespace, messages) {
-                        $scope.apiLibDirectiveMessages[namespace] = messages;
+                    var scrollToMessage = function () {
+                        elm[0].scrollIntoView(true);
+                    };
+
+                    /**
+                     * setMessage
+                     * @param result
+                     */
+                    var setMessages = function (result) {
+                        var messages = rcmApiLibMessageService.getMessages(result.namespace);
+                        // spam protection
+                        if ($scope.apiLibDirectiveMessages[result.namespace] === messages) {
+                            return;
+                        }
+                        $scope.apiLibDirectiveMessages[result.namespace] = messages;
+
                         // Scroll to message
-                        if (messages.length) {
-                            elm[0].scrollIntoView(true);
+                        if (messages.length > 0) {
+                            scrollToMessage()
                         }
                     };
 
+                    /**
+                     * clearMessages
+                     * @param namespace
+                     */
                     var clearMessages = function (namespace) {
                         $scope.apiLibDirectiveMessages[namespace] = [];
                     };
 
+                    /**
+                     *
+                     */
                     eventManager.on(
-                        'rcmApiLibApiMessage.addMessage',
-                        function (response) {
-                            setMessages(
-                                $scope.namespace,
-                                rcmApiLibMessageService.getMessages($scope.namespace)
-                            );
-                        },
+                        'rcmApiLibApiMessage.addMessages',
+                        setMessages,
                         $scope.namespace
                     );
 
+                    /**
+                     *
+                     */
+                    eventManager.on(
+                        'rcmApiLibApiMessage.addMessage',
+                        setMessages,
+                        $scope.namespace
+                    );
+
+                    /**
+                     *
+                     */
                     eventManager.on(
                         'rcmApiLibApiMessage.clearMessages',
                         function (response) {

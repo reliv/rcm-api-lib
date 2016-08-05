@@ -115,7 +115,7 @@ class ApiMessages extends AbstractApiModel implements \IteratorAggregate
     /**
      * getIterator
      *
-     * @return array
+     * @return \ArrayIterator
      */
     public function getIterator()
     {

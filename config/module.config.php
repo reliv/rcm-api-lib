@@ -4,13 +4,21 @@ return [
      * Configuration
      */
     'Reliv\\RcmApiLib' => [
+        /**
+         * CompositeApiMessageHydrators
+         * [{priority} => '{HydratorServiceName}']
+         */
         'CompositeApiMessageHydrators' => [
-            'Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator',
-            'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator',
-            'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
-            'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator',
-            'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
+            5000 => 'Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator',
+            4000 => 'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator',
+            3000 => 'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
+            2000 => 'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator',
+            1000 => 'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
         ],
+
+        /**
+         * InputFilterApiMessagesHydrator
+         */
         'InputFilterApiMessagesHydrator' => [
             'primaryMessage' => 'Some information was missing or invalid',
         ],

@@ -6,9 +6,10 @@ angular.module('rcmApiLib')
     .directive(
         'rcmApiLibMessageDirective',
         [
-            '$log',
             'rcmApiLibMessageService',
-            function ($log, rcmApiLibMessageService) {
+            function (
+                rcmApiLibMessageService
+            ) {
 
                 /**
                  * link
@@ -20,7 +21,7 @@ angular.module('rcmApiLib')
 
                     var eventManager = rcmApiLibMessageService.getEventManager();
 
-                    if(!$scope.namespace) {
+                    if (!$scope.namespace) {
                         $scope.namespace = rcmApiLibMessageService.getDefaultNamespace();
                     }
 
@@ -39,26 +40,17 @@ angular.module('rcmApiLib')
                      * setMessage
                      * @param result
                      */
-                    var setMessage = function (result) {
-                        var messages = [result.message];
+                    var setMessages = function (result) {
+                        var messages = rcmApiLibMessageService.getMessages(result.namespace);
+                        // spam protection
+                        if ($scope.apiLibDirectiveMessages[result.namespace] === messages) {
+                            return;
+                        }
                         $scope.apiLibDirectiveMessages[result.namespace] = messages;
 
                         // Scroll to message
-                        if (messages.length) {
+                        if (messages.length > 0) {
                             scrollToMessage()
-                        }
-                    };
-
-                    /**
-                     * setMessages
-                     * @param result
-                     */
-                    var setMessages = function (result) {
-                        $scope.apiLibDirectiveMessages[result.namespace] = result.messages;
-
-                        // Scroll to message
-                        if (result.messages.length) {
-                            elm[0].scrollIntoView(true);
                         }
                     };
 
@@ -84,7 +76,7 @@ angular.module('rcmApiLib')
                      */
                     eventManager.on(
                         'rcmApiLibApiMessage.addMessage',
-                        setMessage,
+                        setMessages,
                         $scope.namespace
                     );
 

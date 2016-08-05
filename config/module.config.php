@@ -6,14 +6,14 @@ return [
     'Reliv\\RcmApiLib' => [
         /**
          * CompositeApiMessageHydrators
-         * [{priority} => '{HydratorServiceName}']
+         * ['{HydratorServiceName}' => {priority}]
          */
         'CompositeApiMessageHydrators' => [
-            5000 => 'Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator',
-            4000 => 'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator',
-            3000 => 'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator',
-            2000 => 'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator',
-            1000 => 'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator',
+            'Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator' => 5000,
+            'Reliv\RcmApiLib\Hydrator\ArrayApiMessagesHydrator' => 4000,
+            'Reliv\RcmApiLib\Hydrator\ExceptionApiMessagesHydrator' => 3000,
+            'Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator' => 2000,
+            'Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator' => 1000,
         ],
 
         /**

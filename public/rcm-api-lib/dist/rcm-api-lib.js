@@ -992,7 +992,7 @@ angular.module('rcmApiLib')
                         $scope.namespace
                     );
 
-                    $scope.apiLibDirectiveMessages = rcmApiLibMessageService.getMessages($scope.namespace);
+                    $scope.apiLibDirectiveMessages[$scope.namespace] = rcmApiLibMessageService.getMessages($scope.namespace);
                 };
 
                 return {

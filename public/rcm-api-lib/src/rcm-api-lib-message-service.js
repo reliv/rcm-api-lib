@@ -132,6 +132,26 @@ angular.module('rcmApiLib')
                 };
 
                 /**
+                 * setMessage
+                 * @param message
+                 * @param namespace
+                 */
+                self.setMessage = function (message, namespace) {
+                    self.clearMessages();
+                    self.addMessage(message, namespace);
+                };
+
+                /**
+                 * setMessages
+                 * @param messages
+                 * @param namespace
+                 */
+                self.setMessages = function (messages, namespace) {
+                    self.clearMessages();
+                    self.setMessages(messages, namespace)
+                };
+
+                /**
                  * addMessage
                  * @param message
                  * @param namespace
@@ -171,6 +191,26 @@ angular.module('rcmApiLib')
                  */
                 self.getMessages = function(namespace) {
                     return getNamespaceMessages(namespace);
+                };
+
+                /**
+                 * setPrimaryMessage
+                 * @param messages
+                 * @param namespace
+                 * @param callback
+                 */
+                self.setPrimaryMessage = function (messages, namespace, callback) {
+                    self.getPrimaryMessage(
+                        messages,
+                        function (primaryMessage) {
+                            if (primaryMessage) {
+                                self.setMessage(primaryMessage, namespace);
+                                if(typeof callback === 'function') {
+                                    callback(primaryMessage)
+                                }
+                            }
+                        }
+                    )
                 };
 
                 /**

@@ -49,7 +49,7 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
 
         $this->messages = $apiMessages;
 
-        if (is_a($apiMessages, ApiMessages::class)) {
+        if ($apiMessages instanceof ApiMessages) {
             $this->setApiMessages($apiMessages);
         } else {
             $this->setApiMessages(new ApiMessages());

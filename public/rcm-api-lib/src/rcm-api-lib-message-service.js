@@ -137,7 +137,7 @@ angular.module('rcmApiLib')
                  * @param namespace
                  */
                 self.setMessage = function (message, namespace) {
-                    self.clearMessages();
+                    self.clearMessages(namespace);
                     self.addMessage(message, namespace);
                 };
 
@@ -147,8 +147,8 @@ angular.module('rcmApiLib')
                  * @param namespace
                  */
                 self.setMessages = function (messages, namespace) {
-                    self.clearMessages();
-                    self.setMessages(messages, namespace)
+                    self.clearMessages(namespace);
+                    self.addMessages(messages, namespace)
                 };
 
                 /**

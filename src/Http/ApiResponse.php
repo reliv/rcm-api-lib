@@ -35,15 +35,25 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
     protected $messages;
 
     /**
-     * __construct
+     * ApiResponse constructor.
+     *
+     * @param null $apiMessages
+     *
+     * @throws \Exception
      */
-    public function __construct()
+    public function __construct($apiMessages = null)
     {
         /** @var Headers $headers */
         $headers = $this->getHeaders();
         $headers->addHeaderLine('Content-Type', 'application/json');
 
-        $this->messages = new ApiMessages();
+        $this->messages = $apiMessages;
+
+        if (is_a($apiMessages, ApiMessages::class)) {
+            $this->setApiMessages($apiMessages);
+        } else {
+            $this->setApiMessages(new ApiMessages());
+        }
     }
 
     /**

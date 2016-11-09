@@ -7,6 +7,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
+ * @todo Needs to be immutable
  * Class PsrApiResponse
  *
  * @author    James Jervis <jjervis@relivinc.com>

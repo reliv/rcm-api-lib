@@ -2,7 +2,6 @@
 
 namespace Reliv\RcmApiLib\Http;
 
-use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
 use Zend\Http\Headers;
 use Zend\Http\Response as HttpResponse;

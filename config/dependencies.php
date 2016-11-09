@@ -20,18 +20,6 @@ return [
         Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator::class =>
             Reliv\RcmApiLib\Hydrator\StringApiMessagesHydrator::class,
 
-        // RcmApiLibJsController
-        Reliv\RcmApiLib\Middleware\RcmApiLibJsController::class =>
-            Reliv\RcmApiLib\Middleware\RcmApiLibJsController::class,
-
-        // RcmApiLibMinJsController
-        Reliv\RcmApiLib\Middleware\RcmApiLibMinJsController::class =>
-            Reliv\RcmApiLib\Middleware\RcmApiLibMinJsController::class,
-
-        // RcmApiLibMinJsMapController
-        Reliv\RcmApiLib\Middleware\RcmApiLibMinJsMapController::class =>
-            Reliv\RcmApiLib\Middleware\RcmApiLibMinJsMapController::class,
-
         // PsrApiResponseBuilder
         Reliv\RcmApiLib\Service\PsrApiResponseBuilder::class =>
             Reliv\RcmApiLib\Service\PsrApiResponseBuilder::class

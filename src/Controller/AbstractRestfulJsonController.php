@@ -2,14 +2,11 @@
 
 namespace Reliv\RcmApiLib\Controller;
 
-use RcmI18n\Service\ParameterizeTranslator;
 use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
-use Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
 use Reliv\RcmApiLib\Service\ResponseService;
-use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;

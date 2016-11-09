@@ -45,6 +45,10 @@ return [
         Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator::class =>
             Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory::class,
 
+        // PsrResponseService
+        Reliv\RcmApiLib\Service\PsrResponseService::class =>
+            Reliv\RcmApiLib\Factory\ServicePrsResponseServiceFactory::class,
+
         // ResponseService
         Reliv\RcmApiLib\Service\ResponseService::class =>
             Reliv\RcmApiLib\Factory\ServiceResponseServiceFactory::class,

@@ -21,19 +21,22 @@ class PsrApiResponseBuilder
      * @param ResponseInterface $response
      * @param null              $data
      * @param array             $apiMessages
+     * @param int               $encodingOptions
      *
      * @return PsrApiResponse
      */
     public static function build(
         ResponseInterface $response,
         $data = null,
-        $apiMessages = []
+        $apiMessages = [],
+        $encodingOptions = 0
     ) {
         return new PsrApiResponse(
             $data,
             $apiMessages,
             $response->getStatusCode(),
-            $response->getHeaders()
+            $response->getHeaders(),
+            $encodingOptions
         );
     }
 
@@ -43,18 +46,21 @@ class PsrApiResponseBuilder
      * @param ResponseInterface $response
      * @param null              $data
      * @param array             $apiMessages
+     * @param int               $encodingOptions
      *
      * @return PsrApiResponse
      */
     public function __invoke(
         ResponseInterface $response,
         $data = null,
-        $apiMessages = []
+        $apiMessages = [],
+        $encodingOptions = 0
     ) {
         return self::build(
             $response,
             $data,
-            $apiMessages
+            $apiMessages,
+            $encodingOptions
         );
     }
 }

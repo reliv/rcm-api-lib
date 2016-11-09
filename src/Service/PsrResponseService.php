@@ -1,11 +1,11 @@
 <?php
 
-namespace Reliv\RcmApiLib\Middleware;
+namespace Reliv\RcmApiLib\Service;
 
 use Psr\Http\Message\ResponseInterface;
+use RcmI18n\Service\ParameterizeTranslator;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
-use Reliv\RcmApiLib\Service\PsrResponseService;
 
 /**
  * Class AbstractJsonController
@@ -15,22 +15,30 @@ use Reliv\RcmApiLib\Service\PsrResponseService;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-abstract class AbstractJsonController
+class PsrResponseService extends ResponseService
 {
     /**
-     * @var PsrResponseService
+     * @var PsrApiResponseBuilder
      */
-    protected $psrResponseService;
+    protected $psrApiResponseBuilder;
 
     /**
-     * AbstractJsonController constructor.
+     * PsrResponseService constructor.
      *
-     * @param PsrResponseService $psrResponseService
+     * @param \Interop\Container\ContainerInterface $container
+     * @param ParameterizeTranslator                $parameterizeTranslator
+     * @param PsrApiResponseBuilder                 $psrApiResponseBuilder
      */
     public function __construct(
-        PsrResponseService $psrResponseService
+        $container,
+        ParameterizeTranslator $parameterizeTranslator,
+        PsrApiResponseBuilder $psrApiResponseBuilder
     ) {
-        $this->psrResponseService = $psrResponseService;
+        $this->psrApiResponseBuilder = $psrApiResponseBuilder;
+        parent::__construct(
+            $container,
+            $parameterizeTranslator
+        );
     }
 
     /**
@@ -43,13 +51,15 @@ abstract class AbstractJsonController
      *
      * @return PsrApiResponse|ApiResponseInterface
      */
-    protected function getApiResponse(
+    public function getPsrApiResponse(
         ResponseInterface $response,
         $data,
         $statusCode = 200,
         $apiMessagesData = null
     ) {
-        return $this->psrResponseService->getPsrApiResponse(
+        $response = $this->psrApiResponseBuilder->__invoke($response);
+
+        return $this->getApiResponse(
             $response,
             $data,
             $statusCode,

@@ -2,9 +2,6 @@
 
 namespace Reliv\RcmApiLib\Middleware;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 /**
  * Class RcmApiLibMinJsController
  *

@@ -19,12 +19,19 @@
     }
   ],
   "require": {
-    "php": ">=5.5",
-    "zendframework/zendframework": "2.*",
-    "rwoverdijk/assetmanager": "1.*",
-    "fxp/composer-asset-plugin": "^1.2.0",
-    "rcm/i18n": "1.*",
-    "bower-asset/rcm-js-lib": "0.*"
+    "bower-asset/rcm-js-lib": "^0",
+    "fxp/composer-asset-plugin": "^1",
+    "php": ">=5.6",
+    "rcm/i18n": "^1",
+    "rwoverdijk/assetmanager": "^1",
+    "zendframework/zend-diactoros": "^1",
+    "zendframework/zend-http": "^2",
+    "zendframework/zend-inputfilter": "^2",
+    "zendframework/zend-mvc": "^2",
+    "zendframework/zend-servicemanager": "^2",
+    "zendframework/zend-stdlib": "^2",
+    "zendframework/zend-stratigility": "^1",
+    "zendframework/zend-validator": "^2"
   },
   "autoload": {
     "psr-4": {

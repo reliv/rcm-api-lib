@@ -7,14 +7,14 @@ use Reliv\RcmApiLib\Service\PsrResponseService;
 use Reliv\RcmApiLib\Service\PsrApiResponseBuilder;
 
 /**
- * Class ServicePrsResponseServiceFactory
+ * Class ServicePsrResponseServiceFactory
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class ServicePrsResponseServiceFactory
+class ServicePsrResponseServiceFactory
 {
     /**
      * __invoke

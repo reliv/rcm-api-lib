@@ -35,7 +35,7 @@ return [
 
         // PsrResponseService
         Reliv\RcmApiLib\Service\PsrResponseService::class =>
-            Reliv\RcmApiLib\Factory\ServicePrsResponseServiceFactory::class,
+            Reliv\RcmApiLib\Factory\ServicePsrResponseServiceFactory::class,
 
         // ResponseService
         Reliv\RcmApiLib\Service\ResponseService::class =>

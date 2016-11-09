@@ -70,4 +70,14 @@ interface ApiResponseInterface
      * @return ApiMessages
      */
     public function getApiMessages();
+
+    /**
+     * withStatus
+     *
+     * @param int    $statusCode
+     * @param string $reasonPhrase
+     *
+     * @return ApiResponseInterface
+     */
+    public function withStatus($statusCode, $reasonPhrase = '');
 }

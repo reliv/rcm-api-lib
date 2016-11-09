@@ -24,6 +24,8 @@ use Zend\Http\Response as HttpResponse;
  */
 class ApiResponse extends HttpResponse implements ApiResponseInterface
 {
+    use BasicApiResponseTrait;
+
     /**
      * @var mixed
      */
@@ -69,28 +71,6 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
     }
 
     /**
-     * setData
-     *
-     * @param array|null $data
-     *
-     * @return void
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * getData
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
      * setContent
      *
      * @param mixed $content
@@ -126,50 +106,18 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
     }
 
     /**
-     * addApiMessages
+     * withStatus
      *
-     * @param array $apiMessages ApiMessage
+     * @param int    $statusCode
+     * @param string $reasonPhrase
      *
-     * @return void
+     * @return $this
      */
-    public function addApiMessages($apiMessages = [])
+    public function withStatus($statusCode, $reasonPhrase = '')
     {
-        foreach ($apiMessages as $apiMessage) {
-            $this->addApiMessage($apiMessage);
-        }
-    }
+        parent::setStatusCode($statusCode);
+        parent::setReasonPhrase($reasonPhrase);
 
-    /**
-     * setApiMessages
-     *
-     * @param ApiMessages $apiMessages
-     *
-     * @return void
-     */
-    public function setApiMessages(ApiMessages $apiMessages)
-    {
-        $this->messages = $apiMessages;
-    }
-
-    /**
-     * getApiMessages
-     *
-     * @return ApiMessages
-     */
-    public function getApiMessages()
-    {
-        return $this->messages;
-    }
-
-    /**
-     * addApiMessage
-     *
-     * @param ApiMessage $apiMessage
-     *
-     * @return void
-     */
-    public function addApiMessage(ApiMessage $apiMessage)
-    {
-        $this->messages->add($apiMessage);
+        return $this;
     }
 }

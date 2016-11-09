@@ -15,15 +15,17 @@ use Reliv\RcmApiLib\Model\ApiMessages;
  */
 class BasicApiResponse implements ApiResponseInterface
 {
-    /**
-     * @var mixed
-     */
-    protected $data = null;
+    use BasicApiResponseTrait;
 
     /**
-     * @var ApiMessages
+     * @var int
      */
-    protected $messages;
+    protected $statusCode = 200;
+
+    /**
+     * @var string
+     */
+    protected $reasonPhrase = 'OK';
 
     /**
      * BasicApiResponse constructor.
@@ -34,80 +36,25 @@ class BasicApiResponse implements ApiResponseInterface
     public function __construct(
         $data = null,
         $apiMessages = []
-    )
-    {
+    ) {
         $this->messages = new ApiMessages();
         $this->setData($data);
         $this->addApiMessages($apiMessages);
     }
 
     /**
-     * setData
+     * withStatus
      *
-     * @param array|null $data
+     * @param int    $statusCode
+     * @param string $reasonPhrase
      *
-     * @return void
+     * @return $this
      */
-    public function setData($data)
+    public function withStatus($statusCode, $reasonPhrase = '')
     {
-        $this->data = $data;
-    }
+        $this->statusCode = (int)$statusCode;
+        $this->reasonPhrase = (string)$reasonPhrase;
 
-    /**
-     * getData
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * addApiMessages
-     *
-     * @param array $apiMessages ApiMessage
-     *
-     * @return void
-     */
-    public function addApiMessages($apiMessages = [])
-    {
-        foreach ($apiMessages as $apiMessage) {
-            $this->addApiMessage($apiMessage);
-        }
-    }
-
-    /**
-     * setApiMessages
-     *
-     * @param ApiMessages $apiMessages
-     *
-     * @return void
-     */
-    public function setApiMessages(ApiMessages $apiMessages)
-    {
-        $this->messages = $apiMessages;
-    }
-
-    /**
-     * getApiMessages
-     *
-     * @return ApiMessages
-     */
-    public function getApiMessages()
-    {
-        return $this->messages;
-    }
-
-    /**
-     * addApiMessage
-     *
-     * @param ApiMessage $apiMessage
-     *
-     * @return void
-     */
-    public function addApiMessage(ApiMessage $apiMessage)
-    {
-        $this->messages->add($apiMessage);
+        return $this;
     }
 }

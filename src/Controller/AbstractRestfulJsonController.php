@@ -2,10 +2,13 @@
 
 namespace Reliv\RcmApiLib\Controller;
 
+use RcmI18n\Service\ParameterizeTranslator;
 use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
+use Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
+use Reliv\RcmApiLib\Service\ResponseService;
 use Zend\Http\Response;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\Stdlib\RequestInterface;
@@ -29,7 +32,6 @@ use Zend\Stdlib\ResponseInterface;
  */
 abstract class AbstractRestfulJsonController extends AbstractRestfulController
 {
-
     /**
      * @override
      * @var ApiResponse
@@ -37,13 +39,13 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected $response;
 
     /**
-     * getHydrator
+     * getResponseService
      *
-     * @return \Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface
+     * @return ResponseService
      */
-    protected function getHydrator()
+    protected function getResponseService()
     {
-        return $this->serviceLocator->get('Reliv\RcmApiLib\Hydrator');
+        return $this->serviceLocator->get(ResponseService::class);
     }
 
     /**
@@ -62,8 +64,7 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
         $textDomain = 'default',
         $locale = null
     ) {
-        /** ViewHelper /RcmI18n\ViewHelper/ParamTranslate */
-        return $this->paramTranslate(
+        return $this->getResponseService()->translateMessage(
             $message,
             $params,
             $textDomain,
@@ -78,17 +79,9 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected function translateApiResponseMessages()
     {
-        $apiMessages = $this->response->getApiMessages();
-
-        /** @var ApiMessage $apiMessage */
-        foreach ($apiMessages as $apiMessage) {
-            $apiMessage->setValue(
-                $this->translateMessage(
-                    $apiMessage->getValue(),
-                    $apiMessage->getParams()
-                )
-            );
-        }
+        $this->getResponseService()->translateApiResponseMessages(
+            $this->getResponse()
+        );
     }
 
     /**
@@ -129,22 +122,12 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     /**
      * methodNotAllowed
      *
-     * @return ApiResponse
+     * @return ApiResponse|ApiResponseInterface
      */
     protected function methodNotAllowed()
     {
-        $apiMessage = new ApiMessage(
-            'Http',
-            'Method Not Allowed',
-            'Method_Not_Allowed',
-            '405',
-            true
-        );
-
-        return $this->getApiResponse(
-            null,
-            405,
-            $apiMessage
+        return $this->getResponseService()->getMethodNotAllowed(
+            $this->getResponse()
         );
     }
 
@@ -285,27 +268,19 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      * @param int  $statusCode
      * @param null $apiMessagesData
      *
-     * @return ApiResponse
+     * @return ApiResponse|ApiResponseInterface
      */
     protected function getApiResponse(
         $data,
         $statusCode = 200,
         $apiMessagesData = null
     ) {
-        $response = $this->getResponse();
-        $response->setData($data);
-
-        if (!empty($apiMessagesData)) {
-            $this->addApiMessage(
-                $apiMessagesData
-            );
-        }
-
-        $this->translateApiResponseMessages();
-
-        $response->setStatusCode($statusCode);
-
-        return $response;
+        return $this->getResponseService()->getApiResponse(
+            $this->getResponse(),
+            $data,
+            $statusCode,
+            $apiMessagesData
+        );
     }
 
     /**
@@ -318,7 +293,10 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected function setApiMessage(
         ApiMessage $apiMessage
     ) {
-        $this->getResponse()->addApiMessage($apiMessage);
+        $this->getResponseService()->setApiMessage(
+            $this->getResponse(),
+            $apiMessage
+        );
     }
 
     /**
@@ -331,11 +309,10 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected function addApiMessage(
         $apiMessagesData
     ) {
-        $hydrator = $this->getHydrator();
-
-        $apiMessages = $this->getResponse()->getApiMessages();
-
-        $hydrator->hydrate($apiMessagesData, $apiMessages);
+        $this->getResponseService()->addApiMessage(
+            $this->getResponse(),
+            $apiMessagesData
+        );
     }
 
     /**
@@ -348,22 +325,26 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
     protected function setApiMessages(
         ApiMessages $apiMessages
     ) {
-        $this->getResponse()->setApiMessages($apiMessages);
+        $this->getResponseService()->setApiMessages(
+            $this->getResponse(),
+            $apiMessages
+        );
     }
 
     /**
      * addApiMessages
      *
-     * @param array|ArrayIterator $apiMessagesData
+     * @param array|\ArrayIterator $apiMessagesData
      *
      * @return void
      */
     protected function addApiMessages(
         $apiMessagesData
     ) {
-        foreach ($apiMessagesData as $apiMessage) {
-            $this->addApiMessage($apiMessage);
-        }
+        $this->getResponseService()->addApiMessages(
+            $this->getResponse(),
+            $apiMessagesData
+        );
     }
 
     /**
@@ -373,7 +354,9 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected function getApiMessages()
     {
-        return $this->getResponse()->getApiMessages();
+        return $this->getResponseService()->getApiMessages(
+            $this->getResponse()
+        );
     }
 
     /**
@@ -383,7 +366,8 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected function hasApiMessages()
     {
-        $apiMessages = $this->getApiMessages();
-        return $apiMessages->has();
+        return $this->getResponseService()->hasApiMessages(
+            $this->getResponse()
+        );
     }
 }

@@ -30,11 +30,10 @@ class PsrApiResponseBuilder
         $apiMessages = []
     ) {
         return new PsrApiResponse(
-            $response->getBody(),
-            $response->getStatusCode(),
-            $response->getHeaders(),
             $data,
-            $apiMessages
+            $apiMessages,
+            $response->getStatusCode(),
+            $response->getHeaders()
         );
     }
 

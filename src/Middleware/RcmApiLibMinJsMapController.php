@@ -2,9 +2,6 @@
 
 namespace Reliv\RcmApiLib\Middleware;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
 /**
  * Class RcmApiLibMinJsMapController
  *
@@ -13,27 +10,28 @@ use Psr\Http\Message\ResponseInterface;
  * @license   License.txt
  * @link      https://github.com/reliv
  */
-class RcmApiLibMinJsMapController
+class RcmApiLibMinJsMapController extends AbstractSingleAssetController
 {
     /**
-     * __invoke
+     * Returns the config;
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param callable|null     $next
+     * Return format:
+     * [
+     *     'path' => __DIR__ . '/../../public/rcm-api-lib/dist/rcm-api-lib.js',
+     *     'headers' => [
+     *         'content-type', 'application/javascript'
+     *     ]
+     * ];
      *
-     * @return ResponseInterface
+     * @return array
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next = null)
+    protected function getConfig()
     {
-        $js = file_get_contents(__DIR__ . '/../../public/rcm-api-lib/dist/rcm-api-lib.min.js.map');
-
-        $body = $response->getBody();
-
-        $body->write($js);
-
-        $response = $response->withHeader('content-type', ['text/plain','charset=UTF-8']);
-
-        return $response->withBody($body);
+        return [
+            'path' => __DIR__ . '/../../public/rcm-api-lib/dist/rcm-api-lib.min.js.map',
+            'headers' => [
+                'content-type' => ['text/plain', 'charset=UTF-8']
+            ]
+        ];
     }
 }

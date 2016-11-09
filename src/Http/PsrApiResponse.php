@@ -7,7 +7,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
- * @todo Should be immutable
+ * @todo      Should be immutable
  * Class PsrApiResponse
  *
  * @author    James Jervis <jjervis@relivinc.com>
@@ -45,11 +45,38 @@ class PsrApiResponse extends Response implements ApiResponseInterface
         $this->addApiMessages($apiMessages);
         $this->encodingOptions = $encodingOptions;
 
+        $headers = $this->injectContentType('application/json', $headers);
+
         parent::__construct(
             $this->getBody(),
             $status,
             $headers
         );
+    }
+
+    /**
+     * Inject the provided Content-Type, if none is already present.
+     *
+     * @param string $contentType
+     * @param array  $headers
+     *
+     * @return array Headers with injected Content-Type
+     */
+    protected function injectContentType($contentType, array $headers)
+    {
+        $hasContentType = array_reduce(
+            array_keys($headers),
+            function ($carry, $item) {
+                return $carry ?: (strtolower($item) === 'content-type');
+            },
+            false
+        );
+
+        if (!$hasContentType) {
+            $headers['content-type'] = [$contentType];
+        }
+
+        return $headers;
     }
 
     /**
@@ -76,11 +103,13 @@ class PsrApiResponse extends Response implements ApiResponseInterface
         $json = json_encode($content, $this->encodingOptions);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unable to encode data to JSON in %s: %s',
-                __CLASS__,
-                json_last_error_msg()
-            ));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Unable to encode data to JSON in %s: %s',
+                    __CLASS__,
+                    json_last_error_msg()
+                )
+            );
         }
 
         return $json;

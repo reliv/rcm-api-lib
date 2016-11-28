@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Model;
-
 
 /**
  * Class HttpStatusCodeApiMessage
@@ -22,7 +20,6 @@ namespace Reliv\RcmApiLib\Model;
 
 class HttpStatusCodeApiMessage extends ApiMessage
 {
-
     /**
      * @var int
      */

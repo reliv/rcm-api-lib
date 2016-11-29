@@ -31,24 +31,16 @@ class AssetController
     protected $headerMap
         = [
             '_default' => [
-                'headers' => [
-                    'content-type' => 'text/plain'
-                ],
+                'content-type' => 'text/plain'
             ],
             'css' => [
-                'headers' => [
-                    'content-type' => 'text/css'
-                ],
+                'content-type' => 'text/css'
             ],
             'html' => [
-                'headers' => [
-                    'content-type' => 'text/html'
-                ],
+                'content-type' => 'text/html'
             ],
             'js' => [
-                'headers' => [
-                    'content-type' => 'application/javascript'
-                ],
+                'content-type' => 'application/javascript'
             ],
         ];
 

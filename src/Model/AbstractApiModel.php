@@ -75,6 +75,7 @@ abstract class AbstractApiModel implements ApiModelInterface
     public function toArray($ignore = [])
     {
         $prefix = 'get';
+        $boolPrefix = 'is';
         $properties = get_object_vars($this);
         $data = [];
 
@@ -84,7 +85,16 @@ abstract class AbstractApiModel implements ApiModelInterface
                 continue;
             }
 
-            $method = $prefix . ucfirst($property);
+            $suffix = ucfirst($property);
+
+            $method = $prefix . $suffix;
+
+            if (method_exists($this, $method)) {
+                $data[$property] = $this->$method();
+                continue;
+            }
+
+            $method = $boolPrefix . $suffix;
 
             if (method_exists($this, $method)) {
                 $data[$property] = $this->$method();
@@ -103,7 +113,7 @@ abstract class AbstractApiModel implements ApiModelInterface
     {
         return $this->toArray();
     }
-    
+
     /**
      * modelArrayToArray
      *

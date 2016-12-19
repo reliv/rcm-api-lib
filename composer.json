@@ -29,7 +29,7 @@
     "zendframework/zend-http": "^2",
     "zendframework/zend-inputfilter": "^2",
     "zendframework/zend-mvc": "^2",
-    "zendframework/zend-servicemanager": "^2",
+    "zendframework/zend-servicemanager": "2.* || 3.*",
     "zendframework/zend-stdlib": "^2",
     "zendframework/zend-stratigility": "^1",
     "zendframework/zend-validator": "^2"

@@ -230,10 +230,10 @@ angular.module('rcmApiLib')
                 self.ApiMessage = rcmApiLibApiMessage;
 
                 /**
-                 * GET
+                 * getCached
                  * @param apiParams
-                 * @param {bool} cache - if you ask for cache it will try to get it from and set it to the cache
-                 * @returns {*}
+                 * @param cacheId Send a cacheId or it will use the url
+                 * @returns {Promise}
                  */
                 self.getCached = function (apiParams, cacheId) {
 
@@ -242,33 +242,36 @@ angular.module('rcmApiLib')
                     apiParams.loading(true);
 
                     if (!cacheId) {
-                        cacheId = apiParams.url;
+                        cacheId = apiParams.url + JSON.stringify(apiParams.urlParams);
                     }
 
-                    self.getCache(
-                        cacheId,
-                        function (cacheData) {
-                            self.apiSuccess(
-                                self.cache[apiParams.url],
-                                apiParams,
-                                'CACHE',
-                                null,
-                                null
-                            );
-                        },
-                        function () {
-                            apiParams.cacheId = cacheId;
+                    return new Promise(
+                        function (resolve, reject) {
+                            self.getCache(
+                                cacheId
+                            ).then(
+                                resolve
+                            ).catch(
+                                function () {
+                                    apiParams.cacheId = cacheId;
 
-                            self.get(
-                                apiParams
-                            );
+                                    self.get(
+                                        apiParams
+                                    ).then(
+                                        resolve
+                                    ).catch(
+                                        reject
+                                    )
+                                }
+                            )
                         }
-                    )
+                    );
                 };
 
                 /**
                  * GET
                  * @param apiParams
+                 * @returns {Promise}
                  */
                 self.get = function (apiParams) {
 
@@ -276,28 +279,33 @@ angular.module('rcmApiLib')
 
                     apiParams.loading(true);
 
-                    $http(
-                        {
-                            method: 'GET',
-                            url: apiParams.url,
-                            params: apiParams.params
+                    return new Promise(
+                        function (resolve, reject) {
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            $http(
+                                {
+                                    method: 'GET',
+                                    url: apiParams.url,
+                                    params: apiParams.params
+                                }
+                            ).success(
+                                function (data, status, headers, config) {
+                                    self.apiSuccess(data, apiParams, status, headers, config)
+                                }
+                            ).error(
+                                function (data, status, headers, config) {
+                                    self.apiError(data, apiParams, status, headers, config)
+                                }
+                            );
                         }
-                    )
-                        .success(
-                            function (data, status, headers, config) {
-                                self.apiSuccess(data, apiParams, status, headers, config)
-                            }
-                        )
-                        .error(
-                            function (data, status, headers, config) {
-                                self.apiError(data, apiParams, status, headers, config)
-                            }
-                        );
+                    );
                 };
 
                 /**
                  * POST
                  * @param apiParams
+                 * @returns {Promise}
                  */
                 self.post = function (apiParams) {
 
@@ -305,29 +313,34 @@ angular.module('rcmApiLib')
 
                     apiParams.loading(true);
 
-                    $http(
-                        {
-                            method: 'POST',
-                            url: apiParams.url,
-                            data: apiParams.data,
-                            params: apiParams.params
+                    return new Promise(
+                        function (resolve, reject) {
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            $http(
+                                {
+                                    method: 'POST',
+                                    url: apiParams.url,
+                                    data: apiParams.data,
+                                    params: apiParams.params
+                                }
+                            ).success(
+                                function (data, status, headers, config) {
+                                    self.apiSuccess(data, apiParams, status, headers, config)
+                                }
+                            ).error(
+                                function (data, status, headers, config) {
+                                    self.apiError(data, apiParams, status, headers, config)
+                                }
+                            );
                         }
-                    )
-                        .success(
-                            function (data, status, headers, config) {
-                                self.apiSuccess(data, apiParams, status, headers, config)
-                            }
-                        )
-                        .error(
-                            function (data, status, headers, config) {
-                                self.apiError(data, apiParams, status, headers, config)
-                            }
-                        );
+                    );
                 };
 
                 /**
                  * PATCH
                  * @param apiParams
+                 * @returns {Promise}
                  */
                 self.patch = function (apiParams) {
 
@@ -335,29 +348,34 @@ angular.module('rcmApiLib')
 
                     apiParams.loading(true);
 
-                    $http(
-                        {
-                            method: 'PATCH',
-                            url: apiParams.url,
-                            data: apiParams.data, // angular.toJson(data)
-                            params: apiParams.params
+                    return new Promise(
+                        function (resolve, reject) {
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            $http(
+                                {
+                                    method: 'PATCH',
+                                    url: apiParams.url,
+                                    data: apiParams.data,
+                                    params: apiParams.params
+                                }
+                            ).success(
+                                function (data, status, headers, config) {
+                                    self.apiSuccess(data, apiParams, status, headers, config)
+                                }
+                            ).error(
+                                function (data, status, headers, config) {
+                                    self.apiError(data, apiParams, status, headers, config)
+                                }
+                            );
                         }
-                    )
-                        .success(
-                            function (data, status, headers, config) {
-                                self.apiSuccess(data, apiParams, status, headers, config)
-                            }
-                        )
-                        .error(
-                            function (data, status, headers, config) {
-                                self.apiError(data, apiParams, status, headers, config)
-                            }
-                        );
+                    );
                 };
 
                 /**
                  * PUT
                  * @param apiParams
+                 * @returns {Promise}
                  */
                 self.put = function (apiParams) {
 
@@ -365,29 +383,34 @@ angular.module('rcmApiLib')
 
                     apiParams.loading(true);
 
-                    $http(
-                        {
-                            method: 'PUT',
-                            url: apiParams.url,
-                            data: apiParams.data,
-                            params: apiParams.params
+                    return new Promise(
+                        function (resolve, reject) {
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            $http(
+                                {
+                                    method: 'PUT',
+                                    url: apiParams.url,
+                                    data: apiParams.data,
+                                    params: apiParams.params
+                                }
+                            ).success(
+                                function (data, status, headers, config) {
+                                    self.apiSuccess(data, apiParams, status, headers, config)
+                                }
+                            ).error(
+                                function (data, status, headers, config) {
+                                    self.apiError(data, apiParams, status, headers, config)
+                                }
+                            );
                         }
-                    )
-                        .success(
-                            function (data, status, headers, config) {
-                                self.apiSuccess(data, apiParams, status, headers, config)
-                            }
-                        )
-                        .error(
-                            function (data, status, headers, config) {
-                                self.apiError(data, apiParams, status, headers, config)
-                            }
-                        );
+                    );
                 };
 
                 /**
                  * DELETE
                  * @param apiParams
+                 * @returns {Promise}
                  */
                 self.del = function (apiParams) {
 
@@ -395,24 +418,28 @@ angular.module('rcmApiLib')
 
                     apiParams.loading(true);
 
-                    $http(
-                        {
-                            method: 'DELETE',
-                            url: apiParams.url,
-                            data: apiParams.data,
-                            params: apiParams.params
+                    return new Promise(
+                        function (resolve, reject) {
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            $http(
+                                {
+                                    method: 'DELETE',
+                                    url: apiParams.url,
+                                    data: apiParams.data,
+                                    params: apiParams.params
+                                }
+                            ).success(
+                                function (data, status, headers, config) {
+                                    self.apiSuccess(data, apiParams, status, headers, config)
+                                }
+                            ).error(
+                                function (data, status, headers, config) {
+                                    self.apiError(data, apiParams, status, headers, config)
+                                }
+                            );
                         }
-                    )
-                        .success(
-                            function (data, status, headers, config) {
-                                self.apiSuccess(data, apiParams, status, headers, config)
-                            }
-                        )
-                        .error(
-                            function (data, status, headers, config) {
-                                self.apiError(data, apiParams, status, headers, config)
-                            }
-                        );
+                    );
                 };
 
                 /**
@@ -466,16 +493,23 @@ angular.module('rcmApiLib')
                  * @param cacheId
                  * @param cacheCallback
                  * @param noCacheCallback
+                 * @returns {Promise}
                  */
                 self.getCache = function (cacheId, cacheCallback, noCacheCallback) {
 
                     var cacheData = self.cache[cacheId];
 
-                    if (cacheData) {
-                        cacheCallback(cacheData);
-                    } else {
-                        noCacheCallback();
-                    }
+                    return new Promise(
+                        function (resolve, reject) {
+                            if (cacheData) {
+                                cacheCallback(cacheData);
+                                resolve(cacheData)
+                            } else {
+                                noCacheCallback();
+                                reject();
+                            }
+                        }
+                    );
                 };
 
                 /**
@@ -496,6 +530,7 @@ angular.module('rcmApiLib')
                         function (data) {
                             apiParams.loading(false);
                             apiParams.error(data, status, headers, config);
+                            apiParams.reject(data, status, headers, config);
                         },
                         status
                     );
@@ -513,9 +548,9 @@ angular.module('rcmApiLib')
 
                     if (status != 200 || !self.isValidDataType(data, apiParams)) {
                         $log.info(
-                            'API returned responseType ('+
+                            'API returned responseType (' +
                             self.getDataType(data) +
-                            ') that is not supported or invalid status ('+
+                            ') that is not supported or invalid status (' +
                             status +
                             ') data: ',
                             data
@@ -526,6 +561,7 @@ angular.module('rcmApiLib')
                             function (data) {
                                 apiParams.loading(false);
                                 apiParams.error(data, status, headers, config);
+                                apiParams.reject(data, status, headers, config);
                             },
                             status
                         )
@@ -537,6 +573,7 @@ angular.module('rcmApiLib')
                                 self.setCache(apiParams.cacheId, data);
                                 apiParams.loading(false);
                                 apiParams.success(data, status, headers, config);
+                                apiParams.resolve(data, status, headers, config);
                             }
                         );
                     }

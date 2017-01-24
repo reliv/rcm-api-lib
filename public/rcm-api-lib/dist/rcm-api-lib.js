@@ -242,28 +242,23 @@ angular.module('rcmApiLib')
                     apiParams.loading(true);
 
                     if (!cacheId) {
-                        cacheId = apiParams.url + JSON.stringify(apiParams.urlParams);
+                        cacheId = apiParams.url + '?' + JSON.stringify(apiParams.params);
                     }
 
+                    apiParams.cacheId = cacheId;
+
+                    var cacheData = self.getCache(cacheId);
+
+                    if (typeof cacheData === 'undefined') {
+                        return self.get(
+                            apiParams
+                        )
+                    }
                     return new Promise(
                         function (resolve, reject) {
-                            self.getCache(
-                                cacheId
-                            ).then(
-                                resolve
-                            ).catch(
-                                function () {
-                                    apiParams.cacheId = cacheId;
-
-                                    self.get(
-                                        apiParams
-                                    ).then(
-                                        resolve
-                                    ).catch(
-                                        reject
-                                    )
-                                }
-                            )
+                            apiParams.resolve = resolve;
+                            apiParams.reject = reject;
+                            self.apiSuccess(cacheData, apiParams, 200, {}, {})
                         }
                     );
                 };
@@ -274,7 +269,6 @@ angular.module('rcmApiLib')
                  * @returns {Promise}
                  */
                 self.get = function (apiParams) {
-
                     apiParams = self.buildApiParams(apiParams);
 
                     apiParams.loading(true);
@@ -491,31 +485,19 @@ angular.module('rcmApiLib')
                 /**
                  * getCache
                  * @param cacheId
-                 * @param cacheCallback
-                 * @param noCacheCallback
                  * @returns {Promise}
                  */
-                self.getCache = function (cacheId, cacheCallback, noCacheCallback) {
-
-                    var cacheData = self.cache[cacheId];
-
-                    return new Promise(
-                        function (resolve, reject) {
-                            if (cacheData) {
-                                cacheCallback(cacheData);
-                                resolve(cacheData)
-                            } else {
-                                noCacheCallback();
-                                reject();
-                            }
-                        }
-                    );
+                self.getCache = function (cacheId) {
+                    return self.cache[cacheId];
                 };
 
                 /**
-                 *
+                 * apiError
                  * @param data
                  * @param apiParams
+                 * @param status
+                 * @param headers
+                 * @param config
                  */
                 self.apiError = function (data, apiParams, status, headers, config) {
 

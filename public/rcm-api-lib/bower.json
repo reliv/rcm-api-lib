@@ -14,7 +14,8 @@
   ],
   "license": "BSD-3-Clause",
   "dependencies": {
-    "rcm-js-lib": "^0.1.11"
+    "rcm-js-lib": "^0.1.11",
+    "es6-promise": "^4.0"
   },
   "devDependencies": {},
   "ignore": [

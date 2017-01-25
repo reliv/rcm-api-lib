@@ -66,6 +66,20 @@ angular.module('rcmApiLib')
                 };
 
                 /**
+                 * Promise success callback, called if http and API is successful (error code == 0)
+                 * @param {object} data
+                 */
+                self.resolve = function (data) {
+                };
+
+                /**
+                 * Promise error callback, called if http or API is fails (error code > 0)
+                 * @param data
+                 */
+                self.reject = function (data) {
+                };
+
+                /**
                  * populate
                  * @param apiParams
                  */
@@ -73,10 +87,10 @@ angular.module('rcmApiLib')
                     angular.forEach(
                         apiParams,
                         function (value, key) {
-                            if(typeof self[key] === 'function' && typeof value === 'function') {
+                            if (typeof self[key] === 'function' && typeof value === 'function') {
                                 self[key] = value;
                             }
-                            if(typeof self[key] !== 'function' && typeof value !== 'function') {
+                            if (typeof self[key] !== 'function' && typeof value !== 'function') {
                                 self[key] = value;
                             }
                         }

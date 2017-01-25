@@ -330,8 +330,7 @@ angular.module('rcmApiLib')
                         apiParams,
                         function (data) {
                             apiParams.loading(false);
-                            apiParams.error(data, status, headers, config);
-                            apiParams.reject(data, status, headers, config);
+                            apiParams.triggerError(data, status, headers, config);
                         },
                         status
                     );
@@ -361,8 +360,7 @@ angular.module('rcmApiLib')
                             apiParams,
                             function (data) {
                                 apiParams.loading(false);
-                                apiParams.error(data, status, headers, config);
-                                apiParams.reject(data, status, headers, config);
+                                apiParams.triggerError(data, status, headers, config);
                             },
                             status
                         )
@@ -373,8 +371,7 @@ angular.module('rcmApiLib')
                             function (data) {
                                 self.setCache(apiParams.cacheId, data);
                                 apiParams.loading(false);
-                                apiParams.success(data, status, headers, config);
-                                apiParams.resolve(data, status, headers, config);
+                                apiParams.triggerSuccess(data, status, headers, config);
                             }
                         );
                     }

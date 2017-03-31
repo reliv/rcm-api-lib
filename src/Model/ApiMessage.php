@@ -151,9 +151,6 @@ class ApiMessage extends AbstractApiModel
      */
     public function setCode($code)
     {
-        if ($code !== null) {
-            $code = lcfirst((string)$code);
-        }
         $this->code = $code;
     }
 

@@ -63,6 +63,26 @@ class ResponseService
     }
 
     /**
+     * @param array $params
+     *
+     * @return array
+     */
+    protected function buildStringParams(array $params = [])
+    {
+        $stringParams = [];
+
+        foreach ($params as $key => $value) {
+            if (is_string($value) || is_numeric($value)) {
+                $stringParams[$key] = $value;
+                continue;
+            }
+            $stringParams[$key] = json_encode($value);
+        }
+
+        return $stringParams;
+    }
+
+    /**
      * translateMessage
      *
      * @param        $message
@@ -78,9 +98,11 @@ class ResponseService
         $textDomain = 'default',
         $locale = null
     ) {
+        $stringParams = $this->buildStringParams($params);
+
         return $this->getParameterizeTranslator()->translate(
             $message,
-            $params,
+            $stringParams,
             $textDomain,
             $locale
         );

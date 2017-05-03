@@ -53,7 +53,7 @@ angular.module('rcmApiLib').factory(
                     template = self.defaultMessageTemplate;
                 }
                 object = getCleanObject(object);
-console.log(template);
+
                 return template.replace(
                     /\{\{(.*?)\}\}/g,
                     function (i, match) {

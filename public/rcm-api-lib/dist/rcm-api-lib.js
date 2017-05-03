@@ -1073,8 +1073,10 @@ angular.module('rcmApiLib')
     .directive(
         'rcmApiLibMessageDirective',
         [
+            '$window',
             'rcmApiLibMessageService',
             function (
+                $window,
                 rcmApiLibMessageService
             ) {
 
@@ -1086,11 +1088,21 @@ angular.module('rcmApiLib')
                  */
                 var link = function ($scope, elm, attrs) {
 
+                    var log = function (message, data) {
+                        if (!$scope.debug) {
+                            return;
+                        }
+
+                        $window.console.log(message, data)
+                    };
+
                     var eventManager = rcmApiLibMessageService.getEventManager();
 
                     if (!$scope.namespace) {
                         $scope.namespace = rcmApiLibMessageService.getDefaultNamespace();
                     }
+
+                    log('initNamespace', $scope.namespace);
 
                     /**
                      * Create namespace
@@ -1100,7 +1112,9 @@ angular.module('rcmApiLib')
                     $scope.apiLibDirectiveMessages = {};
 
                     var scrollToMessage = function () {
-                        elm[0].scrollIntoView(true);
+                        log('scrollToMessage', null);
+                        var position = elm.position();
+                        $window.scroll(0, position.top);
                     };
 
                     /**
@@ -1109,6 +1123,7 @@ angular.module('rcmApiLib')
                      */
                     var setMessages = function (result) {
                         var messages = rcmApiLibMessageService.getMessages(result.namespace);
+                        log('setMessages', messages);
                         // spam protection
                         if ($scope.apiLibDirectiveMessages[result.namespace] === messages) {
                             return;
@@ -1126,6 +1141,7 @@ angular.module('rcmApiLib')
                      * @param namespace
                      */
                     var clearMessages = function (namespace) {
+                        log('clearMessages', namespace);
                         $scope.apiLibDirectiveMessages[namespace] = [];
                     };
 
@@ -1164,9 +1180,10 @@ angular.module('rcmApiLib')
                 return {
                     link: link,
                     scope: {
-                        namespace: '@namespace'
+                        namespace: '@namespace',
+                        debug: '@debug'
                     },
-                    template: '' +
+                    template: '<div ng-if="debug"><pre>{{apiLibDirectiveMessages[namespace] | json}}</pre></div>' +
                     '<div ng-show="apiLibDirectiveMessages[namespace].length">' +
                     ' <div ng-repeat="message in apiLibDirectiveMessages[namespace]" class="alert alert-{{message.level}}" role="alert">' +
                     '  <div class="message">{{message.value}}</div>' +

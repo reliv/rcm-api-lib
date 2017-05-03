@@ -7,6 +7,7 @@ module.exports = function (grunt) {
         'src/rcm-api-lib-api-data.js',
         'src/rcm-api-lib-api-message.js',
         'src/rcm-api-lib-service.js',
+        'src/rcm-api-lib-message-alert.js',
         'src/rcm-api-lib-message-service.js',
         'src/rcm-api-lib-message-directive.js',
         'src/rcm-api-lib-message-global.js'

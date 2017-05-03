@@ -6,8 +6,10 @@ angular.module('rcmApiLib')
     .directive(
         'rcmApiLibMessageDirective',
         [
+            '$window',
             'rcmApiLibMessageService',
             function (
+                $window,
                 rcmApiLibMessageService
             ) {
 
@@ -33,7 +35,10 @@ angular.module('rcmApiLib')
                     $scope.apiLibDirectiveMessages = {};
 
                     var scrollToMessage = function () {
-                        elm[0].scrollIntoView(true);
+                        var position = elm.position();
+                        $window.scroll(0,position.top);
+
+                        //elm[0].scrollIntoView(true);
                     };
 
                     /**

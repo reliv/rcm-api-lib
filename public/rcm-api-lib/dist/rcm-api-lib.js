@@ -105,11 +105,11 @@ angular.module('rcmApiLib')
                 self.triggerError = function (data, status, headers, config) {
                     self.error(data, status, headers, config);
 
-                    // @bc If reject function has not change,
+                    // @bc If the error function has been changed and reject has not change,
                     // then we handle the promise with a resolve
                     // With the assumption that the promise was not used
                     // Because un-caught promises throw errors
-                    if (self.reject === defaultReject) {
+                    if (self.error !== defaultError && self.reject === defaultReject) {
                         self.resolve(data, status, headers, config);
                         return;
                     }

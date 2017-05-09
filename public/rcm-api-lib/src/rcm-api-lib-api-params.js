@@ -24,6 +24,13 @@ angular.module('rcmApiLib')
                 };
 
                 /**
+                 * Default reject for Promise
+                 * @param error
+                 */
+                var defaultReject = function (error) {
+                };
+
+                /**
                  * URL of request (can contain parsable params in format {myParam})
                  * @type {string}
                  */
@@ -83,11 +90,11 @@ angular.module('rcmApiLib')
                 self.triggerError = function (data, status, headers, config) {
                     self.error(data, status, headers, config);
 
-                    // @bc If the error function has been changed,
+                    // @bc If the error function has been changed and reject has not change,
                     // then we handle the promise with a resolve
                     // With the assumption that the promise was not used
                     // Because un-caught promises throw errors
-                    if (self.error !== defaultError) {
+                    if (self.error !== defaultError && self.reject === defaultReject) {
                         self.resolve(data, status, headers, config);
                         return;
                     }

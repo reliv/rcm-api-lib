@@ -545,7 +545,7 @@ var RcmApiLibService = function (
 
         apiParams.loading(true);
 
-        var promise = Promise(
+        var promise = new Promise(
             function (resolve, reject) {
                 apiParams.resolve = resolve;
                 apiParams.reject = reject;

@@ -2,22 +2,23 @@
 
 namespace Reliv\RcmApiLib\Factory;
 
+use Interop\Container\ContainerInterface;
 use Reliv\RcmApiLib\Hydrator\CompositeApiMessagesHydrator;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CompositeApiMessageHydratorFactory implements FactoryInterface
+class CompositeApiMessageHydratorFactory
 {
     /**
-     * Create service
+     * __invoke
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param $container ContainerInterface|ServiceLocatorInterface
+     *
+     * @return CompositeApiMessagesHydrator
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke($container)
     {
         $composite = new CompositeApiMessagesHydrator();
-        $config = $serviceLocator->get('Config');
+        $config = $container->get('Config');
 
         $queue = new \SplPriorityQueue();
 
@@ -26,7 +27,7 @@ class CompositeApiMessageHydratorFactory implements FactoryInterface
         }
 
         foreach ($queue as $hydratorService) {
-            $composite->add($serviceLocator->get($hydratorService));
+            $composite->add($container->get($hydratorService));
         }
 
         return $composite;

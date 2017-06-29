@@ -3,7 +3,7 @@
 namespace Reliv\RcmApiLib\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
-use Zend\Stratigility\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class AssetController
@@ -108,11 +108,11 @@ class AssetController
     /**
      * getFileName
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      *
      * @return string|null
      */
-    protected function getFileName(Request $request)
+    protected function getFileName(ServerRequestInterface $request)
     {
         return $request->getAttribute(
             self::PARAM_FILE_PATH
@@ -122,13 +122,13 @@ class AssetController
     /**
      * __invoke
      *
-     * @param Request           $request
-     * @param ResponseInterface $response
-     * @param callable|null     $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable|null          $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(Request $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
     {
         $fileName = $this->getFileName($request);
 

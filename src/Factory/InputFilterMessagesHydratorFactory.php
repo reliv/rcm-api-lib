@@ -2,21 +2,22 @@
 
 namespace Reliv\RcmApiLib\Factory;
 
+use Interop\Container\ContainerInterface;
 use Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator;
-use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class InputFilterMessagesHydratorFactory implements FactoryInterface
+class InputFilterMessagesHydratorFactory
 {
     /**
-     * Create service
+     * __invoke
      *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @param $container ContainerInterface|ServiceLocatorInterface
+     *
+     * @return InputFilterApiMessagesHydrator
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
+    public function __invoke($container)
     {
-        $config = $serviceLocator->get('Config');
+        $config = $container->get('Config');
 
         return new InputFilterApiMessagesHydrator(
             $config['Reliv\\RcmApiLib']['InputFilterApiMessagesHydrator']['primaryMessage']

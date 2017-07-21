@@ -12,6 +12,43 @@ angular.module('rcmApiLib')
                 $window,
                 rcmApiLibMessageService
             ) {
+                var getElementOffset = function (element) {
+                    var de = document.documentElement;
+                    var box = element.getBoundingClientRect();
+                    var top = box.top + window.pageYOffset - de.clientTop;
+                    var left = box.left + window.pageXOffset - de.clientLeft;
+                    return {
+                        top: top,
+                        left: left
+                    };
+                };
+
+                var log = function (message, data, debug) {
+                    if (!debug) {
+                        return;
+                    }
+
+                    $window.console.log(message, data)
+                };
+
+                var scrollToMessage = function (elm, debug) {
+
+                    $window.setTimeout(
+                        function () {
+                            //var position = elm.position();
+                            var position = getElementOffset(elm[0]);
+                            $window.scroll(0, position.top);
+                            log(
+                                'scrollToMessage',
+                                {
+                                    position: position,
+                                    elm: elm
+                                },
+                                debug
+                            );
+                        }
+                    )
+                };
 
                 /**
                  * link
@@ -20,22 +57,13 @@ angular.module('rcmApiLib')
                  * @param attrs
                  */
                 var link = function ($scope, elm, attrs) {
-
-                    var log = function (message, data) {
-                        if (!$scope.debug) {
-                            return;
-                        }
-
-                        $window.console.log(message, data)
-                    };
-
                     var eventManager = rcmApiLibMessageService.getEventManager();
 
                     if (!$scope.namespace) {
                         $scope.namespace = rcmApiLibMessageService.getDefaultNamespace();
                     }
 
-                    log('initNamespace', $scope.namespace);
+                    log('initNamespace', $scope.namespace, $scope.debug);
 
                     /**
                      * Create namespace
@@ -44,19 +72,13 @@ angular.module('rcmApiLib')
 
                     $scope.apiLibDirectiveMessages = {};
 
-                    var scrollToMessage = function () {
-                        log('scrollToMessage', null);
-                        var position = elm.position();
-                        $window.scroll(0, position.top);
-                    };
-
                     /**
                      * setMessage
                      * @param result
                      */
                     var setMessages = function (result) {
                         var messages = rcmApiLibMessageService.getMessages(result.namespace);
-                        log('setMessages', messages);
+                        log('setMessages', messages, $scope.debug);
                         // spam protection
                         if ($scope.apiLibDirectiveMessages[result.namespace] === messages) {
                             return;
@@ -65,7 +87,7 @@ angular.module('rcmApiLib')
 
                         // Scroll to message
                         if (messages.length > 0) {
-                            scrollToMessage()
+                            var position = scrollToMessage(elm, $scope.debug);
                         }
                     };
 
@@ -74,7 +96,7 @@ angular.module('rcmApiLib')
                      * @param namespace
                      */
                     var clearMessages = function (namespace) {
-                        log('clearMessages', namespace);
+                        log('clearMessages', namespace, $scope.debug);
                         $scope.apiLibDirectiveMessages[namespace] = [];
                     };
 
@@ -116,12 +138,13 @@ angular.module('rcmApiLib')
                         namespace: '@namespace',
                         debug: '@debug'
                     },
-                    template: '<div ng-if="debug"><pre>{{apiLibDirectiveMessages[namespace] | json}}</pre></div>' +
+                    template: '' +
                     '<div ng-show="apiLibDirectiveMessages[namespace].length">' +
                     ' <div ng-repeat="message in apiLibDirectiveMessages[namespace]" class="alert alert-{{message.level}}" role="alert">' +
                     '  <div class="message">{{message.value}}</div>' +
                     ' </div>' +
-                    '</div>'
+                    '</div>' +
+                    '<div ng-if="debug"><textarea>DEBUG:\n{{apiLibDirectiveMessages[namespace] | json}}</textarea></div>'
                 }
             }
         ]

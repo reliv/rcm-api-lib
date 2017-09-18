@@ -20,8 +20,6 @@
     }
   ],
   "require": {
-    "bower-asset/rcm-js-lib": "^0",
-    "fxp/composer-asset-plugin": "^1",
     "php": ">=5.6",
     "rcm/i18n": "^1",
     "rwoverdijk/assetmanager": "^1",
@@ -38,17 +36,12 @@
     "squizlabs/php_codesniffer": "^2"
   },
   "suggest": {
+    "bower-asset/rcm-js-lib": "^0",
     "bower-asset/es6-promise-polyfill": "^1.2 for older browser support"
   },
   "autoload": {
     "psr-4": {
       "Reliv\\RcmApiLib\\": "src/"
-    }
-  },
-  "extra": {
-    "asset-pattern-skip-version": "(-patch*)",
-    "asset-vcs-driver-options": {
-      "github-no-api": true
     }
   }
 }

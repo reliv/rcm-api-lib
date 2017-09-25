@@ -52,7 +52,7 @@ class StringApiMessagesHydrator implements ApiMessagesHydratorInterface
             );
         }
 
-        if ($data === null) {
+        if (empty($data)) {
             $data = $this->defaultMessage;
         }
 

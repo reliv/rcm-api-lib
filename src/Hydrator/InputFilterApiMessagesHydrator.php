@@ -25,7 +25,6 @@ use Zend\InputFilter\InputFilterInterface;
  */
 class InputFilterApiMessagesHydrator implements ApiMessagesHydratorInterface
 {
-
     /**
      * @var null|string
      */

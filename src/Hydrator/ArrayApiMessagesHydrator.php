@@ -24,7 +24,6 @@ use Reliv\RcmApiLib\Model\ArrayApiMessage;
  */
 class ArrayApiMessagesHydrator implements ApiMessagesHydratorInterface
 {
-
     /**
      * hydrate
      *

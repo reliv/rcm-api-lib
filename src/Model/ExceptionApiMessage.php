@@ -25,12 +25,12 @@ class ExceptionApiMessage extends ApiMessage
     protected $typeName = 'exception';
 
     /**
-     * @param \Exception $exception
+     * @param \Throwable $exception
      * @param array      $params
      * @param bool|true  $primary
      */
     public function __construct(
-        \Exception $exception,
+        \Throwable $exception,
         $params = [],
         $primary = true
     ) {
@@ -39,11 +39,12 @@ class ExceptionApiMessage extends ApiMessage
     }
 
     /**
-     * build
+     * @param \Throwable $exception
+     * @param array      $params
      *
      * @return void
      */
-    public function build(\Exception $exception, $params = [])
+    public function build(\Throwable $exception, $params = [])
     {
         $exceptionParams = [];
 
@@ -72,17 +73,17 @@ class ExceptionApiMessage extends ApiMessage
     /**
      * getSourceString
      *
-     * @param $exception
+     * @param \Throwable $exception
      *
      * @return string
      */
-    public function getSourceString(\Exception $exception)
+    public function getSourceString(\Throwable $exception)
     {
-        $classname = get_class($exception);
-        if ($pos = strrpos($classname, '\\')) {
-            $classname = lcfirst(substr($classname, $pos + 1));
+        $className = get_class($exception);
+        if ($pos = strrpos($className, '\\')) {
+            $className = lcfirst(substr($className, $pos + 1));
         }
 
-        return $classname;
+        return $className;
     }
 }

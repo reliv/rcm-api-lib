@@ -1,12 +1,9 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Hydrator;
 
 use Reliv\RcmApiLib\Exception\ApiMessagesHydratorException;
-use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
-use Reliv\RcmApiLib\Model\ExceptionApiMessage;
 use Reliv\RcmApiLib\Model\StringApiMessage;
 
 /**
@@ -25,6 +22,20 @@ use Reliv\RcmApiLib\Model\StringApiMessage;
 class StringApiMessagesHydrator implements ApiMessagesHydratorInterface
 {
     /**
+     * @var string
+     */
+    protected $defaultMessage;
+
+    /**
+     * @param string $defaultMessage
+     */
+    public function __construct(
+        string $defaultMessage = 'An error occurred'
+    ) {
+        $this->defaultMessage = $defaultMessage;
+    }
+
+    /**
      * hydrate
      *
      * @param mixed       $data
@@ -35,10 +46,14 @@ class StringApiMessagesHydrator implements ApiMessagesHydratorInterface
      */
     public function hydrate($data, ApiMessages $apiMessages)
     {
-        if (!is_string($data)) {
+        if (!is_string($data) && $data !== null) {
             throw new ApiMessagesHydratorException(
                 get_class($this) . ' cannot hydrate this data type'
             );
+        }
+
+        if (empty($data)) {
+            $data = $this->defaultMessage;
         }
 
         $apiMessage = new StringApiMessage(

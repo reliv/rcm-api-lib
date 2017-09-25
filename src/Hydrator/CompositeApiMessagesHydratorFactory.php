@@ -1,12 +1,11 @@
 <?php
 
-namespace Reliv\RcmApiLib\Factory;
+namespace Reliv\RcmApiLib\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Reliv\RcmApiLib\Hydrator\CompositeApiMessagesHydrator;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CompositeApiMessageHydratorFactory
+class CompositeApiMessagesHydratorFactory
 {
     /**
      * __invoke

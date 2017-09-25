@@ -1,12 +1,11 @@
 <?php
 
-namespace Reliv\RcmApiLib\Factory;
+namespace Reliv\RcmApiLib\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class InputFilterMessagesHydratorFactory
+class InputFilterApiMessagesHydratorFactory
 {
     /**
      * __invoke

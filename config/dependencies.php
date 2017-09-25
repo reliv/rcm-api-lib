@@ -26,19 +26,23 @@ return [
     ],
     'factories' => [
         /* MAIN HYDRATOR */
+        \Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator::class =>
+            \Reliv\RcmApiLib\Hydrator\CompositeApiMessagesHydratorFactory::class,
+
+        /* @deprecated old MAIN HYDRATOR */
         'Reliv\RcmApiLib\Hydrator' =>
-            Reliv\RcmApiLib\Factory\CompositeApiMessageHydratorFactory::class,
+            \Reliv\RcmApiLib\Hydrator\CompositeApiMessagesHydratorFactory::class,
 
         // InputFilterApiMessagesHydrator
         Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydrator::class =>
-            Reliv\RcmApiLib\Factory\InputFilterMessagesHydratorFactory::class,
+            \Reliv\RcmApiLib\Hydrator\InputFilterApiMessagesHydratorFactory::class,
 
         // PsrResponseService
         Reliv\RcmApiLib\Service\PsrResponseService::class =>
-            Reliv\RcmApiLib\Factory\ServicePsrResponseServiceFactory::class,
+            \Reliv\RcmApiLib\Factory\PsrResponseServiceFactory::class,
 
         // ResponseService
         Reliv\RcmApiLib\Service\ResponseService::class =>
-            Reliv\RcmApiLib\Factory\ServiceResponseServiceFactory::class,
+            \Reliv\RcmApiLib\Factory\ResponseServiceFactory::class,
     ],
 ];

@@ -3,18 +3,14 @@
 namespace Reliv\RcmApiLib\Factory;
 
 use Interop\Container\ContainerInterface;
+use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Service\ResponseService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ServiceResponseServiceFactory
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
-class ServiceResponseServiceFactory
+class ResponseServiceFactory
 {
     /**
      * __invoke
@@ -27,7 +23,7 @@ class ServiceResponseServiceFactory
     {
         return new ResponseService(
             $container,
-            $container->get(\RcmI18n\Service\ParameterizeTranslator::class)
+            $container->get(Translate::class)
         );
     }
 }

@@ -2,8 +2,9 @@
 
 namespace Reliv\RcmApiLib\Service;
 
+use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use RcmI18n\Service\ParameterizeTranslator;
+use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
 
@@ -25,19 +26,19 @@ class PsrResponseService extends ResponseService
     /**
      * PsrResponseService constructor.
      *
-     * @param \Interop\Container\ContainerInterface $container
-     * @param ParameterizeTranslator                $parameterizeTranslator
-     * @param PsrApiResponseBuilder                 $psrApiResponseBuilder
+     * @param ContainerInterface    $container
+     * @param Translate             $translate
+     * @param PsrApiResponseBuilder $psrApiResponseBuilder
      */
     public function __construct(
         $container,
-        ParameterizeTranslator $parameterizeTranslator,
+        Translate $translate,
         PsrApiResponseBuilder $psrApiResponseBuilder
     ) {
         $this->psrApiResponseBuilder = $psrApiResponseBuilder;
         parent::__construct(
             $container,
-            $parameterizeTranslator
+            $translate
         );
     }
 

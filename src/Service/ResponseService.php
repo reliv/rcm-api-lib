@@ -3,18 +3,14 @@
 namespace Reliv\RcmApiLib\Service;
 
 use Interop\Container\ContainerInterface;
-use RcmI18n\Service\ParameterizeTranslator;
+use Reliv\RcmApiLib\Api\Translate\OptionsTranslate;
+use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
 
 /**
- * Class ResponseService
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 class ResponseService
 {
@@ -24,22 +20,22 @@ class ResponseService
     protected $container;
 
     /**
-     * @var ParameterizeTranslator
+     * @var Translate
      */
-    protected $parameterizeTranslator;
+    protected $translate;
 
     /**
      * ResponseService constructor.
      *
-     * @param ContainerInterface     $container
-     * @param ParameterizeTranslator $parameterizeTranslator
+     * @param ContainerInterface $container
+     * @param Translate          $translate
      */
     public function __construct(
         $container,
-        ParameterizeTranslator $parameterizeTranslator
+        Translate $translate
     ) {
         $this->container = $container;
-        $this->parameterizeTranslator = $parameterizeTranslator;
+        $this->translate = $translate;
     }
 
     /**
@@ -50,16 +46,6 @@ class ResponseService
     protected function getHydrator()
     {
         return $this->container->get('Reliv\RcmApiLib\Hydrator');
-    }
-
-    /**
-     * getParameterizeTranslator
-     *
-     * @return ParameterizeTranslator
-     */
-    protected function getParameterizeTranslator()
-    {
-        return $this->parameterizeTranslator;
     }
 
     /**
@@ -100,18 +86,20 @@ class ResponseService
     ) {
         $stringParams = $this->buildStringParams($params);
 
-        return $this->getParameterizeTranslator()->translate(
+        return $this->translate->__invoke(
             $message,
-            $stringParams,
-            $textDomain,
-            $locale
+            [
+                OptionsTranslate::OPTIONS_PARAMS => $stringParams,
+                OptionsTranslate::OPTIONS_TEXT_DOMAIN => $textDomain,
+                OptionsTranslate::OPTIONS_LOCALE => $locale,
+            ]
         );
     }
 
     /**
-     * translateApiResponseMessages
+     * @param ApiResponseInterface $response
      *
-     * @return void
+     * @return ApiResponseInterface
      */
     public function translateApiResponseMessages(
         ApiResponseInterface $response
@@ -127,6 +115,8 @@ class ResponseService
                 )
             );
         }
+
+        return $response;
     }
 
     /**
@@ -188,6 +178,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated
      * setApiMessage
      *
      * @param ApiResponseInterface $response

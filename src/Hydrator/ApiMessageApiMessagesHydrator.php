@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Reliv\RcmApiLib\Hydrator;
 
 use Reliv\RcmApiLib\Exception\ApiMessagesHydratorException;

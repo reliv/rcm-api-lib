@@ -32,8 +32,7 @@ class WithApiMessagesBasic implements WithApiMessages
     public function __invoke(
         ApiResponseInterface $apiResponse,
         $apiMessagesData
-    ): ApiResponseInterface
-    {
+    ): ApiResponseInterface {
         foreach ($apiMessagesData as $apiMessageData) {
             $apiResponse = $this->withApiMessage->__invoke($apiResponse, $apiMessageData);
         }

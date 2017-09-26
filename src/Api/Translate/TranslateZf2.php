@@ -42,8 +42,7 @@ class TranslateZf2 implements Translate
         string $message,
         array $params,
         array $options = []
-    ):string
-    {
+    ):string {
         $params = $this->buildStringParams->__invoke(
             $params
         );

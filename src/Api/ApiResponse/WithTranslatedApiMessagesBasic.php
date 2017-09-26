@@ -33,8 +33,7 @@ class WithTranslatedApiMessagesBasic implements WithTranslatedApiMessages
     public function __invoke(
         ApiResponseInterface $apiResponse,
         array $optionsTranslate = []
-    ): ApiResponseInterface
-    {
+    ): ApiResponseInterface {
         $apiMessages = $apiResponse->getApiMessages();
 
         /** @var ApiMessage $apiMessage */

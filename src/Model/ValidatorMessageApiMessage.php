@@ -2,22 +2,8 @@
 
 namespace Reliv\RcmApiLib\Model;
 
-use Zend\Validator\ValidatorInterface;
-
 /**
- * Class ValidatorMessageApiMessage
- *
- * API Validator message format
- *
- * PHP version 5
- *
- * @category  Reliv
- * @package   Reliv\RcmApiLib\Message
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright ${YEAR} Reliv International
- * @license   License.txt New BSD License
- * @version   Release: <package_version>
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 class ValidatorMessageApiMessage extends ApiMessage
 {

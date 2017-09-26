@@ -9,8 +9,6 @@ use Reliv\RcmApiLib\Api\Options;
  */
 class OptionsTranslate extends Options
 {
-    const OPTIONS_PARAMS = 'params';
     const OPTIONS_TEXT_DOMAIN = 'textDomain';
     const OPTIONS_LOCALE = 'locale';
-
 }

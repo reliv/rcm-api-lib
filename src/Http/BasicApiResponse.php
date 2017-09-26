@@ -5,12 +5,7 @@ namespace Reliv\RcmApiLib\Http;
 use Reliv\RcmApiLib\Model\ApiMessages;
 
 /**
- * Class BasicApiResponse
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 class BasicApiResponse implements ApiResponseInterface
 {
@@ -39,6 +34,19 @@ class BasicApiResponse implements ApiResponseInterface
         $this->messages = new ApiMessages();
         $this->setData($data);
         $this->addApiMessages($apiMessages);
+    }
+
+    /**
+     * @param ApiMessages $apiMessages
+     *
+     * @return BasicApiResponse|ApiResponseInterface
+     */
+    public function withApiMessages(ApiMessages $apiMessages)
+    {
+        $new = clone $this;
+        $new->messages = $apiMessages;
+
+        return $new;
     }
 
     /**

@@ -3,21 +3,8 @@
 namespace Reliv\RcmApiLib\Model;
 
 /**
- * Class HttpStatusCodeApiMessage
- *
- * LongDescHere
- *
- * PHP version 5
- *
- * @category  Reliv
- * @package   Reliv\RcmApiLib\Model
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2015 Reliv International
- * @license   License.txt New BSD License
- * @version   Release: <package_version>
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
-
 class HttpStatusCodeApiMessage extends ApiMessage
 {
     /**
@@ -27,7 +14,8 @@ class HttpStatusCodeApiMessage extends ApiMessage
     /**
      * @var array Reason Phrases
      */
-    protected $reasonPhrases = [
+    protected $reasonPhrases
+        = [
             0 => 'Unknown Error',
             // INFORMATIONAL CODES
             100 => 'Continue',
@@ -92,7 +80,7 @@ class HttpStatusCodeApiMessage extends ApiMessage
             508 => 'Loop Detected',
             511 => 'Network Authentication Required',
         ];
-    
+
     /**
      * HttpStatusCodeApiMessage constructor.
      *

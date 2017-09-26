@@ -9,40 +9,12 @@ use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
 
 /**
- * Class AbstractJsonController
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @deprecated Use \Reliv\RcmApiLib\Api\ApiResponse
  */
 class PsrResponseService extends ResponseService
 {
     /**
-     * @var PsrApiResponseBuilder
-     */
-    protected $psrApiResponseBuilder;
-
-    /**
-     * PsrResponseService constructor.
-     *
-     * @param ContainerInterface    $container
-     * @param Translate             $translate
-     * @param PsrApiResponseBuilder $psrApiResponseBuilder
-     */
-    public function __construct(
-        $container,
-        Translate $translate,
-        PsrApiResponseBuilder $psrApiResponseBuilder
-    ) {
-        $this->psrApiResponseBuilder = $psrApiResponseBuilder;
-        parent::__construct(
-            $container,
-            $translate
-        );
-    }
-
-    /**
+     * @deprecated Use NewPsrResponseWithTranslatedMessages
      * getApiResponse
      *
      * @param ResponseInterface $response
@@ -58,10 +30,16 @@ class PsrResponseService extends ResponseService
         $statusCode = 200,
         $apiMessagesData = null
     ) {
-        $response = $this->psrApiResponseBuilder->__invoke($response);
+        $apiResponse = new PsrApiResponse(
+            null,
+            [],
+            $response->getStatusCode(),
+            $response->getHeaders(),
+            0
+        );
 
         return $this->getApiResponse(
-            $response,
+            $apiResponse,
             $data,
             $statusCode,
             $apiMessagesData

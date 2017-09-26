@@ -110,8 +110,19 @@ abstract class AbstractRestfulJsonController extends AbstractRestfulController
      */
     protected function methodNotAllowed()
     {
-        return $this->getResponseService()->getMethodNotAllowed(
-            $this->getResponse()
+        $apiMessage = new ApiMessage(
+            'Http',
+            'Method Not Allowed',
+            'Method_Not_Allowed',
+            '405',
+            true
+        );
+
+        return $this->getResponseService()->getApiResponse(
+            $this->getResponse(),
+            null,
+            405,
+            $apiMessage
         );
     }
 

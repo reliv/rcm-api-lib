@@ -3,6 +3,7 @@
 namespace Reliv\RcmApiLib\Service;
 
 use Interop\Container\ContainerInterface;
+use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessages;
 use Reliv\RcmApiLib\Api\Translate\OptionsTranslate;
 use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
@@ -10,6 +11,7 @@ use Reliv\RcmApiLib\Model\ApiMessage;
 use Reliv\RcmApiLib\Model\ApiMessages;
 
 /**
+ * @deprecated Use \Reliv\RcmApiLib\Api\ApiResponse
  * @author James Jervis - https://github.com/jerv13
  */
 class ResponseService
@@ -41,11 +43,11 @@ class ResponseService
     /**
      * getHydrator
      *
-     * @return \Reliv\RcmApiLib\Hydrator\ApiMessagesHydratorInterface
+     * @return \Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessages
      */
     protected function getHydrator()
     {
-        return $this->container->get('Reliv\RcmApiLib\Hydrator');
+        return $this->container->get(HydrateApiMessages::class);
     }
 
     /**
@@ -69,6 +71,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use Reliv\RcmApiLib\Api\Translate
      * translateMessage
      *
      * @param        $message
@@ -97,6 +100,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use
      * @param ApiResponseInterface $response
      *
      * @return ApiResponseInterface
@@ -120,6 +124,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated
      * getMethodNotAllowed
      *
      * @param ApiResponseInterface $response
@@ -146,6 +151,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use NewZfResponseWithTranslatedMessages
      * getApiResponse
      *
      * @param ApiResponseInterface $response
@@ -194,6 +200,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use Reliv\RcmApiLib\Api\ApiResponse\WithApiMessage
      * addApiMessage
      *
      * @param ApiResponseInterface $response
@@ -209,10 +216,11 @@ class ResponseService
 
         $apiMessages = $response->getApiMessages();
 
-        $hydrator->hydrate($apiMessagesData, $apiMessages);
+        $hydrator->__invoke($apiMessagesData, $apiMessages);
     }
 
     /**
+     * @deprecated
      * setApiMessages
      *
      * @param ApiResponseInterface $response
@@ -228,6 +236,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use Reliv\RcmApiLib\Api\ApiResponse\WithApiMessages
      * addApiMessages
      *
      * @param ApiResponseInterface $response
@@ -245,6 +254,7 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use ApiResponseInterface->getApiMessages()
      * getApiMessages
      *
      * @param ApiResponseInterface $response
@@ -258,6 +268,8 @@ class ResponseService
     }
 
     /**
+     * @deprecated Use ApiResponseInterface->getApiMessages()->has()
+     *
      * hasApiMessages
      *
      * @param ApiResponseInterface $response

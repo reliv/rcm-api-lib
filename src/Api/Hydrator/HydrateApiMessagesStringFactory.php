@@ -1,29 +1,22 @@
 <?php
 
-namespace Reliv\RcmApiLib\Service;
+namespace Reliv\RcmApiLib\Api\Hydrator;
 
 use Interop\Container\ContainerInterface;
-use Reliv\RcmApiLib\Api\Translate\Translate;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * @deprecated
  * @author James Jervis - https://github.com/jerv13
  */
-class ResponseServiceFactory
+class HydrateApiMessagesStringFactory
 {
     /**
-     * __invoke
-     *
      * @param $container ContainerInterface|ServiceLocatorInterface
      *
-     * @return ResponseService
+     * @return HydrateApiMessagesString
      */
     public function __invoke($container)
     {
-        return new ResponseService(
-            $container,
-            $container->get(Translate::class)
-        );
+        return new HydrateApiMessagesString();
     }
 }

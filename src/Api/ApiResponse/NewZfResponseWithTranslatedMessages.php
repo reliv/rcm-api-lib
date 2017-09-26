@@ -2,12 +2,13 @@
 
 namespace Reliv\RcmApiLib\Api\ApiResponse;
 
-use Reliv\RcmApiLib\Http\ApiResponseInterface;
+use Reliv\RcmApiLib\Http\ApiResponse;
+use Reliv\RcmApiLib\Http\PsrApiResponse;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-abstract class NewAbstract
+class NewZfResponseWithTranslatedMessages
 {
     /**
      * @var WithApiMessage
@@ -31,34 +32,36 @@ abstract class NewAbstract
     }
 
     /**
-     * getApiResponse
+     * @param mixed $data
+     * @param int   $statusCode
+     * @param null  $apiMessageData
+     * @param array $headers
+     * @param array $options
      *
-     * @param ApiResponseInterface $apiResponse
-     * @param                      $data
-     * @param int                  $statusCode
-     * @param null                 $apiMessagesData
-     *
-     * @return ApiResponseInterface
+     * @return \Reliv\RcmApiLib\Http\ApiResponseInterface|PsrApiResponse
      */
-    protected function getApiResponse(
-        ApiResponseInterface $apiResponse,
+    public function __invoke(
         $data,
         $statusCode = 200,
-        $apiMessagesData = null
+        $apiMessageData = null,
+        $headers = [],
+        array $options = []
     ) {
-        $apiResponse->setData($data);
+        $apiResponse = new ApiResponse();
 
         if (!empty($apiMessagesData)) {
-            $this->withApiMessage->__invoke(
-                $apiResponse,
-                $apiMessagesData
-            );
+            return $apiResponse;
         }
+
+        $this->withApiMessage->__invoke(
+            $apiResponse,
+            $apiMessageData
+        );
 
         $apiResponse = $this->withTranslatedApiMessages->__invoke(
             $apiResponse
         );
 
-        return $apiResponse->withStatus($statusCode);
+        return $apiResponse;
     }
 }

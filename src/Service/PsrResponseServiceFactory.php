@@ -1,14 +1,13 @@
 <?php
 
-namespace Reliv\RcmApiLib\Factory;
+namespace Reliv\RcmApiLib\Service;
 
 use Interop\Container\ContainerInterface;
 use Reliv\RcmApiLib\Api\Translate\Translate;
-use Reliv\RcmApiLib\Service\PsrApiResponseBuilder;
-use Reliv\RcmApiLib\Service\PsrResponseService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
+ * @deprecated
  * @author James Jervis - https://github.com/jerv13
  */
 class PsrResponseServiceFactory
@@ -24,8 +23,7 @@ class PsrResponseServiceFactory
     {
         return new PsrResponseService(
             $container,
-            $container->get(Translate::class),
-            $container->get(PsrApiResponseBuilder::class)
+            $container->get(Translate::class)
         );
     }
 }

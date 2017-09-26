@@ -15,12 +15,20 @@ class TranslateZf2 implements Translate
     protected $translator;
 
     /**
+     * @var BuildStringParams
+     */
+    protected $buildStringParams;
+
+    /**
      * @param TranslatorInterface $translator
+     * @param BuildStringParams   $buildStringParams
      */
     public function __construct(
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        BuildStringParams $buildStringParams
     ) {
         $this->translator = $translator;
+        $this->buildStringParams = $buildStringParams;
     }
 
     /**
@@ -34,6 +42,19 @@ class TranslateZf2 implements Translate
         array $options = []
     ):string
     {
+        $params = $this->buildStringParams->__invoke(
+            OptionsTranslate::getOption(
+                $options,
+                OptionsTranslate::OPTIONS_PARAMS,
+                []
+            )
+        );
+
+        $message = $this->prepareMessage(
+            $message,
+            $params
+        );
+
         return $this->translator->translate(
             $message,
             OptionsTranslate::getOption(
@@ -47,5 +68,24 @@ class TranslateZf2 implements Translate
                 null
             )
         );
+    }
+
+    /**
+     * @param string $message
+     * @param array  $params
+     *
+     * @return string
+     */
+    protected function prepareMessage(string $message, array $params)
+    {
+        foreach ($params as $name => $value) {
+            $message = str_replace(
+                '{' . $name . '}',
+                $value,
+                $message
+            );
+        }
+
+        return $message;
     }
 }

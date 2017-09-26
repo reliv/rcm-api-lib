@@ -48,24 +48,4 @@ class WithTranslatedApiMessageBasic implements WithTranslatedApiMessage
 
         return $apiMessage;
     }
-
-    /**
-     * @param array $params
-     *
-     * @return array
-     */
-    protected function buildStringParams(array $params = [])
-    {
-        $stringParams = [];
-
-        foreach ($params as $key => $value) {
-            if (is_string($value) || is_numeric($value)) {
-                $stringParams[$key] = $value;
-                continue;
-            }
-            $stringParams[$key] = json_encode($value);
-        }
-
-        return $stringParams;
-    }
 }

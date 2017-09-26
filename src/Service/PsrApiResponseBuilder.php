@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
 
 /**
+ * @deprecated
  * Class PsrApiResponseBuilder
  *
  * @author    James Jervis <jjervis@relivinc.com>

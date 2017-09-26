@@ -20,7 +20,8 @@ class TranslateZf2Factory
     public function __invoke($container)
     {
         return new TranslateZf2(
-            $container->get('MvcTranslator')
+            $container->get('MvcTranslator'),
+            $container->get(BuildStringParams::class)
         );
     }
 }

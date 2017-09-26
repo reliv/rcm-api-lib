@@ -21,14 +21,11 @@
   ],
   "require": {
     "php": ">=5.6",
-    "rcm/i18n": "^1",
-    "rwoverdijk/assetmanager": "^1",
+    "zendframework/zend-config-aggregator": "1.*",
     "zendframework/zend-diactoros": "^1",
     "zendframework/zend-http": "^2",
     "zendframework/zend-inputfilter": "^2",
-    "zendframework/zend-mvc": "^2",
     "zendframework/zend-servicemanager": "2.* || 3.*",
-    "zendframework/zend-stdlib": "^2",
     "zendframework/zend-validator": "^2"
   },
   "require-dev": {
@@ -36,8 +33,13 @@
     "squizlabs/php_codesniffer": "^2"
   },
   "suggest": {
+    "rcm/i18n": "^1",
+    "rwoverdijk/assetmanager": "^1",
+    "bower-asset/angular": "~1",
     "bower-asset/rcm-js-lib": "^0",
-    "bower-asset/es6-promise-polyfill": "^1.2 for older browser support"
+    "bower-asset/es6-promise-polyfill": "^1.2 for older browser support",
+    "zendframework/zend-mvc": "^2",
+    "zendframework/zend-stdlib": "^2"
   },
   "autoload": {
     "psr-4": {

@@ -2,36 +2,42 @@
 
 namespace Reliv\RcmApiLib\Api\ApiResponse;
 
+use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessages;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
-use Reliv\RcmApiLib\Hydrator\ApiMessageApiMessagesHydrator;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-class WithApiMessageBasic
+class WithApiMessageBasic implements WithApiMessage
 {
     /**
-     * @param ApiMessageApiMessagesHydrator $hydrator
+     * @var HydrateApiMessages
+     */
+    protected $hydrate;
+
+    /**
+     * @param HydrateApiMessages $hydrate
      */
     public function __construct(
-        ApiMessageApiMessagesHydrator $hydrator
+        HydrateApiMessages $hydrate
     ) {
-        $this->hydrator = $hydrator;
+        $this->hydrate = $hydrate;
     }
 
     /**
      * @param ApiResponseInterface $apiResponse
-     * @param mixed                $apiMessagesData
+     * @param mixed                $apiMessageData
      *
      * @return ApiResponseInterface
      */
     public function __invoke(
         ApiResponseInterface $apiResponse,
-        $apiMessagesData
-    ): ApiResponseInterface {
+        $apiMessageData
+    ): ApiResponseInterface
+    {
         $apiMessages = $apiResponse->getApiMessages();
 
-        $apiMessages = $this->hydrator->hydrate($apiMessagesData, $apiMessages);
+        $apiMessages = $this->hydrate->__invoke($apiMessageData, $apiMessages);
 
         $apiResponse->setApiMessages(
             $apiMessages

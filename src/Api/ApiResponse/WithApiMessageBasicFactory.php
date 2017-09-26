@@ -1,28 +1,27 @@
 <?php
 
-namespace Reliv\RcmApiLib\Api\Translate;
+namespace Reliv\RcmApiLib\Api\ApiResponse;
 
 use Interop\Container\ContainerInterface;
-use RcmI18n\Service\ParameterizeTranslator;
+use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessages;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-class TranslateRcmI18nFactory
+class WithApiMessageBasicFactory
 {
     /**
      * __invoke
      *
      * @param $container ContainerInterface|ServiceLocatorInterface
      *
-     * @return TranslateRcmI18n
+     * @return WithApiMessageBasic
      */
     public function __invoke($container)
     {
-        return new TranslateRcmI18n(
-            $container->get(ParameterizeTranslator::class),
-            $container->get(BuildStringParams::class)
+        return new WithApiMessageBasic(
+            $container->get(HydrateApiMessages::class)
         );
     }
 }

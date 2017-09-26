@@ -7,16 +7,16 @@ use Reliv\RcmApiLib\Http\ApiResponseInterface;
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-interface WithApiMessage
+interface WithApiMessages
 {
     /**
      * @param ApiResponseInterface $apiResponse
-     * @param mixed                $apiMessageData
+     * @param array                $apiMessagesData
      *
      * @return ApiResponseInterface
      */
     public function __invoke(
         ApiResponseInterface $apiResponse,
-        $apiMessageData
+        array $apiMessagesData
     ): ApiResponseInterface;
 }

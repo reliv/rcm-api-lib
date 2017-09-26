@@ -2,13 +2,31 @@
 
 namespace Reliv\RcmApiLib;
 
+use Zend\ConfigAggregator\ConfigAggregator;
+
 /**
- * Class Module
+ * ZF2 Module
  */
 class Module
 {
     public function getConfig()
     {
-        return include __DIR__ . '/../config/module.config.php';
+        $assetManager = new AssetManagerConfig();
+        $rcmApiLib = new RcmApiLibConfig();
+        $zf2Config = new Zf2Config();
+
+        $configManager = new ConfigAggregator(
+            [
+                $assetManager,
+                $rcmApiLib,
+                $zf2Config,
+            ]
+        );
+
+        $config = $configManager->getMergedConfig();
+
+        $config['service_manager'] = array_merge($config['service_manager'], $config['dependencies']);
+
+        return $config;
     }
 }

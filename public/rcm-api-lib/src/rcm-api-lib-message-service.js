@@ -2,13 +2,13 @@
  * {RcmApiLibMessageService}
  * @param angular
  * @param rcmApiLibApiMessage
- * @param RcmEventManagerClass
+ * @param EventManagerClass
  * @constructor
  */
 var RcmApiLibMessageService = function (
     angular,
     rcmApiLibApiMessage,
-    RcmEventManagerClass
+    EventManagerClass
 ) {
 
     /**
@@ -18,9 +18,9 @@ var RcmApiLibMessageService = function (
 
     /**
      *
-     * @type {RcmEventManagerClass|*}
+     * @type {RcmApiLibEventManager|*}
      */
-    var eventManager = new RcmEventManagerClass();
+    var eventManager = new EventManagerClass();
 
     /**
      * defaultNamespace
@@ -36,7 +36,7 @@ var RcmApiLibMessageService = function (
 
     /**
      * getEventManager
-     * @returns {RcmEventManager}
+     * @returns {RcmApiLibEventManager}
      */
     self.getEventManager = function () {
         return eventManager;
@@ -70,7 +70,13 @@ var RcmApiLibMessageService = function (
     var addNamespaceMessage = function (namespace, message) {
         namespace = self.createNamespace(namespace);
         self.messages[namespace].push(message);
-        eventManager.trigger('rcmApiLibApiMessage.addMessage', {namespace: namespace, message: message});
+        eventManager.trigger(
+            'rcmApiLibApiMessage.addMessage',
+            {
+                namespace: namespace,
+                message: message
+            }
+        );
     };
 
     /**
@@ -185,7 +191,10 @@ var RcmApiLibMessageService = function (
         );
         eventManager.trigger(
             'rcmApiLibApiMessage.addMessages',
-            {namespace: namespace, messages: self.getMessages(namespace)}
+            {
+                namespace: namespace,
+                messages: self.getMessages(namespace)
+            }
         );
     };
 
@@ -319,12 +328,13 @@ angular.module('rcmApiLib').factory(
     'rcmApiLibMessageService',
     [
         'rcmApiLibApiMessage',
-        'RcmEventManagerClass',
-        function (rcmApiLibApiMessage, RcmEventManagerClass) {
+        function (
+            rcmApiLibApiMessage
+        ) {
             return new RcmApiLibMessageService(
                 angular,
                 rcmApiLibApiMessage,
-                RcmEventManagerClass
+                'RcmApiLibEventManager'
             );
         }
     ]

@@ -2,16 +2,24 @@
 
 namespace Reliv\RcmApiLib\Api\ApiResponse;
 
-use Psr\Http\Message\ResponseInterface;
 use Reliv\RcmApiLib\Api\Options;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-class NewPsr extends NewAbstract
+class NewPsrResponseWithTranslatedMessages
 {
     const OPTIONS_ENCODING = 'jsonEncodingOptions';
+
+    /**
+     * @var WithApiMessage
+     */
+    protected $withApiMessage;
+    /**
+     * @var WithTranslatedApiMessages
+     */
+    protected $withTranslatedApiMessages;
 
     /**
      * @param WithApiMessage            $withApiMessage
@@ -21,23 +29,24 @@ class NewPsr extends NewAbstract
         WithApiMessage $withApiMessage,
         WithTranslatedApiMessages $withTranslatedApiMessages
     ) {
-        parent::__construct($withApiMessage, $withTranslatedApiMessages);
+        $this->withApiMessage = $withApiMessage;
+        $this->withTranslatedApiMessages = $withTranslatedApiMessages;
     }
 
     /**
-     * @param ResponseInterface $response
-     * @param                   $data
-     * @param int               $statusCode
-     * @param null              $apiMessagesData
-     * @param array             $options
+     * @param mixed $data
+     * @param int   $statusCode
+     * @param null  $apiMessageData
+     * @param array $headers
+     * @param array $options
      *
-     * @return PsrApiResponse
+     * @return \Reliv\RcmApiLib\Http\ApiResponseInterface|PsrApiResponse
      */
     public function __invoke(
-        ResponseInterface $response,
         $data,
         $statusCode = 200,
-        $apiMessagesData = null,
+        $apiMessageData = null,
+        $headers = [],
         array $options = []
     ) {
         $encodingOptions = Options::getOption(
@@ -50,15 +59,23 @@ class NewPsr extends NewAbstract
             $data,
             [],
             $statusCode,
-            $response->getHeaders(),
+            $headers,
             $encodingOptions
         );
 
-        return $this->getApiResponse(
+        if (!empty($apiMessagesData)) {
+            return $apiResponse;
+        }
+
+        $this->withApiMessage->__invoke(
             $apiResponse,
-            $data,
-            $statusCode,
-            $apiMessagesData
+            $apiMessageData
         );
+
+        $apiResponse = $this->withTranslatedApiMessages->__invoke(
+            $apiResponse
+        );
+
+        return $apiResponse;
     }
 }

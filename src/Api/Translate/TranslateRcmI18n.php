@@ -15,12 +15,20 @@ class TranslateRcmI18n implements Translate
     protected $translator;
 
     /**
+     * @var BuildStringParams
+     */
+    protected $buildStringParams;
+
+    /**
      * @param ParameterizeTranslator $translator
+     * @param BuildStringParams      $buildStringParams
      */
     public function __construct(
-        ParameterizeTranslator $translator
+        ParameterizeTranslator $translator,
+        BuildStringParams $buildStringParams
     ) {
         $this->translator = $translator;
+        $this->buildStringParams = $buildStringParams;
     }
 
     /**
@@ -32,15 +40,18 @@ class TranslateRcmI18n implements Translate
     public function __invoke(
         string $message,
         array $options = []
-    ):string
-    {
-        return $this->translator->translate(
-            $message,
+    ):string {
+        $params = $this->buildStringParams->__invoke(
             OptionsTranslate::getOption(
                 $options,
                 OptionsTranslate::OPTIONS_PARAMS,
                 []
-            ),
+            )
+        );
+
+        return $this->translator->translate(
+            $message,
+            $params,
             OptionsTranslate::getOption(
                 $options,
                 OptionsTranslate::OPTIONS_TEXT_DOMAIN,

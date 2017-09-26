@@ -1,4 +1,4 @@
 /**
  * rcmApiLib Module
  */
-angular.module('rcmApiLib', ['RcmJsLib']);
+angular.module('rcmApiLib', []);

@@ -1503,7 +1503,7 @@ angular.module('rcmApiLib').factory(
             return new RcmApiLibMessageService(
                 angular,
                 rcmApiLibApiMessage,
-                'RcmApiLibEventManager'
+                RcmApiLibEventManager
             );
         }
     ]

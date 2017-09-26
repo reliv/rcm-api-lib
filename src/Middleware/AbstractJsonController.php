@@ -14,7 +14,7 @@ abstract class AbstractJsonController
     /**
      * @var NewPsrResponseWithTranslatedMessages
      */
-    protected $psrResponseService;
+    protected $newPsrResponseWithTranslatedMessages;
 
     /**
      * @param NewPsrResponseWithTranslatedMessages $newPsrResponseWithTranslatedMessages

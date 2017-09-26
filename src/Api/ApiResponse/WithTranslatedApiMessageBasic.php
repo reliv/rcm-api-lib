@@ -35,13 +35,10 @@ class WithTranslatedApiMessageBasic implements WithTranslatedApiMessage
         ApiMessage $apiMessage,
         array $optionsTranslate = []
     ): ApiMessage {
-        $optionsTranslate[OptionsTranslate::OPTIONS_PARAMS] = $this->buildStringParams(
-            $apiMessage->getParams()
-        );
-
         $apiMessage->setValue(
             $this->translate->__invoke(
                 $apiMessage->getValue(),
+                $apiMessage->getParams(),
                 $optionsTranslate
             )
         );

@@ -4,12 +4,12 @@ namespace Reliv\RcmApiLib\Api\ApiResponse;
 
 use Reliv\RcmApiLib\Http\ApiResponse;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
-use Zend\Http\Headers;
+use Zend\Http\Response;
 
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-class NewZfResponseWithTranslatedMessages
+class NewZfResponseFromResponseWithTranslatedMessages
 {
     /**
      * @var WithApiMessage
@@ -33,27 +33,30 @@ class NewZfResponseWithTranslatedMessages
     }
 
     /**
-     * @param mixed $data
-     * @param int   $statusCode
-     * @param null  $apiMessageData
-     * @param array $headers
-     * @param array $options
+     * @param Response $zfResponse
+     * @param mixed    $data
+     * @param int      $statusCode
+     * @param null     $apiMessageData
+     * @param array    $options
      *
      * @return ApiResponseInterface|ApiResponse
      */
     public function __invoke(
+        Response $zfResponse,
         $data,
         $statusCode = 200,
         $apiMessageData = null,
-        $headers = [],
         array $options = []
     ) {
-        $apiResponse = new ApiResponse();
+        if ($zfResponse instanceof ApiResponseInterface) {
+            $apiResponse = $zfResponse;
+        } else {
+            $apiResponse = new ApiResponse();
+            $apiResponse->setHeaders($zfResponse->getHeaders());
+        }
+
         $apiResponse->setData($data);
         $apiResponse->setStatusCode($statusCode);
-        $headers = new Headers();
-        $headers->addHeaders($headers);
-        $apiResponse->setHeaders($headers);
 
         if (empty($apiMessagesData)) {
             return $this->withTranslatedApiMessages->__invoke(

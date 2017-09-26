@@ -38,6 +38,13 @@ interface ApiResponseInterface
     public function getData();
 
     /**
+     * @param ApiMessages $apiMessages
+     *
+     * @return ApiResponseInterface
+     */
+    public function withApiMessages(ApiMessages $apiMessages);
+
+    /**
      * addApiMessages
      *
      * @param array $apiMessages ApiMessage

@@ -4,6 +4,8 @@ namespace Reliv\RcmApiLib;
 
 use Reliv\RcmApiLib\Api\ApiResponse\NewPsrResponseWithTranslatedMessages;
 use Reliv\RcmApiLib\Api\ApiResponse\NewPsrResponseWithTranslatedMessagesFactory;
+use Reliv\RcmApiLib\Api\ApiResponse\NewZfResponseFromResponseWithTranslatedMessages;
+use Reliv\RcmApiLib\Api\ApiResponse\NewZfResponseFromResponseWithTranslatedMessagesFactory;
 use Reliv\RcmApiLib\Api\ApiResponse\NewZfResponseWithTranslatedMessages;
 use Reliv\RcmApiLib\Api\ApiResponse\NewZfResponseWithTranslatedMessagesFactory;
 use Reliv\RcmApiLib\Api\ApiResponse\WithApiMessage;
@@ -20,8 +22,8 @@ use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesApiMessageFactory;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesArray;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesArrayFactory;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesCompositeFactory;
-use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesDefault;
-use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesDefaultFactory;
+use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesNoMessage;
+use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesNoMessageFactory;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesException;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesExceptionFactory;
 use Reliv\RcmApiLib\Api\Hydrator\HydrateApiMessagesInputFilter;
@@ -32,11 +34,6 @@ use Reliv\RcmApiLib\Api\Translate\BuildStringParams;
 use Reliv\RcmApiLib\Api\Translate\BuildStringParamsFactory;
 use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Api\Translate\TranslateRcmI18nFactory;
-use Reliv\RcmApiLib\Service\PsrApiResponseBuilder;
-use Reliv\RcmApiLib\Service\PsrResponseService;
-use Reliv\RcmApiLib\Service\PsrResponseServiceFactory;
-use Reliv\RcmApiLib\Service\ResponseService;
-use Reliv\RcmApiLib\Service\ResponseServiceFactory;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -50,17 +47,15 @@ class RcmApiLibConfig
              * dependencies
              */
             'dependencies' => [
-                'invokables' => [
-                    // PsrApiResponseBuilder
-                    PsrApiResponseBuilder::class
-                    => PsrApiResponseBuilder::class
-                ],
                 'factories' => [
                     /**
                      * Api ApiResponse ===================================
                      */
                     NewPsrResponseWithTranslatedMessages::class
                     => NewPsrResponseWithTranslatedMessagesFactory::class,
+
+                    NewZfResponseFromResponseWithTranslatedMessages::class
+                    => NewZfResponseFromResponseWithTranslatedMessagesFactory::class,
 
                     NewZfResponseWithTranslatedMessages::class
                     => NewZfResponseWithTranslatedMessagesFactory::class,
@@ -78,33 +73,38 @@ class RcmApiLibConfig
                     => WithTranslatedApiMessagesBasicFactory::class,
 
                     /**
-                     * Apil HydrateApiMessages ===================================
+                     * Api HydrateApiMessages ===================================
                      */
                     /* MAIN HYDRATOR */
                     HydrateApiMessages::class
                     => HydrateApiMessagesCompositeFactory::class,
 
-                    // ApiMessageApiMessagesHydrator
+                    // ApiMessage
                     HydrateApiMessagesApiMessage::class
                     => HydrateApiMessagesApiMessageFactory::class,
 
-                    // ArrayApiMessagesHydrator
+                    // Array
                     HydrateApiMessagesArray::class
                     => HydrateApiMessagesArrayFactory::class,
 
-                    HydrateApiMessagesDefault::class
-                    => HydrateApiMessagesDefaultFactory::class,
-
-                    // ExceptionApiMessagesHydrator
+                    // Exception
                     HydrateApiMessagesException::class
                     => HydrateApiMessagesExceptionFactory::class,
 
-                    // InputFilterApiMessagesHydrator
+                    // InputFilter
                     HydrateApiMessagesInputFilter::class
                     => HydrateApiMessagesInputFilterFactory::class,
 
+                    // Default
+                    HydrateApiMessagesNoMessage::class
+                    => HydrateApiMessagesNoMessageFactory::class,
+
+                    // String
+                    HydrateApiMessagesString::class
+                    => HydrateApiMessagesStringFactory::class,
+
                     /**
-                     * Api ApiResponse ===================================
+                     * Api Translate ===================================
                      */
                     BuildStringParams::class
                     => BuildStringParamsFactory::class,
@@ -116,18 +116,6 @@ class RcmApiLibConfig
                      */
                     Translate::class
                     => TranslateRcmI18nFactory::class,
-
-                    // StringApiMessagesHydrator
-                    HydrateApiMessagesString::class
-                    => HydrateApiMessagesStringFactory::class,
-
-                    // PsrResponseService
-                    PsrResponseService::class
-                    => PsrResponseServiceFactory::class,
-
-                    // ResponseService
-                    ResponseService::class
-                    => ResponseServiceFactory::class,
                 ],
             ],
 
@@ -145,7 +133,7 @@ class RcmApiLibConfig
                     HydrateApiMessagesException::class => 3000,
                     HydrateApiMessagesInputFilter::class => 2000,
                     HydrateApiMessagesString::class => 1000,
-                    HydrateApiMessagesDefault::class => 100,
+                    HydrateApiMessagesNoMessage::class => 100,
                 ],
 
                 /**

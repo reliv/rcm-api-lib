@@ -63,8 +63,10 @@ class NewPsrResponseWithTranslatedMessages
             $encodingOptions
         );
 
-        if (!empty($apiMessagesData)) {
-            return $apiResponse;
+        if (empty($apiMessagesData)) {
+            return $this->withTranslatedApiMessages->__invoke(
+                $apiResponse
+            );
         }
 
         $this->withApiMessage->__invoke(
@@ -72,10 +74,8 @@ class NewPsrResponseWithTranslatedMessages
             $apiMessageData
         );
 
-        $apiResponse = $this->withTranslatedApiMessages->__invoke(
+        return $this->withTranslatedApiMessages->__invoke(
             $apiResponse
         );
-
-        return $apiResponse;
     }
 }

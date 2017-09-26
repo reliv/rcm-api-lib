@@ -20,10 +20,9 @@
     }
   ],
   "require": {
-    "php": ">=5.6",
+    "php": ">=7",
     "zendframework/zend-config-aggregator": "1.*",
     "zendframework/zend-diactoros": "^1",
-    "zendframework/zend-http": "^2",
     "zendframework/zend-inputfilter": "^2",
     "zendframework/zend-servicemanager": "2.* || 3.*",
     "zendframework/zend-validator": "^2"
@@ -33,13 +32,13 @@
     "squizlabs/php_codesniffer": "^2"
   },
   "suggest": {
-    "rcm/i18n": "^1",
-    "rwoverdijk/assetmanager": "^1",
-    "bower-asset/angular": "~1",
-    "bower-asset/rcm-js-lib": "^0",
+    "rcm/i18n": "Required by default, can over-ride in config: Translate::class",
+    "rwoverdijk/assetmanager": "Required if using asset manager config",
+    "bower-asset/angular": "Required for JS",
     "bower-asset/es6-promise-polyfill": "^1.2 for older browser support",
-    "zendframework/zend-mvc": "^2",
-    "zendframework/zend-stdlib": "^2"
+    "zendframework/zend-http": "Required if using ZF2 controllers",
+    "zendframework/zend-mvc": "Required if using ZF2 controllers",
+    "zendframework/zend-stdlib": "Required if using ZF2 controllers"
   },
   "autoload": {
     "psr-4": {

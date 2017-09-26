@@ -8,15 +8,15 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * @author James Jervis - https://github.com/jerv13
  */
-class HydrateApiMessagesDefaultFactory
+class HydrateApiMessagesNoMessageFactory
 {
     /**
      * @param $container ContainerInterface|ServiceLocatorInterface
      *
-     * @return HydrateApiMessagesDefault
+     * @return HydrateApiMessagesNoMessage
      */
     public function __invoke($container)
     {
-        return new HydrateApiMessagesDefault();
+        return new HydrateApiMessagesNoMessage();
     }
 }

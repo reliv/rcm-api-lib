@@ -33,20 +33,18 @@ class TranslateRcmI18n implements Translate
 
     /**
      * @param string $message
+     * @param array  $params
      * @param array  $options
      *
-     * @return mixed
+     * @return string
      */
     public function __invoke(
         string $message,
+        array $params,
         array $options = []
     ):string {
         $params = $this->buildStringParams->__invoke(
-            OptionsTranslate::getOption(
-                $options,
-                OptionsTranslate::OPTIONS_PARAMS,
-                []
-            )
+            $params
         );
 
         return $this->translator->translate(

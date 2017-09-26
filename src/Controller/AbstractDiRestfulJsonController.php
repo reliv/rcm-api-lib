@@ -2,8 +2,8 @@
 
 namespace Reliv\RcmApiLib\Controller;
 
-use Reliv\RcmApiLib\Http\ApiResponse;
-use Reliv\RcmApiLib\Service\ResponseService;
+use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -11,29 +11,11 @@ use Reliv\RcmApiLib\Service\ResponseService;
 abstract class AbstractDiRestfulJsonController extends AbstractRestfulJsonController
 {
     /**
-     * @override
-     * @var ApiResponse
-     */
-    protected $responseService;
-
-    /**
-     * AbstractDiRestfulJsonController constructor.
-     *
-     * @param ResponseService $responseService
+     * @param ContainerInterface|ServiceLocatorInterface $serviceLocator
      */
     public function __construct(
-        ResponseService $responseService
+        $serviceLocator
     ) {
-        $this->responseService = $responseService;
-    }
-
-    /**
-     * getResponseService
-     *
-     * @return ResponseService
-     */
-    protected function getResponseService()
-    {
-        return $this->responseService;
+        parent::__construct($serviceLocator);
     }
 }

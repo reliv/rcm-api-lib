@@ -2,8 +2,6 @@
 
 namespace Reliv\RcmApiLib\Api\ApiResponse;
 
-use Reliv\RcmApiLib\Api\Translate\OptionsTranslate;
-use Reliv\RcmApiLib\Api\Translate\Translate;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Model\ApiMessage;
 
@@ -35,7 +33,8 @@ class WithTranslatedApiMessagesBasic implements WithTranslatedApiMessages
     public function __invoke(
         ApiResponseInterface $apiResponse,
         array $optionsTranslate = []
-    ): ApiResponseInterface {
+    ): ApiResponseInterface
+    {
         $apiMessages = $apiResponse->getApiMessages();
 
         /** @var ApiMessage $apiMessage */

@@ -2,11 +2,9 @@
 
 namespace Reliv\RcmApiLib\Middleware;
 
-use Psr\Http\Message\ResponseInterface;
 use Reliv\RcmApiLib\Api\ApiResponse\NewPsrResponseWithTranslatedMessages;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
-use Reliv\RcmApiLib\Service\PsrResponseService;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -14,7 +12,7 @@ use Reliv\RcmApiLib\Service\PsrResponseService;
 abstract class AbstractJsonController
 {
     /**
-     * @var PsrResponseService
+     * @var NewPsrResponseWithTranslatedMessages
      */
     protected $psrResponseService;
 
@@ -28,11 +26,11 @@ abstract class AbstractJsonController
     }
 
     /**
-     * @param mixed             $data
-     * @param int               $statusCode
-     * @param null              $apiMessagesData
-     * @param array             $headers
-     * @param array             $options
+     * @param mixed $data
+     * @param int   $statusCode
+     * @param null  $apiMessagesData
+     * @param array $headers
+     * @param array $options
      *
      * @return ApiResponseInterface|PsrApiResponse
      */

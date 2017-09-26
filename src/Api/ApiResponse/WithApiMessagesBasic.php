@@ -25,13 +25,13 @@ class WithApiMessagesBasic implements WithApiMessages
 
     /**
      * @param ApiResponseInterface $apiResponse
-     * @param array                $apiMessagesData
+     * @param array|\Traversable   $apiMessagesData
      *
      * @return ApiResponseInterface
      */
     public function __invoke(
         ApiResponseInterface $apiResponse,
-        array $apiMessagesData
+        $apiMessagesData
     ): ApiResponseInterface
     {
         foreach ($apiMessagesData as $apiMessageData) {

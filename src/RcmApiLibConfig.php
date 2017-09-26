@@ -133,7 +133,7 @@ class RcmApiLibConfig
                     HydrateApiMessagesException::class => 3000,
                     HydrateApiMessagesInputFilter::class => 2000,
                     HydrateApiMessagesString::class => 1000,
-                    HydrateApiMessagesNoMessage::class => 100,
+                    //HydrateApiMessagesNoMessage::class => 100,
                 ],
 
                 /**

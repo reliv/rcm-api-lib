@@ -1,7 +1,8 @@
 Rcm Api Lib
 ====================
 
-API basic response library making use of Zend Expressive OR ZF2's regular MVC framework
+API basic response library making use of 
+Middleware (like Zend Expressive) OR ZF2's MVC framework
 
 Makes it easy to quickly create a common API data format.
 
@@ -17,10 +18,10 @@ Include a JavaScript (Angular.JS) library for the client.
 - Custom types can also be injected
 
 
-### EXAMPLE: Zend Expressive ###
+### EXAMPLE: Middleware (like Zend Expressive) ###
         
 ```php
-// From a Zend Expressive middleware that extends Reliv\RcmApiLib\Middleware\AbstractJsonController
+// From a Middleware that extends Reliv\RcmApiLib\Middleware\AbstractJsonController
 
     /** EXAMPLE: InputFilter (Zend)  **/
     public function __invoke(

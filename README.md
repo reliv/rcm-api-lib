@@ -35,7 +35,7 @@ Include a JavaScript (Angular.JS) library for the client.
 
         if (!$inputFilter->isValid()) {
             return $this->getApiResponse(
-                null,
+                [],
                 400,
                 $apiMessagesData = $inputFilter
             );

@@ -44,9 +44,4 @@ class Zf2Config
             /* </Example>*/
         ];
     }
-
-
-
-
-
 }

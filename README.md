@@ -1,49 +1,104 @@
 Rcm Api Lib
 ====================
 
-API basic response library making use of ZF2's regular MVC framework
+API basic response library making use of Zend Expressive OR ZF2's regular MVC framework
 
-##### Module title: #####
-Rcm Api Lib
+Makes it easy to quickly create a common API data format.
 
-##### Module description: #####
-Rcm Api Library
+Include a JavaScript (Angular.JS) library for the client.
 
-##### Company:
-Reliv' International, Inc.
+##### Several types of common error message types are supported: #####
 
-##### Module copyright date: #####
-2015
-
-##### Company or root namespace: #####
-Reliv
- 
-##### Module namespace: #####
-RcmApiLib
-
-##### Project root name, lowercase, dash separated: #####
-reliv
-
-##### Project name, lowercase, dash separated: #####
-rcm-api-lib
-
-##### Project homepage: #####
-https://github.com/reliv/rcm-api-lib
-
-##### Project author: #####
-James Jervis
-
-##### Project author email: #####
-jjervis@relivinc.com
-
-##### Project author homepage: #####
-https://github.com/reliv
+- Array
+- Exception
+- HttpStatusCode
+- InputFilter (Zend)
+- String
+- Custom types can also be injected
 
 
-##### EXAMPLE #####
+### EXAMPLE: Zend Expressive ###
+        
 ```php
+// From a Zend Expressive middleware that extends Reliv\RcmApiLib\Middleware\AbstractJsonController
 
-// From a Controller that extends \Reliv\RcmApiLib\Controller\AbstractRestfulJsonController
+    /** EXAMPLE: InputFilter (Zend)  **/
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ) {
+        $inputFilter = new RcmGoogleAnalyticsFilter();
+
+        $inputFilter->setData($data);
+
+        if (!$inputFilter->isValid()) {
+            return $this->getApiResponse(
+                null,
+                400,
+                $apiMessagesData = $inputFilter
+            );
+        }
+    }
+```
+
+##### Returns something like: #####
+    
+```json
+{
+  "data": [],
+  "messages": [
+    {
+      "type": "inputFilter",
+      "source": "validation",
+      "code": "error",
+      "value": "Some information was missing or invalid on the form. Please check the form and try again.",
+      "primary": true,
+      "params": [],
+      "key": "inputFilter.validation.error"
+    },
+    {
+      "type": "validatorMessage",
+      "source": "my-value",
+      "code": "isEmpty",
+      "value": "Value is required and can't be empty",
+      "primary": null,
+      "params": [],
+      "key": "validatorMessage.my-value.isEmpty"
+    }
+  ]
+} 
+```
+    
+    
+    
+```php    
+    /** EXAMPLE: General **/
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ) {
+        return $this->getApiResponse(
+            ['my' => 'response'],
+            400,
+            new ApiMessage(
+                'my-type',
+                'my-message-value {my-param}',
+                'my-source',
+                'my-code',
+                true,
+                ['my-param' => 'my-value']
+            )
+        );
+    }
+
+```
+
+### EXAMPLE: Zend Framework ###
+
+```php
+// From a ZF2 Controller that extends \Reliv\RcmApiLib\Controller\AbstractRestfulJsonController
 // @see \Reliv\RcmApiLib\Controller\ExampleRestfulJsonController
 
     // Add exception message
@@ -93,3 +148,9 @@ https://github.com/reliv
     );
     
 ```
+
+### Author: ###
+James Jervis
+jjervis@relivinc.com
+Copyright (c) 2015, Reliv' International, Inc.
+https://github.com/reliv/rcm-api-lib

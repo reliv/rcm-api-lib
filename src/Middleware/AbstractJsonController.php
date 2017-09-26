@@ -5,6 +5,7 @@ namespace Reliv\RcmApiLib\Middleware;
 use Reliv\RcmApiLib\Api\ApiResponse\NewPsrResponseWithTranslatedMessages;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
+use Reliv\RcmApiLib\Model\ApiMessage;
 
 /**
  * @author James Jervis - https://github.com/jerv13
@@ -28,7 +29,7 @@ abstract class AbstractJsonController
     /**
      * @param mixed $data
      * @param int   $statusCode
-     * @param null  $apiMessagesData
+     * @param null  $apiMessageData
      * @param array $headers
      * @param array $options
      *
@@ -37,14 +38,14 @@ abstract class AbstractJsonController
     protected function getApiResponse(
         $data,
         $statusCode = 200,
-        $apiMessagesData = null,
+        $apiMessageData = null,
         array $headers = [],
         array $options = []
     ) {
         return $this->newPsrResponseWithTranslatedMessages->__invoke(
             $data,
             $statusCode,
-            $apiMessagesData,
+            $apiMessageData,
             $headers,
             $options
         );

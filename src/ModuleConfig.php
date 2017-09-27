@@ -2,33 +2,29 @@
 
 namespace Reliv\RcmApiLib;
 
+use Zend\ConfigAggregator\ConfigAggregator;
+
 /**
- * Class ModuleConfig
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 class ModuleConfig
 {
     public function __invoke()
     {
-        return [
-            /**
-             * dependencies
-             */
-            'dependencies' => require(__DIR__ . '/../config/dependencies.php'),
+        $assetMiddleware = new AssetMiddlewareConfig();
+        $rcmApiLib = new RcmApiLibConfig();
+        $zf2Config = new Zf2Config();
 
-            /**
-             * Configuration
-             */
-            'Reliv\\RcmApiLib' =>require(__DIR__ . '/../config/reliv.rcm-api-lib.php'),
+        $configManager = new ConfigAggregator(
+            [
+                $assetMiddleware,
+                $rcmApiLib,
+                $zf2Config,
+            ]
+        );
 
-            /**
-             * routes
-             */
-            'routes' => require(__DIR__ . '/../config/routes.php'),
-        ];
+        $config = $configManager->getMergedConfig();
+
+        return $config;
     }
 }

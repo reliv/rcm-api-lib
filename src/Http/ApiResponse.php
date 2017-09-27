@@ -7,19 +7,7 @@ use Zend\Http\Headers;
 use Zend\Http\Response as HttpResponse;
 
 /**
- * Class ApiResponse
- *
- * JSON ApiResponse
- *
- * PHP version 5
- *
- * @category  Reliv
- * @package   Reliv\RcmApiLib
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2015 Reliv International
- * @license   License.txt New BSD License
- * @version   Release: <package_version>
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 class ApiResponse extends HttpResponse implements ApiResponseInterface
 {
@@ -55,6 +43,19 @@ class ApiResponse extends HttpResponse implements ApiResponseInterface
         } else {
             $this->setApiMessages(new ApiMessages());
         }
+    }
+
+    /**
+     * @param ApiMessages $apiMessages
+     *
+     * @return ApiResponse|ApiResponseInterface
+     */
+    public function withApiMessages(ApiMessages $apiMessages)
+    {
+        $new = clone $this;
+        $new->messages = $apiMessages;
+
+        return $new;
     }
 
     /**

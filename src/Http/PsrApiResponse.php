@@ -8,7 +8,6 @@ use Zend\Diactoros\Stream;
 
 /**
  * @todo      Should be immutable
- * Class PsrApiResponse
  *
  * @author    James Jervis <jjervis@relivinc.com>
  * @copyright 2016 Reliv International
@@ -52,6 +51,44 @@ class PsrApiResponse extends Response implements ApiResponseInterface
             $status,
             $headers
         );
+    }
+
+    /**
+     * @param ApiMessages $apiMessages
+     *
+     * @return PsrApiResponse|ApiResponseInterface
+     */
+    public function withApiMessages(ApiMessages $apiMessages)
+    {
+        $new = clone $this;
+        $new->messages = $apiMessages;
+
+        return $new;
+    }
+
+    /**
+     * To mimic \Zend\Diactoros\Response\JsonResponse
+     *
+     * @return mixed
+     */
+    public function getPayload()
+    {
+        return $this->data;
+    }
+
+    /**
+     * To mimic \Zend\Diactoros\Response\JsonResponse
+     *
+     * @param $data
+     *
+     * @return PsrApiResponse
+     */
+    public function withPayload($data)
+    {
+        $new = clone $this;
+        $new->setData($data);
+
+        return $new;
     }
 
     /**

@@ -2,58 +2,52 @@
 
 namespace Reliv\RcmApiLib\Middleware;
 
-use Psr\Http\Message\ResponseInterface;
+use Reliv\RcmApiLib\Api\ApiResponse\NewPsrResponseWithTranslatedMessages;
 use Reliv\RcmApiLib\Http\ApiResponseInterface;
 use Reliv\RcmApiLib\Http\PsrApiResponse;
-use Reliv\RcmApiLib\Service\PsrResponseService;
+use Reliv\RcmApiLib\Model\ApiMessage;
 
 /**
- * Class AbstractJsonController
- *
- * @author    James Jervis <jjervis@relivinc.com>
- * @copyright 2016 Reliv International
- * @license   License.txt
- * @link      https://github.com/reliv
+ * @author James Jervis - https://github.com/jerv13
  */
 abstract class AbstractJsonController
 {
     /**
-     * @var PsrResponseService
+     * @var NewPsrResponseWithTranslatedMessages
      */
-    protected $psrResponseService;
+    protected $newPsrResponseWithTranslatedMessages;
 
     /**
-     * AbstractJsonController constructor.
-     *
-     * @param PsrResponseService $psrResponseService
+     * @param NewPsrResponseWithTranslatedMessages $newPsrResponseWithTranslatedMessages
      */
     public function __construct(
-        PsrResponseService $psrResponseService
+        NewPsrResponseWithTranslatedMessages $newPsrResponseWithTranslatedMessages
     ) {
-        $this->psrResponseService = $psrResponseService;
+        $this->newPsrResponseWithTranslatedMessages = $newPsrResponseWithTranslatedMessages;
     }
 
     /**
-     * getApiResponse
+     * @param mixed $data
+     * @param int   $statusCode
+     * @param null  $apiMessageData
+     * @param array $headers
+     * @param array $options
      *
-     * @param ResponseInterface $response
-     * @param mixed             $data
-     * @param int               $statusCode
-     * @param null              $apiMessagesData
-     *
-     * @return PsrApiResponse|ApiResponseInterface
+     * @return ApiResponseInterface|PsrApiResponse
      */
     protected function getApiResponse(
-        ResponseInterface $response,
         $data,
         $statusCode = 200,
-        $apiMessagesData = null
+        $apiMessageData = null,
+        array $headers = [],
+        array $options = []
     ) {
-        return $this->psrResponseService->getPsrApiResponse(
-            $response,
+        return $this->newPsrResponseWithTranslatedMessages->__invoke(
             $data,
             $statusCode,
-            $apiMessagesData
+            $apiMessageData,
+            $headers,
+            $options
         );
     }
 }

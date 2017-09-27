@@ -3,6 +3,7 @@ module.exports = function (grunt) {
     var files = [
         'src/rcm-api-lib.js',
         'src/rcm-api-lib-service-config.js',
+        'src/rcm-api-lib-event-manager.js',
         'src/rcm-api-lib-api-params.js',
         'src/rcm-api-lib-api-data.js',
         'src/rcm-api-lib-api-message.js',

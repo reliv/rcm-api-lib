@@ -37,7 +37,7 @@ Include a JavaScript (Angular.JS) library for the client.
             return $this->getApiResponse(
                 [],
                 400,
-                $apiMessagesData = $inputFilter
+                $inputFilter
             );
         }
     }

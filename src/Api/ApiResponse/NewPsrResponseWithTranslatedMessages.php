@@ -63,7 +63,7 @@ class NewPsrResponseWithTranslatedMessages
             $encodingOptions
         );
 
-        if (empty($apiMessagesData)) {
+        if (empty($apiMessageData)) {
             return $this->withTranslatedApiMessages->__invoke(
                 $apiResponse
             );

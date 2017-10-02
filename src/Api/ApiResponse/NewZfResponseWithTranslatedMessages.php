@@ -55,7 +55,7 @@ class NewZfResponseWithTranslatedMessages
         $headers->addHeaders($headers);
         $apiResponse->setHeaders($headers);
 
-        if (empty($apiMessagesData)) {
+        if (empty($apiMessageData)) {
             return $this->withTranslatedApiMessages->__invoke(
                 $apiResponse
             );

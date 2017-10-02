@@ -58,7 +58,7 @@ class NewZfResponseFromResponseWithTranslatedMessages
         $apiResponse->setData($data);
         $apiResponse->setStatusCode($statusCode);
 
-        if (empty($apiMessagesData)) {
+        if (empty($apiMessageData)) {
             return $this->withTranslatedApiMessages->__invoke(
                 $apiResponse
             );

@@ -64,7 +64,6 @@ class HydrateApiMessagesComposite implements HydrateApiMessages
      */
     protected function getTypeDetails($apiMessageData)
     {
-
         $message = "type: " . gettype($apiMessageData) . " \n";
 
         if (is_object($apiMessageData)) {

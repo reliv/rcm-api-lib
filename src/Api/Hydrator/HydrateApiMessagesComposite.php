@@ -53,7 +53,25 @@ class HydrateApiMessagesComposite implements HydrateApiMessages
         }
 
         throw new CanNotHydrate(
-            get_class($this) . ' cannot hydrate this data type: ' . gettype($apiMessageData)
+            get_class($this) . ' cannot hydrate this data ' . $this->getTypeDetails($apiMessageData)
         );
+    }
+
+    /**
+     * @param mixed $apiMessageData
+     *
+     * @return string
+     */
+    protected function getTypeDetails($apiMessageData) {
+
+        $message = "type: " . gettype($apiMessageData) . " \n";
+
+        if(is_object($apiMessageData)) {
+            $message .= "class: " . get_class($apiMessageData) . " \n";
+        } else {
+            $message .= "data: " . json_encode($apiMessageData, 0, 5) . " \n";
+        }
+
+        return $message;
     }
 }

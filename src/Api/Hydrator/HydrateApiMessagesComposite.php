@@ -62,11 +62,12 @@ class HydrateApiMessagesComposite implements HydrateApiMessages
      *
      * @return string
      */
-    protected function getTypeDetails($apiMessageData) {
+    protected function getTypeDetails($apiMessageData)
+    {
 
         $message = "type: " . gettype($apiMessageData) . " \n";
 
-        if(is_object($apiMessageData)) {
+        if (is_object($apiMessageData)) {
             $message .= "class: " . get_class($apiMessageData) . " \n";
         } else {
             $message .= "data: " . json_encode($apiMessageData, 0, 5) . " \n";

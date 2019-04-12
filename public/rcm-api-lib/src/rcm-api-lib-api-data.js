@@ -25,11 +25,13 @@ var RcmApiLibApiData = function () {
  */
 angular.module('rcmApiLib').factory(
     'rcmApiLibApiData',
-    function ($http, $log) {
+    ['$http', '$log',
+        function ($http, $log) {
 
-        /**
-         * Class RcmApiLibApiData
-         */
-        return RcmApiLibApiData
-    }
+            /**
+             * Class RcmApiLibApiData
+             */
+            return RcmApiLibApiData
+        }
+    ]
 );

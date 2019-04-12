@@ -142,11 +142,13 @@ var RcmApiLibApiParams = function () {
  */
 angular.module('rcmApiLib').factory(
     'rcmApiLibApiParams',
-    function ($http, $log) {
+    ['$http', '$log',
+        function ($http, $log) {
 
-        /**
-         * Class RcmApiLibApiParams
-         */
-        return RcmApiLibApiParams;
-    }
+            /**
+             * Class RcmApiLibApiParams
+             */
+            return RcmApiLibApiParams;
+        }
+    ]
 );

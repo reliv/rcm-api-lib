@@ -1,0 +1,11 @@
+import './rcm-api-lib';
+import './rcm-api-lib-service-config';
+import './rcm-api-lib-event-manager';
+import './rcm-api-lib-api-params';
+import './rcm-api-lib-api-data';
+import './rcm-api-lib-api-message';
+import './rcm-api-lib-service';
+import './rcm-api-lib-message-alert';
+import './rcm-api-lib-message-service';
+import './rcm-api-lib-message-directive';
+import './rcm-api-lib-global';

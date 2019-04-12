@@ -2,7 +2,7 @@
  * RcmApiLibEventManager
  * @constructor
  */
-var RcmApiLibEventManager = function () {
+window.RcmApiLibEventManager = function () {
 
     var self = this;
 

@@ -2,7 +2,7 @@
  * {rcmApiLibServiceConfig}
  * @type {{defaultMessage: string}}
  */
-var rcmApiLibServiceConfig = {
+window.rcmApiLibServiceConfig = {
     defaultMessage: 'An unknown error occurred while making request'
 };
 
